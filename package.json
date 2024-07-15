@@ -1,0 +1,56 @@
+{
+  "version": "0.1.0",
+  "name": "@dotenvx/dotenvx-pro",
+  "description": "dotnevx pro",
+  "author": "@motdotla",
+  "keywords": [
+    "dotenvx",
+    "dotenv",
+    "env"
+  ],
+  "homepage": "https://github.com/dotenvx/dotenvx-pro",
+  "repository": "dotenvx/dotenvx-pro",
+  "files": [
+    "src/**/*",
+    "CHANGELOG.md"
+  ],
+  "main": "src/lib/main.js",
+  "bin": {
+    "dotenvx-pro": "./src/cli/dotenvx-pro.js"
+  },
+  "scripts": {
+    "standard": "standard",
+    "standard:fix": "standard --fix",
+    "test": "tap run --show-full-coverage",
+    "prerelease": "npm test",
+    "release": "standard-version",
+    "patch": "patch-package"
+  },
+  "funding": "https://dotenvx.com",
+  "dependencies": {
+    "@inquirer/confirm": "^2.0.17",
+    "arch": "^2.1.1",
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "conf": "^10.2.0",
+    "dotenv": "^16.4.5",
+    "execa": "^5.1.1",
+    "is-wsl": "^2.1.1",
+    "open": "^8.4.2",
+    "undici": "^5.28.3",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "capture-console": "^1.0.2",
+    "patch-package": "^8.0.0",
+    "pkg": "^5.8.1",
+    "proxyquire": "^2.1.3",
+    "sinon": "^14.0.1",
+    "standard": "^17.1.0",
+    "standard-version": "^9.5.0",
+    "tap": "^18.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

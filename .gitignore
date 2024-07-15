@@ -1,0 +1,20 @@
+.DS_Store
+.nyc_output
+.tap
+coverage/
+node_modules/
+dist/*
+.env*
+!.env.vault
+tests/tmp
+
+# for test purposes
+!tests/.env
+!tests/.env.expand
+!tests/.env.eval
+!tests/.env.local
+!tests/.env.multiline
+!tests/.env.vault
+!tests/monorepo/**/.env*
+spec/tmp/*
+!spec/tmp/.gitkeep
