@@ -49,7 +49,7 @@ INSTALL_SCRIPT_URL="https://dotenvx.sh/pro"
 usage() {
   echo "Usage: $0 [options] [command]"
   echo ""
-  echo "install dotenvx-pro"
+  echo "install dotenvx pro"
   echo ""
   echo "Options:"
   echo "  --directory       directory to install dotenvx-pro to (default: \"/usr/local/bin\")"
