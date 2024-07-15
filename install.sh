@@ -273,10 +273,10 @@ which_path() {
 
 # warnings* -----------------------------
 warn_of_any_conflict() {
-  local dotenvx_path="$(which_path)"
+  local dotenvx_pro_path="$(which_path)"
 
-  if [ "$dotenvx_path" != "" ] && [ "$dotenvx_path" != "$(directory)/$(binary_name)" ]; then
-    echo "[DOTENVX_CONFLICT] conflicting dotenvx-pro found at $dotenvx_path" >&2
+  if [ "$dotenvx_pro_path" != "" ] && [ "$dotenvx_pro_path" != "$(directory)/$(binary_name)" ]; then
+    echo "[DOTENVX_PRO_CONFLICT] conflicting dotenvx-pro found at $dotenvx_pro_path" >&2
     echo "? we recommend updating your path to include $(directory)" >&2
   fi
 

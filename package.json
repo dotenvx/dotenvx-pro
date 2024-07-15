@@ -24,7 +24,7 @@
     "test": "tap run --allow-empty-coverage --disable-coverage --timeout=60000",
     "test-coverage": "tap run --show-full-coverage --timeout=60000",
     "testshell": "bash shellspec",
-    "prerelease": "npm test",
+    "prerelease": "npm test && npm run testshell",
     "release": "standard-version",
     "patch": "patch-package"
   },

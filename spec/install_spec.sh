@@ -5,7 +5,7 @@ Describe 'install.sh'
   Include install.sh
 
   setup() {
-    VERSION="0.1.0"
+    VERSION="0.1.2"
     DIRECTORY="./spec/tmp"
   }
 
@@ -29,20 +29,20 @@ Describe 'install.sh'
     return 0
   }
 
-  mock_which_dotenvx_pro_empty() {
+  mock_which_path_empty() {
     echo ""
 
     return 0
   }
 
-  mock_which_dotenvx_pro_path_different() {
+  mock_which_path_different() {
     echo "/different/path"
 
     return 0
   }
 
-  preinstall_dotenvx_pro() {
-    # Run the actual install_dotenvx_pro function to install the binary
+  preinstall() {
+    # Run the actual install function to install the binary
     install > /dev/null
   }
 
@@ -53,7 +53,7 @@ Describe 'install.sh'
   Describe 'default values'
     It 'checks default VERSION'
       When call echo "$VERSION"
-      The output should equal "0.1.0"
+      The output should equal "0.1.2"
     End
 
     It 'checks default DIRECTORY'
@@ -167,7 +167,7 @@ install dotenvx pro
 
 Options:
   --directory       directory to install dotenvx-pro to (default: \"/usr/local/bin\")
-  --version         version of dotenvx-pro to install (default: \"0.1.0\")
+  --version         version of dotenvx-pro to install (default: \"0.1.2\")
 
 Commands:
   install           install dotenvx-pro
@@ -308,7 +308,7 @@ Commands:
     It 'returns the combined values'
       When call filename
       The status should equal 0
-      The output should equal "dotenvx-pro-0.1.0-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | tr '[:upper:]' '[:lower:]').tar.gz"
+      The output should equal "dotenvx-pro-0.1.2-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | tr '[:upper:]' '[:lower:]').tar.gz"
     End
   End
 
@@ -316,7 +316,7 @@ Commands:
     It 'returns the combined values'
       When call download_url
       The status should equal 0
-      The output should equal "https://registry.npmjs.org/@dotenvx/dotenvx-pro-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | tr '[:upper:]' '[:lower:]')/-/dotenvx-pro-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | tr '[:upper:]' '[:lower:]')-0.1.0.tgz"
+      The output should equal "https://registry.npmjs.org/@dotenvx/dotenvx-pro-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | tr '[:upper:]' '[:lower:]')/-/dotenvx-pro-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | tr '[:upper:]' '[:lower:]')-0.1.2.tgz"
     End
   End
 
@@ -341,8 +341,8 @@ Commands:
   End
 
   Describe 'is_installed()'
-    which_dotenvx() {
-      mock_which_dotenvx_empty
+    which_path() {
+      mock_which_path_empty
     }
 
     It 'returns false'
@@ -351,41 +351,41 @@ Commands:
     End
 
     Describe 'when already installed'
-      Before 'preinstall_dotenvx_pro'
+      Before 'preinstall'
 
       It 'returns true and outputs a message'
         When call is_installed
         The status should equal 0
-        The output should equal "[dotenvx-pro@0.1.0] already installed (./spec/tmp/dotenvx)"
+        The output should equal "[dotenvx-pro@0.1.2] already installed (./spec/tmp/dotenvx-pro)"
       End
     End
   End
 
-  Describe 'which_dotenvx()'
-    which_dotenvx() {
-      mock_which_dotenvx_empty
+  Describe 'which_path()'
+    which_path() {
+      mock_which_path_empty
     }
 
     It 'returns empty space'
-      When call which_dotenvx
+      When call which_path
       The output should equal ""
     End
 
     Describe 'when a different path'
-      which_dotenvx() {
-        mock_which_dotenvx_path_different
+      which_path() {
+        mock_which_path_different
       }
 
       It 'returns the different path'
-        When call which_dotenvx
+        When call which_path
         The output should equal "/different/path"
       End
     End
   End
 
   Describe 'warn_of_any_conflict()'
-    which_dotenvx() {
-      mock_which_dotenvx_empty
+    which_path() {
+      mock_which_path_empty
     }
 
     It 'does not warn since which dotenvx is empty'
@@ -396,81 +396,81 @@ Commands:
     End
 
     Describe 'when a different path'
-      which_dotenvx() {
-        mock_which_dotenvx_path_different
+      which_path() {
+        mock_which_path_different
       }
 
       It 'warns'
         When call warn_of_any_conflict
         The status should equal 0
-        The stderr should equal "[DOTENVX_CONFLICT] conflicting dotenvx found at /different/path
+        The stderr should equal "[DOTENVX_PRO_CONFLICT] conflicting dotenvx-pro found at /different/path
 ? we recommend updating your path to include ./spec/tmp"
       End
     End
   End
 
-  Describe 'install_dotenvx()'
-    which_dotenvx() {
-      mock_which_dotenvx_empty
+  Describe 'install()'
+    which_path() {
+      mock_which_path_empty
     }
 
     It 'installs it'
-      When call install_dotenvx
+      When call install
       The status should equal 0
-      The output should equal "[dotenvx@0.1.0] installed successfully (./spec/tmp/dotenvx)
-now type: dotenvx help"
+      The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
+now type: dotenvx-pro help"
     End
 
     Describe 'when a different path'
-      which_dotenvx() {
-        mock_which_dotenvx_path_different
+      which_path() {
+        mock_which_path_different
       }
 
       It 'installs it but warns'
-        When call install_dotenvx
+        When call install
         The status should equal 0
-        The output should equal "[dotenvx@0.1.0] installed successfully (./spec/tmp/dotenvx)
-now type: dotenvx help"
-        The stderr should equal "[DOTENVX_CONFLICT] conflicting dotenvx found at /different/path
+        The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
+now type: dotenvx-pro help"
+        The stderr should equal "[DOTENVX_PRO_CONFLICT] conflicting dotenvx-pro found at /different/path
 ? we recommend updating your path to include ./spec/tmp"
       End
     End
   End
 
   Describe 'run()'
-    which_dotenvx() {
-      mock_which_dotenvx_empty
+    which_path() {
+      mock_which_path_empty
     }
 
     It 'installs dotenvx'
       When call run
       The status should equal 0
-      The output should equal "[dotenvx@0.1.0] installed successfully (./spec/tmp/dotenvx)
-now type: dotenvx help"
+      The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
+now type: dotenvx-pro help"
     End
 
     Describe 'when a different path'
-      which_dotenvx() {
-        mock_which_dotenvx_path_different
+      which_path() {
+        mock_which_path_different
       }
 
       It 'installs it but warns'
         When call run
         The status should equal 0
-        The output should equal "[dotenvx@0.1.0] installed successfully (./spec/tmp/dotenvx)
-now type: dotenvx help"
-        The stderr should equal "[DOTENVX_CONFLICT] conflicting dotenvx found at /different/path
+        The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
+now type: dotenvx-pro help"
+        The stderr should equal "[DOTENVX_PRO_CONFLICT] conflicting dotenvx-pro found at /different/path
 ? we recommend updating your path to include ./spec/tmp"
       End
     End
 
     Describe 'when already installed at same location'
-      Before 'preinstall_dotenvx_pro'
+      Before 'preinstall'
 
       It 'says already installed'
         When call run
         The status should equal 0
-        The output should equal "[dotenvx@0.1.0] already installed (./spec/tmp/dotenvx)"
+        The output should equal "[dotenvx-pro@0.1.2] already installed (./spec/tmp/dotenvx-pro)"
       End
     End
   End
