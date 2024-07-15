@@ -1,0 +1,402 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ['*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+      - run: npm install
+      - run: npm run standard
+      - run: npm run test
+      - run: npm audit --omit=dev
+
+  # run only on semantic version tag
+  release:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      # GITHUB_ENV operates like a .env file
+      - name: extract version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          CLEAN_VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
+
+      - name: node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+
+      # https://news.ycombinator.com/item?id=32388964
+      # https://github.com/procursusteam/ldid
+      # https://www.pulumi.com/blog/nodejs-binaries-with-pkg/
+      # https://github.com/pulumi/pulumi-aws-static-website/blob/main/.github/workflows/release.yaml
+      - name: ldid for macos binary building
+        uses: MOZGIII/install-ldid-action@v1
+        with:
+          tag: v2.1.5-procursus2
+
+      - name: npm install
+        run: npm install
+
+      - name: npm run patch
+        run: npm run patch
+
+      - name: pkg
+        run: |
+          echo "pkg-ing"
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-macos-x64 --output bin/darwin-amd64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-macos-x64 --output bin/darwin-x86_64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-macos-arm64 --output bin/darwin-arm64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-x64 --output bin/linux-amd64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-x64 --output bin/linux-x86_64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-arm64 --output bin/linux-arm64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-arm64 --output bin/linux-aarch64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-win-x64 --output bin/windows-amd64/dotenvx-pro.exe
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-win-x64 --output bin/windows-x86_64/dotenvx-pro.exe
+          echo "change ownership"
+          sudo chown -R root:root bin/
+          echo "dist-ing"
+          mkdir -p dist
+          mkdir -p dist2
+          mkdir -p dist2/${{ env.VERSION }}
+          mkdir -p dist2/latest
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-darwin-amd64.tar.gz -C bin/darwin-amd64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-darwin-x86_64.tar.gz -C bin/darwin-x86_64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-darwin-arm64.tar.gz -C bin/darwin-arm64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-linux-amd64.tar.gz -C bin/linux-amd64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-linux-x86_64.tar.gz -C bin/linux-x86_64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-linux-arm64.tar.gz -C bin/linux-arm64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-linux-aarch64.tar.gz -C bin/linux-aarch64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-windows-amd64.tar.gz -C bin/windows-amd64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-windows-x86_64.tar.gz -C bin/windows-x86_64/ .
+          zip -j ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-windows-amd64.zip bin/windows-amd64/dotenvx-pro.exe
+          zip -j ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-windows-x86_64.zip bin/windows-x86_64/dotenvx-pro.exe
+          tar --gzip -cf ./dist/dotenvx-pro-darwin-amd64.tar.gz -C bin/darwin-amd64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-darwin-x86_64.tar.gz -C bin/darwin-x86_64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-darwin-arm64.tar.gz -C bin/darwin-arm64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-linux-amd64.tar.gz -C bin/linux-amd64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-linux-x86_64.tar.gz -C bin/linux-x86_64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-linux-arm64.tar.gz -C bin/linux-arm64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-linux-aarch64.tar.gz -C bin/linux-aarch64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-windows-amd64.tar.gz -C bin/windows-amd64/ .
+          tar --gzip -cf ./dist/dotenvx-pro-windows-x86_64.tar.gz -C bin/windows-x86_64/ .
+          zip -j ./dist/dotenvx-pro-windows-amd64.zip bin/windows-amd64/dotenvx-pro.exe
+          zip -j ./dist/dotenvx-pro-windows-x86_64.zip bin/windows-x86_64/dotenvx-pro.exe
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-darwin-amd64.tar.gz -C bin/darwin-amd64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-darwin-x86_64.tar.gz -C bin/darwin-x86_64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-darwin-arm64.tar.gz -C bin/darwin-arm64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-amd64.tar.gz -C bin/linux-amd64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-x86_64.tar.gz -C bin/linux-x86_64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-arm64.tar.gz -C bin/linux-arm64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-aarch64.tar.gz -C bin/linux-aarch64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-windows-amd64.tar.gz -C bin/windows-amd64/ .
+          tar --gzip -cf ./dist2/latest/dotenvx-pro-windows-x86_64.tar.gz -C bin/windows-x86_64/ .
+          zip -j ./dist2/latest/dotenvx-pro-windows-amd64.zip bin/windows-amd64/dotenvx-pro.exe
+          zip -j ./dist2/latest/dotenvx-pro-windows-x86_64.zip bin/windows-x86_64/dotenvx-pro.exe
+
+      - name: update install.sh with VERSION
+        run: |
+          sed "0,/^VERSION=\".*\"/s//VERSION=\"${{ env.CLEAN_VERSION }}\"/" install.sh > ./dist/install.sh
+          sed "0,/^VERSION=\".*\"/s//VERSION=\"${{ env.CLEAN_VERSION }}\"/" install.sh > ./dist2/install.sh
+
+      - name: create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/install.sh
+          body: "see [CHANGELOG](https://github.com/dotenvx/dotenvx-pro/blob/main/CHANGELOG.md)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: publish checksums to release
+        uses: wangzuo/action-release-checksums@v1
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      # https://github.com/Justintime50/homebrew-releaser
+      - name: homebrew releaser
+        uses: Justintime50/homebrew-releaser@v1
+        with:
+          debug: false
+          homebrew_owner: dotenvx
+          homebrew_tap: homebrew-brew
+          formula_folder: Formula
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          commit_owner: motdotenv
+          commit_email: mot@dotenv.org
+          install: 'bin.install "dotenvx-pro";'
+          test: 'system bin/"dotenvx-pro", "--version";'
+          target_darwin_amd64: true
+          target_darwin_arm64: true
+          target_linux_amd64: true
+          target_linux_arm64: true
+          update_readme_table: true
+  npm:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@dotenvx'
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  dotenvx-pro-darwin-amd64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: darwin-amd64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-darwin-arm64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: darwin-arm64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-darwin-x86_64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: darwin-x86_64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-linux-aarch64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: linux-aarch64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-linux-amd64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: linux-amd64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-linux-arm64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: linux-arm64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-linux-x86_64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: linux-x86_64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-windows-amd64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: windows-amd64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  dotenvx-pro-windows-x86_64:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: commit binary to github
+        uses: ./.github/actions/commit-binary-to-github
+        with:
+          version: ${GITHUB_REF#refs/tags/}
+          platform: windows-x86_64
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  # aggregate publish-all job to wait for all previous jobs to complete
+  publish-all:
+    runs-on: ubuntu-latest
+    needs: 
+      - npm
+      - homebrew
+      - dotenvx-pro-darwin-amd64
+      - dotenvx-pro-darwin-arm64
+      - dotenvx-pro-darwin-x86_64
+      - dotenvx-pro-linux-aarch64
+      - dotenvx-pro-linux-amd64
+      - dotenvx-pro-linux-arm64
+      - dotenvx-pro-linux-x86_64
+      - dotenvx-pro-windows-amd64
+      - dotenvx-pro-windows-x86_64
+    steps:
+      - name: publish-all aggregate step
+        run: echo "publish-all completed"
+
+  dotenvx-sh:
+    needs: publish-all
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: extract version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          CLEAN_VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
+      - name: update install.sh with VERSION
+        run: |
+          mkdir -p dist
+          sed "0,/^VERSION=\".*\"/s//VERSION=\"${{ env.CLEAN_VERSION }}\"/" install.sh > ./dist/install.sh
+      - name: checkout dotenvx/dotenvx.sh repo
+        uses: actions/checkout@v4
+        with:
+          repository: "dotenvx/dotenvx.sh"
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          path: "dotenvx.sh"
+      - name: copy install.sh to dotenvx.sh/pro repo
+        run: |
+          cp dist/install.sh dotenvx.sh/pro/install.sh
+          echo "${{ env.CLEAN_VERSION }}" > dotenvx.sh/pro/VERSION
+      - name: commit and push
+        run: |
+          cd dotenvx.sh
+          git config --global user.name 'motdotenv'
+          git config --global user.email 'mot@dotenv.org'
+          git add .
+          git commit -m "dotenvx-pro@${{ env.VERSION }}" --allow-empty
+          git tag "${{ env.VERSION }}" --force
+          git push origin HEAD --tags --force
+  confirm-dotenvx-sh:
+    needs: dotenvx-sh
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: extract version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          CLEAN_VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
+      - name: wait for deployment
+        run: |
+          end=$((SECONDS+300))
+          while [ $SECONDS -lt $end ]; do
+            current_version=$(curl -s -L https://dotenvx.sh/pro/VERSION)
+            if [ "$current_version" == "${{ env.CLEAN_VERSION }}" ]; then
+              echo "dotenvx.sh deployment successful with version $current_version"
+              exit 0
+            fi
+            echo "waiting for deployment..."
+            sleep 10
+          done
+          echo "[DEPLOYMENT_FAILED]: VERSION did not update to ${{ env.CLEAN_VERSION }} within 5 minutes"
+          exit 1
