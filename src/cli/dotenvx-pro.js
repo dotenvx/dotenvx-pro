@@ -32,4 +32,11 @@ program
   .option('-h, --hostname <url>', 'set hostname', store.getHostname())
   .action(loginAction)
 
+const tokenAction = require('./actions/token')
+program
+  .command('token')
+  .description('print the auth token dotenvx hub is configured to use')
+  .option('-h, --hostname <url>', 'set hostname', 'https://hub.dotenvx.com')
+  .action(tokenAction)
+
 program.parse(process.argv)
