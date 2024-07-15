@@ -2,8 +2,9 @@ const t = require('tap')
 const sinon = require('sinon')
 const capcon = require('capture-console')
 
-const store = require('./../../../src/shared/store')
-const token = require('./../../../src/cli/actions/token')
+const store = require('../../../src/shared/store')
+const token = require('../../../src/cli/actions/token')
+const { logger } = require('../../../src/shared/logger')
 
 t.beforeEach((ct) => {
   sinon.restore()
@@ -34,14 +35,13 @@ t.test('token - undefined', ct => {
   const stub1 = sinon.stub(store, 'configPath').returns('/some/path/.env')
   const stub2 = sinon.stub(store, 'getToken').returns(undefined)
   const processExitStub = sinon.stub(process, 'exit')
+  const loggerErrorStub = sinon.stub(logger, 'error')
 
-  const stdout = capcon.interceptStdout(() => {
-    token.call(fakeContext)
-  })
+  token.call(fakeContext)
 
   t.ok(stub1.called, 'store.configPath() called')
   t.ok(stub2.called, 'store.getToken() called')
-  t.equal(stdout, '\x1b[1m\x1b[31mnot found\x1b[39m\x1b[22m\n')
+  t.ok(loggerErrorStub.calledWith('not found'), 'logger.error')
   t.ok(processExitStub.calledWith(1), 'process.exit(1)')
 
   ct.end()
