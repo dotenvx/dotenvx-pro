@@ -3,13 +3,10 @@ const { request } = require('undici')
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const confirm = require('@inquirer/confirm').default
 
-// const createSpinner = require('./../../shared/createSpinner')
 const store = require('./../../shared/store')
 const { logger } = require('./../../shared/logger')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
-
-// const spinner = createSpinner('waiting on user authorization')
 
 const formatCode = function (str) {
   const parts = []
@@ -48,18 +45,14 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval) {
           const newInterval = interval + 1 // grow the interval
           await new Promise(resolve => setTimeout(resolve, newInterval * 1000))
         } else {
-          // spinner.start()
-          // spinner.fail(responseData.error_description)
           logger.error(responseData.error_description)
           process.exit(1)
         }
       }
 
       if (responseData.access_token) {
-        // spinner.start()
         store.setToken(responseData.full_username, responseData.access_token)
         store.setHostname(responseData.hostname)
-        // spinner.succeed(`logged in as ${responseData.username}`)
         logger.success(`logged in as ${responseData.username}`)
         process.exit(0)
       } else {
@@ -67,8 +60,6 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval) {
         await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
-      // spinner.start()
-      // spinner.fail(error.toString())
       logger.error(error.toString())
       process.exit(1)
     }
@@ -96,9 +87,6 @@ async function login () {
 
     if (response.statusCode >= 400) {
       logger.http(responseData)
-
-      //spinner.start()
-      //spinner.fail(responseData.error_description)
       logger.error(responseData.error_description)
       process.exit(1)
     }
@@ -120,14 +108,10 @@ async function login () {
 
     if (answer) {
       await open(verificationUri)
-
-      // spinner.start()
     } else {
       process.exit(1)
     }
   } catch (error) {
-    // spinner.start()
-    // spinner.fail(error.toString())
     logger.error(error.toString())
     process.exit(1)
   }

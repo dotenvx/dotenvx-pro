@@ -35,8 +35,21 @@ program
 const tokenAction = require('./actions/token')
 program
   .command('token')
-  .description('print the auth token dotenvx hub is configured to use')
-  .option('-h, --hostname <url>', 'set hostname', 'https://hub.dotenvx.com')
+  .description('print the auth token dotenvx pro is configured to use')
+  .option('-h, --hostname <url>', 'set hostname', 'https://pro.dotenvx.com')
   .action(tokenAction)
+
+const statusAction = require('./actions/status')
+program
+  .command('status')
+  .description('display logged in user')
+  .action(statusAction)
+
+const logoutAction = require('./actions/logout')
+program
+  .command('logout')
+  .description('log out this machine from dotenvx pro')
+  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .action(logoutAction)
 
 program.parse(process.argv)
