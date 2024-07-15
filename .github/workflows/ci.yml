@@ -80,9 +80,6 @@ jobs:
           sudo chown -R root:root bin/
           echo "dist-ing"
           mkdir -p dist
-          mkdir -p dist2
-          mkdir -p dist2/${{ env.VERSION }}
-          mkdir -p dist2/latest
           tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-darwin-amd64.tar.gz -C bin/darwin-amd64/ .
           tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-darwin-x86_64.tar.gz -C bin/darwin-x86_64/ .
           tar --gzip -cf ./dist/dotenvx-pro-${{ env.CLEAN_VERSION }}-darwin-arm64.tar.gz -C bin/darwin-arm64/ .
@@ -105,22 +102,10 @@ jobs:
           tar --gzip -cf ./dist/dotenvx-pro-windows-x86_64.tar.gz -C bin/windows-x86_64/ .
           zip -j ./dist/dotenvx-pro-windows-amd64.zip bin/windows-amd64/dotenvx-pro.exe
           zip -j ./dist/dotenvx-pro-windows-x86_64.zip bin/windows-x86_64/dotenvx-pro.exe
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-darwin-amd64.tar.gz -C bin/darwin-amd64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-darwin-x86_64.tar.gz -C bin/darwin-x86_64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-darwin-arm64.tar.gz -C bin/darwin-arm64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-amd64.tar.gz -C bin/linux-amd64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-x86_64.tar.gz -C bin/linux-x86_64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-arm64.tar.gz -C bin/linux-arm64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-linux-aarch64.tar.gz -C bin/linux-aarch64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-windows-amd64.tar.gz -C bin/windows-amd64/ .
-          tar --gzip -cf ./dist2/latest/dotenvx-pro-windows-x86_64.tar.gz -C bin/windows-x86_64/ .
-          zip -j ./dist2/latest/dotenvx-pro-windows-amd64.zip bin/windows-amd64/dotenvx-pro.exe
-          zip -j ./dist2/latest/dotenvx-pro-windows-x86_64.zip bin/windows-x86_64/dotenvx-pro.exe
 
       - name: update install.sh with VERSION
         run: |
           sed "0,/^VERSION=\".*\"/s//VERSION=\"${{ env.CLEAN_VERSION }}\"/" install.sh > ./dist/install.sh
-          sed "0,/^VERSION=\".*\"/s//VERSION=\"${{ env.CLEAN_VERSION }}\"/" install.sh > ./dist2/install.sh
 
       - name: create release
         uses: softprops/action-gh-release@v1
