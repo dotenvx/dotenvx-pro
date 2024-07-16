@@ -166,11 +166,11 @@ Describe 'install.sh'
 install dotenvx pro
 
 Options:
-  --directory       directory to install dotenvx-pro to (default: \"/usr/local/bin\")
-  --version         version of dotenvx-pro to install (default: \"0.1.2\")
+  --directory       directory to install dotenvx pro to (default: \"/usr/local/bin\")
+  --version         version of dotenvx pro to install (default: \"0.1.2\")
 
 Commands:
-  install           install dotenvx-pro
+  install           install dotenvx pro
   help              display help"
     End
   End
@@ -418,7 +418,7 @@ Commands:
       When call install
       The status should equal 0
       The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
-now type: dotenvx-pro help"
+now type: dotenvx pro help"
     End
 
     Describe 'when a different path'
@@ -430,7 +430,7 @@ now type: dotenvx-pro help"
         When call install
         The status should equal 0
         The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
-now type: dotenvx-pro help"
+now type: dotenvx pro help"
         The stderr should equal "[DOTENVX_PRO_CONFLICT] conflicting dotenvx-pro found at /different/path
 ? we recommend updating your path to include ./spec/tmp"
       End
@@ -446,7 +446,7 @@ now type: dotenvx-pro help"
       When call run
       The status should equal 0
       The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
-now type: dotenvx-pro help"
+now type: dotenvx pro help"
     End
 
     Describe 'when a different path'
@@ -458,7 +458,7 @@ now type: dotenvx-pro help"
         When call run
         The status should equal 0
         The output should equal "[dotenvx-pro@0.1.2] installed successfully (./spec/tmp/dotenvx-pro)
-now type: dotenvx-pro help"
+now type: dotenvx pro help"
         The stderr should equal "[DOTENVX_PRO_CONFLICT] conflicting dotenvx-pro found at /different/path
 ? we recommend updating your path to include ./spec/tmp"
       End

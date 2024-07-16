@@ -52,11 +52,11 @@ usage() {
   echo "install dotenvx pro"
   echo ""
   echo "Options:"
-  echo "  --directory       directory to install dotenvx-pro to (default: \"/usr/local/bin\")"
-  echo "  --version         version of dotenvx-pro to install (default: \"$VERSION\")"
+  echo "  --directory       directory to install dotenvx pro to (default: \"/usr/local/bin\")"
+  echo "  --version         version of dotenvx pro to install (default: \"$VERSION\")"
   echo ""
   echo "Commands:"
-  echo "  install           install dotenvx-pro"
+  echo "  install           install dotenvx pro"
   echo "  help              display help"
 }
 
@@ -357,7 +357,7 @@ install() {
 
   # let user know
   echo "[dotenvx-pro@$VERSION] installed successfully ($(directory)/$(binary_name))"
-  echo "now type: dotenvx-pro help"
+  echo "now type: dotenvx pro help"
 
   return 0
 }
