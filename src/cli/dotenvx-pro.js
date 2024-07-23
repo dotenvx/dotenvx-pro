@@ -32,24 +32,25 @@ program
   .option('-h, --hostname <url>', 'set hostname', store.getHostname())
   .action(loginAction)
 
-const tokenAction = require('./actions/token')
-program
-  .command('token')
-  .description('print the auth token dotenvx pro is configured to use')
-  .option('-h, --hostname <url>', 'set hostname', 'https://pro.dotenvx.com')
-  .action(tokenAction)
-
-const statusAction = require('./actions/status')
-program
-  .command('status')
-  .description('display logged in user')
-  .action(statusAction)
-
 const logoutAction = require('./actions/logout')
 program
   .command('logout')
   .description('log out this machine from dotenvx pro')
   .option('-h, --hostname <url>', 'set hostname', store.getHostname())
   .action(logoutAction)
+
+// dotenvx pro settings
+program.addCommand(require('./commands/settings'))
+
+// overide helpInformation to hide help command
+program.helpInformation = function () {
+  const originalHelp = Command.prototype.helpInformation.call(this)
+  const lines = originalHelp.split('\n')
+
+  // filter out the hidden command from the help output
+  const filteredLines = lines.filter(line => !line.includes('help [command]'))
+
+  return filteredLines.join('\n')
+}
 
 program.parse(process.argv)
