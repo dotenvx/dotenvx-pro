@@ -18,7 +18,29 @@ const formatCode = function (str) {
   return parts.join('-')
 }
 
-async function pollTokenUrl (tokenUrl, deviceCode, interval) {
+async function pingPublicKey (publicKeyUrl) {
+  const token = store.getToken()
+  const publicKey = store.getPublicKey()
+
+  const response = await request(publicKeyUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      public_key: publicKey
+    })
+  })
+
+  const responseData = await response.body.json()
+  logger.http(responseData)
+
+  // {"error":{"status":400,"code":"public_key_does_not_match","message":"public_key does not match what's on file"}}
+  // if there is an issue here we want to say so
+}
+
+async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl) {
   logger.http(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
@@ -51,9 +73,14 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval) {
       }
 
       if (responseData.access_token) {
-        store.setToken(responseData.full_username, responseData.access_token)
+        store.setUser(responseData.full_username, responseData.access_token)
         store.setHostname(responseData.hostname)
         logger.success(`logged in as ${responseData.username}`)
+
+        await pingPublicKey(publicKeyUrl)
+
+        // here, run verify or something - something related to the publicKey and identifying the user. maybe /identify
+        // use publicKey to do it
         process.exit(0)
       } else {
         // continue polling if no access_token. shouldn't ever get here if server is implemented correctly
@@ -73,6 +100,7 @@ async function login () {
   const hostname = options.hostname
   const deviceCodeUrl = `${hostname}/oauth/device/code`
   const tokenUrl = `${hostname}/oauth/token`
+  const publicKeyUrl = `${hostname}/api/public_key`
 
   try {
     const response = await request(deviceCodeUrl, {
@@ -101,7 +129,7 @@ async function login () {
     // qrcode.generate(verificationUri, { small: true }) // too verbose
 
     // begin polling
-    pollTokenUrl(tokenUrl, deviceCode, interval)
+    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })

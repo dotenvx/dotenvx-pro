@@ -39,24 +39,15 @@ program
   .option('-h, --hostname <url>', 'set hostname', store.getHostname())
   .action(logoutAction)
 
-const tokenAction = require('./actions/token')
-program
-  .command('token')
-  .description('print the auth token dotenvx pro is configured to use')
-  .action(tokenAction)
+// dotenvx pro settings
+program.addCommand(require('./commands/settings'))
 
-const statusAction = require('./actions/status')
-program
-  .command('status')
-  .description('display logged in user')
-  .action(statusAction)
-
-// overide helpInformation to hide DEPRECATED commands
+// overide helpInformation to hide help command
 program.helpInformation = function () {
   const originalHelp = Command.prototype.helpInformation.call(this)
   const lines = originalHelp.split('\n')
 
-  // Filter out the hidden command from the help output
+  // filter out the hidden command from the help output
   const filteredLines = lines.filter(line => !line.includes('help [command]'))
 
   return filteredLines.join('\n')
