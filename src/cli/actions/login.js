@@ -34,10 +34,13 @@ async function pingPublicKey (publicKeyUrl) {
   })
 
   const responseData = await response.body.json()
+
   logger.http(responseData)
 
-  // {"error":{"status":400,"code":"public_key_does_not_match","message":"public_key does not match what's on file"}}
-  // if there is an issue here we want to say so
+  if (response.statusCode >= 400) {
+    logger.error(`[${responseData.error.code}] ${responseData.error.message}`)
+    process.exit(1)
+  }
 }
 
 async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl) {
