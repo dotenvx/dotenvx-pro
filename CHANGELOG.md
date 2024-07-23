@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx/compare/v0.2.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx/compare/v0.3.0...main)
+
+## 0.3.0
+
+### Added
+
+* produce machine fingerprint ([#3](https://github.com/dotenvx/dotenvx-pro/pull/3))
 
 ## 0.2.0
 
