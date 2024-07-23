@@ -17,26 +17,26 @@ async function systemInformation () {
       version: system.version,
       serial: system.serial,
       uuid: system.uuid,
-      sku: system.sku,
+      sku: system.sku
     },
     bios: {
       vendor: bios.vendor,
       version: bios.version,
       releaseDate: bios.releaseDate,
-      revision: bios.revision,
+      revision: bios.revision
     },
     baseboard: {
       manufacturer: baseboard.manufacturer,
       model: baseboard.model,
       version: baseboard.version,
       serial: baseboard.serial,
-      assetTag: baseboard.assetTag,
+      assetTag: baseboard.assetTag
     },
     cpu: {
       manufacturer: cpu.manufacturer,
       brand: cpu.brand,
       speed: cpu.speed,
-      cores: cpu.cores,
+      cores: cpu.cores
     },
     os: {
       platform: osInfo.platform,
@@ -46,10 +46,10 @@ async function systemInformation () {
       arch: osInfo.arch,
       hostname: osInfo.hostname,
       codepage: osInfo.codepage,
-      logofile: osInfo.logofile,
+      logofile: osInfo.logofile
     },
     memory: {
-      total: mem.total,
+      total: mem.total
     },
     diskLayout: diskLayout.map(disk => ({
       device: disk.device,
@@ -57,12 +57,12 @@ async function systemInformation () {
       name: disk.name,
       vendor: disk.vendor,
       size: disk.size,
-      serialNum: disk.serialNum,
+      serialNum: disk.serialNum
     })),
     networkInterfaces: networkInterfaces.map(iface => ({
       iface: iface.iface,
       ip4: iface.ip4,
-      mac: iface.mac,
+      mac: iface.mac
     }))
   }
 }
