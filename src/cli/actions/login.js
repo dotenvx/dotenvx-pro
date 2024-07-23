@@ -32,7 +32,7 @@ async function pingFingerprint (fingerprintUrl) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      fingerprint: fingerprint,
+      fingerprint,
       system_information: sysInfo
     })
   })

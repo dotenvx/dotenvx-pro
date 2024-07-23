@@ -8,7 +8,6 @@ async function systemInformation () {
   const osInfo = await si.osInfo()
   const mem = await si.mem()
   const diskLayout = await si.diskLayout()
-  const networkInterfaces = await si.networkInterfaces()
 
   return {
     system: {
