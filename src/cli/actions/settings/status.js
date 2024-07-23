@@ -1,7 +1,7 @@
 const store = require('./../../../shared/store')
 const { logger } = require('./../../../shared/logger')
 
-async function status () {
+function status () {
   const username = store.getUsername()
 
   if (username) {

@@ -1,7 +1,7 @@
 const store = require('./../../../shared/store')
 const { logger } = require('./../../../shared/logger')
 
-async function publicKey () {
+function publicKey () {
   const publicKey = store.getPublicKey()
   if (publicKey) {
     process.stdout.write(publicKey)

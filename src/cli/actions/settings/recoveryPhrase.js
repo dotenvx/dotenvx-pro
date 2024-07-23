@@ -4,7 +4,7 @@ const store = require('./../../../shared/store')
 const { logger } = require('./../../../shared/logger')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 
-async function recoveryPhrase () {
+function recoveryPhrase () {
   const privateKey = store.getPrivateKey()
   if (privateKey) {
     const recoveryPhrase = bip39.entropyToMnemonic(privateKey) // use privateKey as entropy

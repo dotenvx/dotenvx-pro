@@ -33,4 +33,11 @@ settings
   .description('print your bip-39 recovery phrase')
   .action(recoveryPhraseAction)
 
+// dotenvx pro settings fingerprint
+const fingerprintAction = require('./../actions/settings/fingerprint')
+settings
+  .command('fingerprint')
+  .description('print your machine\'s fingerprint')
+  .action(fingerprintAction)
+
 module.exports = settings

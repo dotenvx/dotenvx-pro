@@ -1,7 +1,7 @@
 const store = require('./../../../shared/store')
 const { logger } = require('./../../../shared/logger')
 
-async function token () {
+function token () {
   const token = store.getToken()
   if (token) {
     process.stdout.write(token)
