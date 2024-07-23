@@ -44,7 +44,6 @@ async function systemInformation () {
       release: osInfo.release,
       kernel: osInfo.kernel,
       arch: osInfo.arch,
-      hostname: osInfo.hostname,
       codepage: osInfo.codepage,
       logofile: osInfo.logofile
     },
@@ -58,11 +57,6 @@ async function systemInformation () {
       vendor: disk.vendor,
       size: disk.size,
       serialNum: disk.serialNum
-    })),
-    networkInterfaces: networkInterfaces.map(iface => ({
-      iface: iface.iface,
-      ip4: iface.ip4,
-      mac: iface.mac
     }))
   }
 }
