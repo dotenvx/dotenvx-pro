@@ -26,13 +26,6 @@ settings
   .description('print your publicKey')
   .action(publicKeyAction)
 
-// dotenvx pro settings privateKey
-const privateKeyAction = require('./../actions/settings/privateKey')
-settings
-  .command('privatekey')
-  .description('print your privateKey')
-  .action(privateKeyAction)
-
 // dotenvx pro settings recoveryphrase
 const recoveryPhraseAction = require('./../actions/settings/recoveryPhrase')
 settings
