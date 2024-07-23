@@ -41,6 +41,7 @@
     "execa": "^5.1.1",
     "is-wsl": "^2.1.1",
     "open": "^8.4.2",
+    "systeminformation": "^5.22.11",
     "undici": "^5.28.3",
     "winston": "^3.11.0"
   },

@@ -1,10 +1,12 @@
 const open = require('open')
 const { request } = require('undici')
-const clipboardy = require('./../../lib/helpers/clipboardy')
 const confirm = require('@inquirer/confirm').default
 
 const store = require('./../../shared/store')
 const { logger } = require('./../../shared/logger')
+const clipboardy = require('./../../lib/helpers/clipboardy')
+const systemInformation = require('./../../lib/helpers/systemInformation')
+const calculateFingerprint = require('./../../lib/helpers/calculateFingerprint')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
@@ -16,6 +18,32 @@ const formatCode = function (str) {
   }
 
   return parts.join('-')
+}
+
+async function pingFingerprint (fingerprintUrl) {
+  const token = store.getToken()
+  const sysInfo = await systemInformation()
+  const fingerprint = await calculateFingerprint()
+
+  const response = await request(fingerprintUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fingerprint,
+      system_information: sysInfo
+    })
+  })
+
+  const responseData = await response.body.json()
+
+  logger.http(responseData)
+
+  if (response.statusCode >= 400) {
+    logger.error(`[${responseData.error.code}] ${responseData.error.message}`)
+  }
 }
 
 async function pingPublicKey (publicKeyUrl) {
@@ -43,7 +71,7 @@ async function pingPublicKey (publicKeyUrl) {
   }
 }
 
-async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl) {
+async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl) {
   logger.http(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
@@ -81,9 +109,8 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl) {
         logger.success(`logged in as ${responseData.username}`)
 
         await pingPublicKey(publicKeyUrl)
+        await pingFingerprint(fingerprintUrl)
 
-        // here, run verify or something - something related to the publicKey and identifying the user. maybe /identify
-        // use publicKey to do it
         process.exit(0)
       } else {
         // continue polling if no access_token. shouldn't ever get here if server is implemented correctly
@@ -104,6 +131,7 @@ async function login () {
   const deviceCodeUrl = `${hostname}/oauth/device/code`
   const tokenUrl = `${hostname}/oauth/token`
   const publicKeyUrl = `${hostname}/api/public_key`
+  const fingerprintUrl = `${hostname}/api/fingerprint`
 
   try {
     const response = await request(deviceCodeUrl, {
@@ -132,7 +160,7 @@ async function login () {
     // qrcode.generate(verificationUri, { small: true }) // too verbose
 
     // begin polling
-    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl)
+    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })
