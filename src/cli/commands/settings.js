@@ -40,4 +40,12 @@ settings
   .description('print your machine\'s fingerprint')
   .action(fingerprintAction)
 
+// dotenvx pro settings systeminformation
+const systemInformationAction = require('./../actions/settings/systemInformation')
+settings
+  .command('systeminformation')
+  .description('print your machine\'s systeminformation')
+  .option('-pp, --pretty-print', 'pretty print output')
+  .action(systemInformationAction)
+
 module.exports = settings
