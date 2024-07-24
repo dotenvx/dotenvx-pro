@@ -16,7 +16,7 @@ settings.command('status')
 const tokenAction = require('./../actions/settings/token')
 settings
   .command('token')
-  .description('print the auth token dotenvx pro is configured to use')
+  .description('print your dotenvx oauth token')
   .action(tokenAction)
 
 // dotenvx pro settings publickey

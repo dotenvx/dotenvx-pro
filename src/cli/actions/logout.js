@@ -1,36 +1,52 @@
-const openBrowser = require('open')
-const confirm = require('@inquirer/confirm').default
-
+const ora = require('ora')
 const store = require('./../../shared/store')
+const { request } = require('undici')
 const { logger } = require('./../../shared/logger')
-// const sleep = require('./../../lib/helpers/sleep')
 
 const username = store.getUsername()
 const usernamePart = username ? ` [${username}]` : ''
 
+const spinner = ora('waiting on browser authorization')
+
 async function logout () {
-  // debug opts
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  logger.debug('deleting settings.DOTENVX_PRO_TOKEN')
-  store.deleteToken()
-
-  logger.debug('deleting settings.DOTENVX_PRO_HOSTNAME')
-  store.deleteHostname()
-
-  logger.blank(`logged off machine${usernamePart}`)
-
+  const token = store.getToken()
   const hostname = options.hostname
   const logoutUrl = `${hostname}/logout`
+  const apiLogoutUrl = `${hostname}/api/logout`
 
-  // optionally allow user to open browser
-  const answer = await confirm({ message: `press Enter to also log off browser [${logoutUrl}]...` })
+  const response = await request(apiLogoutUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+  })
 
-  if (answer) {
-    await openBrowser(logoutUrl)
-    logger.blank(`logged off browser${usernamePart}`)
+  const responseData = await response.body.json()
+
+  logger.http(responseData)
+
+  if (response.statusCode >= 400) {
+    spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
+  } else {
+    spinner.succeed(`logged off machine [${responseData.username}]`)
+
+    logger.debug('deleting settings.DOTENVX_PRO_TOKEN')
+    store.deleteToken()
+
+    logger.debug('deleting settings.DOTENVX_PRO_HOSTNAME')
+    store.deleteHostname()
+
+    spinner.succeed(`deleted access token [${responseData.access_token_short}]`)
+
+    logger.blank('')
+    logger.blank(`Next visit [${logoutUrl}] to additionally log off browser`)
   }
+
 }
 
 module.exports = logout

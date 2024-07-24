@@ -1,3 +1,4 @@
+const ora = require('ora')
 const open = require('open')
 const { request } = require('undici')
 const confirm = require('@inquirer/confirm').default
@@ -10,6 +11,8 @@ const calculateFingerprint = require('./../../lib/helpers/calculateFingerprint')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
+const spinner = ora('waiting on browser authorization')
+
 const formatCode = function (str) {
   const parts = []
 
@@ -21,6 +24,8 @@ const formatCode = function (str) {
 }
 
 async function pingFingerprint (fingerprintUrl) {
+  spinner.start(`fingerprinting device`)
+
   const token = store.getToken()
   const sysInfo = await systemInformation()
   const fingerprint = await calculateFingerprint()
@@ -42,14 +47,17 @@ async function pingFingerprint (fingerprintUrl) {
   logger.http(responseData)
 
   if (response.statusCode >= 400) {
-    logger.error(`[${responseData.error.code}] ${responseData.error.message}`)
+    spinner.warn(`[${responseData.error.code}] ${responseData.error.message}`)
+  } else {
+    spinner.succeed(`fingerprinted device [${fingerprint}]`)
   }
 }
 
-async function pingPublicKey (publicKeyUrl) {
+async function syncPublicKey (publicKeyUrl) {
+  spinner.start(`syncing publicKey`)
+
   const token = store.getToken()
   const publicKey = store.getPublicKey()
-
   const response = await request(publicKeyUrl, {
     method: 'POST',
     headers: {
@@ -66,12 +74,14 @@ async function pingPublicKey (publicKeyUrl) {
   logger.http(responseData)
 
   if (response.statusCode >= 400) {
-    logger.error(`[${responseData.error.code}] ${responseData.error.message}`)
+    spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
     process.exit(1)
   }
+
+  spinner.succeed(`synced publicKey [${publicKey}]`)
 }
 
-async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl) {
+async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl, settingsDevicesUrl) {
   logger.http(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
@@ -104,12 +114,21 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, finge
       }
 
       if (responseData.access_token) {
-        store.setUser(responseData.full_username, responseData.access_token)
-        store.setHostname(responseData.hostname)
-        logger.success(`logged in as ${responseData.username}`)
+        spinner.succeed(`logged in [${responseData.username}]`)
 
-        await pingPublicKey(publicKeyUrl)
+        logger.debug('setting settings.DOTENVX_PRO_TOKEN')
+        store.setUser(responseData.full_username, responseData.access_token)
+
+        logger.debug('setting settings.DOTENVX_PRO_HOSTNAME')
+        store.setHostname(responseData.hostname)
+
+        spinner.succeed(`set access token [${responseData.access_token_short}]`)
+
+        await syncPublicKey(publicKeyUrl)
         await pingFingerprint(fingerprintUrl)
+
+        logger.blank('')
+        logger.blank(`Next visit [${settingsDevicesUrl}] to optionally view your devices`)
 
         process.exit(0)
       } else {
@@ -132,6 +151,7 @@ async function login () {
   const tokenUrl = `${hostname}/oauth/token`
   const publicKeyUrl = `${hostname}/api/public_key`
   const fingerprintUrl = `${hostname}/api/fingerprint`
+  const settingsDevicesUrl = `${hostname}/settings/devices`
 
   try {
     const response = await request(deviceCodeUrl, {
@@ -160,10 +180,12 @@ async function login () {
     // qrcode.generate(verificationUri, { small: true }) // too verbose
 
     // begin polling
-    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl)
+    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl, settingsDevicesUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })
+
+    spinner.start()
 
     if (answer) {
       await open(verificationUri)
