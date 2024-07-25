@@ -73,7 +73,7 @@ const getToken = function () {
 }
 
 const getTokenShort = function () {
-  return getToken().toString().slice(0, 11)
+  return (getToken() || '').slice(0, 11)
 }
 
 const getFullUsername = function () {
@@ -107,7 +107,7 @@ const getPrivateKey = function () {
 }
 
 const getPrivateKeyShort = function () {
-  return getPrivateKey().toString().slice(0, 7)
+  return (getPrivateKey() || '').slice(0, 7)
 }
 
 const getPublicKey = function () {
