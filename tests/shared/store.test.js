@@ -58,6 +58,15 @@ t.test('#setHostname', ct => {
   ct.end()
 })
 
+t.test('#setPrivateKey', ct => {
+  const result = store.setPrivateKey(privateKey)
+
+  ct.same(result, privateKey)
+  ct.ok(setStub.calledWith('DOTENVX_PRO_PRIVATE_KEY', privateKey), 'set DOTENVX_PRO_PRIVATE_KEY')
+
+  ct.end()
+})
+
 t.test('#deleteToken', ct => {
   const result = store.deleteToken()
 
@@ -176,6 +185,19 @@ t.test('#getPrivateKey - exists', ct => {
 
   ct.end()
 })
+
+t.test('#getPrivateKeyShort - exists', ct => {
+  const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_PRIVATE_KEY').returns(privateKey)
+
+  const result = store.getPrivateKeyShort()
+
+  ct.same(result, '2c93601')
+  ct.ok(getStub.calledWith('DOTENVX_PRO_PRIVATE_KEY'), 'get DOTENVX_PRO_PRIVATE_KEY')
+  ct.ok(setStub.notCalled, 'set DOTENVX_PRO_PRIVATE_KEY')
+
+  ct.end()
+})
+
 
 t.test('#getPublicKey', ct => {
   const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_PRIVATE_KEY').returns(privateKey)
