@@ -198,7 +198,6 @@ t.test('#getPrivateKeyShort - exists', ct => {
   ct.end()
 })
 
-
 t.test('#getPublicKey', ct => {
   const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_PRIVATE_KEY').returns(privateKey)
 
