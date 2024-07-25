@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.3.0...main)
 
+## 0.4.0
+
+### Added
+
+* add `settings recover` (recovers your account) ([#5](https://github.com/dotenvx/dotenvx-pro/pull/5))
+
 ## 0.3.0
 
 ### Added
