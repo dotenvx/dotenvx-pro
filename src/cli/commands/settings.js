@@ -9,7 +9,7 @@ settings
 // dotenvx pro settings status
 const statusAction = require('./../actions/settings/status')
 settings.command('status')
-  .description('display logged in user')
+  .description('check account status')
   .action(statusAction)
 
 // dotenvx pro settings token
@@ -30,7 +30,7 @@ settings
 const recoveryPhraseAction = require('./../actions/settings/recoveryPhrase')
 settings
   .command('recoveryphrase')
-  .description('print your bip-39 recovery phrase')
+  .description('print your recovery phrase')
   .action(recoveryPhraseAction)
 
 // dotenvx pro settings fingerprint
@@ -47,5 +47,11 @@ settings
   .description('print your machine\'s systeminformation')
   .option('-pp, --pretty-print', 'pretty print output')
   .action(systemInformationAction)
+
+const recover = require('./../actions/settings/recover')
+settings
+  .command('recover')
+  .description('recover your account 🔐')
+  .action(recover)
 
 module.exports = settings

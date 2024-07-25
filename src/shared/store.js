@@ -39,6 +39,13 @@ const setHostname = function (hostname) {
   return hostname
 }
 
+// used for recovery only - see getPrivateKey for first-time onboarding
+const setPrivateKey = function (privateKey) {
+  confStore.set('DOTENVX_PRO_PRIVATE_KEY', privateKey)
+
+  return privateKey
+}
+
 //
 // Delete
 //
@@ -124,6 +131,7 @@ module.exports = {
   // Set
   setUser,
   setHostname,
+  setPrivateKey,
   // Delete
   deleteToken,
   deleteHostname,

@@ -54,7 +54,7 @@ tar -xzf dotenvx-pro.tar.gz
 $ dotenvx pro
 Usage: @dotenvx/dotenvx-pro [options] [command]
 
-dotenvx pro
+dotenvx pro 🏆
 
 Options:
   -l, --log-level <level>  set log level (default: "info")
@@ -66,9 +66,7 @@ Options:
 
 Commands:
   login [options]          authenticate to dotenvx pro
-  token [options]          print the auth token dotenvx pro is configured to use
-  status                   display logged in user
   logout [options]         log out this machine from dotenvx pro
-  help [command]           display help for command
+  settings                 ⚙️  settings
 
 ```
