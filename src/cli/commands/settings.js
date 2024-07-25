@@ -30,7 +30,7 @@ settings
 const recoveryPhraseAction = require('./../actions/settings/recoveryPhrase')
 settings
   .command('recoveryphrase')
-  .description('print your bip-39 recovery phrase')
+  .description('print your recovery phrase')
   .action(recoveryPhraseAction)
 
 // dotenvx pro settings fingerprint
@@ -51,7 +51,7 @@ settings
 const recover = require('./../actions/settings/recover')
 settings
   .command('recover')
-  .description('recover your account')
+  .description('recover your account 🔐')
   .action(recover)
 
 module.exports = settings

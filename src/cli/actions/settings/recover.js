@@ -14,7 +14,7 @@ async function recover () {
   const input = await enquirer.prompt({
     type: 'password',
     name: 'recoveryPhrase',
-    message: 'Please enter your bip-39 recovery phrase (input is hidden, multiline supported, press enter twice to submit):',
+    message: 'Please provide your recovery phrase (input is hidden, multiline supported, press enter twice to submit):',
     multiline: true
   })
 
