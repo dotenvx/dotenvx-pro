@@ -3,9 +3,6 @@ const store = require('./../../shared/store')
 const { request } = require('undici')
 const { logger } = require('./../../shared/logger')
 
-const username = store.getUsername()
-const usernamePart = username ? ` [${username}]` : ''
-
 const spinner = ora('waiting on browser authorization')
 
 async function logout () {
@@ -46,7 +43,6 @@ async function logout () {
     logger.blank('')
     logger.blank(`Next visit [${logoutUrl}] to additionally log off browser`)
   }
-
 }
 
 module.exports = logout

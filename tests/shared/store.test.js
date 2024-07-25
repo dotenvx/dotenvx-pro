@@ -99,11 +99,22 @@ t.test('#getHostname - custom', ct => {
 })
 
 t.test('#getToken', ct => {
-  const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_TOKEN').returns('dxo_1234')
+  const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_TOKEN').returns('dxo_123456789')
 
   const result = store.getToken()
 
-  ct.same(result, 'dxo_1234')
+  ct.same(result, 'dxo_123456789')
+  ct.ok(getStub.calledWith('DOTENVX_PRO_TOKEN'), 'get DOTENVX_PRO_TOKEN')
+
+  ct.end()
+})
+
+t.test('#getTokenShort', ct => {
+  const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_TOKEN').returns('dxo_123456789')
+
+  const result = store.getTokenShort()
+
+  ct.same(result, 'dxo_1234567')
   ct.ok(getStub.calledWith('DOTENVX_PRO_TOKEN'), 'get DOTENVX_PRO_TOKEN')
 
   ct.end()

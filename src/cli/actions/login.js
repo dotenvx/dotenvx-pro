@@ -24,7 +24,7 @@ const formatCode = function (str) {
 }
 
 async function pingFingerprint (fingerprintUrl) {
-  spinner.start(`fingerprinting device`)
+  spinner.start('fingerprinting device')
 
   const token = store.getToken()
   const sysInfo = await systemInformation()
@@ -54,7 +54,7 @@ async function pingFingerprint (fingerprintUrl) {
 }
 
 async function syncPublicKey (publicKeyUrl) {
-  spinner.start(`syncing publicKey`)
+  spinner.start('syncing publicKey')
 
   const token = store.getToken()
   const publicKey = store.getPublicKey()

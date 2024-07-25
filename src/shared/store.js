@@ -65,6 +65,10 @@ const getToken = function () {
   return confStore.get('DOTENVX_PRO_TOKEN')
 }
 
+const getTokenShort = function () {
+  return getToken().toString().slice(0, 11)
+}
+
 const getFullUsername = function () {
   return confStore.get('DOTENVX_PRO_FULL_USERNAME')
 }
@@ -95,6 +99,10 @@ const getPrivateKey = function () {
   return privateKey
 }
 
+const getPrivateKeyShort = function () {
+  return getPrivateKey().toString().slice(0, 7)
+}
+
 const getPublicKey = function () {
   // create keyPair object from hex string
   const privateKeyHex = getPrivateKey()
@@ -122,9 +130,11 @@ module.exports = {
   // Get
   getHostname,
   getToken,
+  getTokenShort,
   getUsername,
   getFullUsername,
   getPrivateKey,
+  getPrivateKeyShort,
   getPublicKey,
   configPath
 }
