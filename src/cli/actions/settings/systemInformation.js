@@ -13,6 +13,8 @@ async function systemInformation () {
     space = 2
   }
 
+  console.log(JSON.stringify(value))
+
   process.stdout.write(JSON.stringify(value, null, space))
 }
 

@@ -7,7 +7,6 @@ const store = require('./../../shared/store')
 const { logger } = require('./../../shared/logger')
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
-const calculateFingerprint = require('./../../lib/helpers/calculateFingerprint')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
@@ -123,7 +122,6 @@ async function login () {
 
   try {
     const systemInfo = await systemInformation()
-    const fingerprint = await calculateFingerprint()
     const response = await request(deviceCodeUrl, {
       method: 'POST',
       headers: {
@@ -131,8 +129,7 @@ async function login () {
       },
       body: JSON.stringify({
         client_id: OAUTH_CLIENT_ID,
-        system_information: systemInfo,
-        fingerprint
+        system_information: systemInfo
       })
     })
 
