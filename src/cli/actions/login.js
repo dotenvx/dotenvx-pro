@@ -154,12 +154,16 @@ async function login () {
   const settingsDevicesUrl = `${hostname}/settings/devices`
 
   try {
+    const fingerprint = await calculateFingerprint()
     const response = await request(deviceCodeUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ client_id: OAUTH_CLIENT_ID })
+      body: JSON.stringify({
+        client_id: OAUTH_CLIENT_ID,
+        fingerprint
+      })
     })
 
     const responseData = await response.body.json()
