@@ -7,9 +7,9 @@ t.test('#formatRecoveryPhrase', ct => {
 
   const result = formatRecoveryPhrase(recoveryPhrase)
 
-  t.equal(result.split('\n')[0], 'cart     guess    electric')
-  t.equal(result.split('\n')[1], 'adult    carpet   ritual  ')
-  t.equal(result.split('\n')[2], 'wisdom   obscure  season  ')
+  t.equal(result.split('\n')[0], 'cart         guess        electric    ')
+  t.equal(result.split('\n')[1], 'adult        carpet       ritual      ')
+  t.equal(result.split('\n')[2], 'wisdom       obscure      season      ')
 
   ct.end()
 })

@@ -9,14 +9,16 @@ settings
 // dotenvx pro settings status
 const statusAction = require('./../actions/settings/status')
 settings.command('status')
-  .description('check account status')
+  .description('check account status (--unmask)')
+  .option('--unmask', 'unmask access token')
   .action(statusAction)
 
 // dotenvx pro settings token
 const tokenAction = require('./../actions/settings/token')
 settings
   .command('token')
-  .description('print your dotenvx access token')
+  .description('print your dotenvx access token (--unmask)')
+  .option('--unmask', 'unmask access token')
   .action(tokenAction)
 
 // dotenvx pro settings publickey
@@ -30,14 +32,16 @@ settings
 const privateKeyAction = require('./../actions/settings/privateKey')
 settings
   .command('privatekey')
-  .description('print your privateKey')
+  .description('print your privateKey (--unmask)')
+  .option('--unmask', 'unmask privateKey')
   .action(privateKeyAction)
 
 // dotenvx pro settings recoveryphrase
 const recoveryPhraseAction = require('./../actions/settings/recoveryPhrase')
 settings
   .command('recoveryphrase')
-  .description('print your recovery phrase')
+  .description('print your recovery phrase (--unmask)')
+  .option('--unmask', 'unmask recovery phrase')
   .action(recoveryPhraseAction)
 
 // dotenvx pro settings systeminformation

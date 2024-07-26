@@ -1,6 +1,6 @@
 function formatRecoveryPhrase (recoveryPhrase) {
   const words = recoveryPhrase.split(' ')
-  const maxWordLength = Math.max(...words.map(word => word.length))
+  const maxWordLength = 12 // longest possible word unforgettable
   const paddedWords = words.map(word => word.padEnd(maxWordLength, ' '))
   const rows = []
   // loop and group into 4
