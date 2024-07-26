@@ -23,36 +23,6 @@ const formatCode = function (str) {
   return parts.join('-')
 }
 
-async function pingFingerprint (fingerprintUrl) {
-  spinner.start('fingerprinting device')
-
-  const token = store.getToken()
-  const sysInfo = await systemInformation()
-  const fingerprint = await calculateFingerprint()
-
-  const response = await request(fingerprintUrl, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      fingerprint,
-      system_information: sysInfo
-    })
-  })
-
-  const responseData = await response.body.json()
-
-  logger.http(responseData)
-
-  if (response.statusCode >= 400) {
-    spinner.warn(`[${responseData.error.code}] ${responseData.error.message}`)
-  } else {
-    spinner.succeed(`fingerprinted device [${fingerprint}]`)
-  }
-}
-
 async function syncPublicKey (publicKeyUrl) {
   spinner.start('syncing publicKey')
 
@@ -81,7 +51,7 @@ async function syncPublicKey (publicKeyUrl) {
   spinner.succeed(`synced publicKey [${publicKey}]`)
 }
 
-async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl, settingsDevicesUrl) {
+async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, settingsDevicesUrl) {
   logger.http(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
@@ -125,7 +95,6 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, finge
         spinner.succeed(`set access token [${responseData.access_token_short}]`)
 
         await syncPublicKey(publicKeyUrl)
-        await pingFingerprint(fingerprintUrl)
 
         logger.blank('')
         logger.blank(`Next visit [${settingsDevicesUrl}] to optionally view your devices`)
@@ -150,10 +119,10 @@ async function login () {
   const deviceCodeUrl = `${hostname}/oauth/device/code`
   const tokenUrl = `${hostname}/oauth/token`
   const publicKeyUrl = `${hostname}/api/public_key`
-  const fingerprintUrl = `${hostname}/api/fingerprint`
   const settingsDevicesUrl = `${hostname}/settings/devices`
 
   try {
+    const systemInfo = await systemInformation()
     const fingerprint = await calculateFingerprint()
     const response = await request(deviceCodeUrl, {
       method: 'POST',
@@ -162,6 +131,7 @@ async function login () {
       },
       body: JSON.stringify({
         client_id: OAUTH_CLIENT_ID,
+        system_information: systemInfo,
         fingerprint
       })
     })
@@ -184,7 +154,7 @@ async function login () {
     // qrcode.generate(verificationUri, { small: true }) // too verbose
 
     // begin polling
-    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl, fingerprintUrl, settingsDevicesUrl)
+    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl, settingsDevicesUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })
