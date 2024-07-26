@@ -1,4 +1,4 @@
-function maskRecoveryPhrase(str) {
+function maskRecoveryPhrase (str) {
   const maxWordLength = 12
   const words = str.split(/\s+/) // split by whitespace
   const firstWord = words[0]

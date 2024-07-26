@@ -11,7 +11,7 @@ async function status () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  function smartMask(str, showChar = 7) {
+  function smartMask (str, showChar = 7) {
     if (options.unmask) {
       return str
     } else {
