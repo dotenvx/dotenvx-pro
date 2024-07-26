@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.4.1...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.5.0...main)
+
+## 0.5.0
+
+### Added
+
+* send machine fingerprint with device code request ([#9](https://github.com/dotenvx/dotenvx-pro/pull/9))
 
 ## 0.4.1
 
