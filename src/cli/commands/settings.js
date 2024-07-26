@@ -33,13 +33,6 @@ settings
   .description('print your recovery phrase')
   .action(recoveryPhraseAction)
 
-// dotenvx pro settings fingerprint
-const fingerprintAction = require('./../actions/settings/fingerprint')
-settings
-  .command('fingerprint')
-  .description('print your machine\'s fingerprint')
-  .action(fingerprintAction)
-
 // dotenvx pro settings systeminformation
 const systemInformationAction = require('./../actions/settings/systemInformation')
 settings
