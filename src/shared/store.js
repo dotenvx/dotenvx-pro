@@ -107,7 +107,7 @@ const getPrivateKey = function () {
 }
 
 const getPrivateKeyShort = function () {
-  return (getPrivateKey() || '').slice(0, 7)
+  return getPrivateKey().slice(0, 7)
 }
 
 const getPublicKey = function () {

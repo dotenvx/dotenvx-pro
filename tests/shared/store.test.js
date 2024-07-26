@@ -129,6 +129,17 @@ t.test('#getTokenShort', ct => {
   ct.end()
 })
 
+t.test('#getTokenShort - undefined', ct => {
+  const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_TOKEN').returns(undefined)
+
+  const result = store.getTokenShort()
+
+  ct.same(result, '')
+  ct.ok(getStub.calledWith('DOTENVX_PRO_TOKEN'), 'get DOTENVX_PRO_TOKEN')
+
+  ct.end()
+})
+
 t.test('#getFullUsername', ct => {
   const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_FULL_USERNAME').returns('gh/username')
 
