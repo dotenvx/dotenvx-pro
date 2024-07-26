@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.6.0...main)
 
+## 0.7.0
+
+* add `settings privatekey` to print privateKey
+
 ## 0.6.0
 
 * move fingerprinting to the service for better security/obfuscation
