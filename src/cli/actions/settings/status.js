@@ -26,7 +26,7 @@ async function status () {
   const privateKey = store.getPrivateKey()
   const configPath = store.configPath()
 
-  spinner.succeed(`token [${smartMask(token)}]`)
+  spinner.succeed(`token [${smartMask(token, 11)}]`)
   spinner.succeed(`username [${username}]`)
   spinner.succeed(`fullUsername [${fullUsername}]`)
   spinner.succeed(`publicKey [${smartMask(publicKey)}]`)
@@ -59,9 +59,9 @@ async function status () {
   const remotePublicKey = responseData.public_key
 
   if (remoteRevokedAt) {
-    spinner.fail(`remote: token revoked [${smartMask(token)}]`)
+    spinner.fail(`remote: token revoked [${smartMask(token, 11)}]`)
   } else {
-    spinner.succeed(`remote: token [${smartMask(token)}]`)
+    spinner.succeed(`remote: token [${smartMask(token, 11)}]`)
   }
 
   if (remoteUsername === username) {
