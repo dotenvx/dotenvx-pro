@@ -1,7 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const bip39 = require('bip39')
-const Pdfkit = require('pdfkit')
 const qrcode = require('qrcode')
 
 const store = require('./../../shared/store')
@@ -12,7 +10,7 @@ const formatRecoveryPhrase = require('./formatRecoveryPhrase')
 
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 
-async function emergencyKit2 (options) {
+async function emergencyKit (options) {
   function smartMask (str) {
     if (options.unmask) {
       return str
@@ -40,13 +38,10 @@ async function emergencyKit2 (options) {
 
   let privateKey = store.getPrivateKey()
   if (privateKey) {
-    let recoveryPhrase = bip39.entropyToMnemonic(privateKey) // use privateKey as entropy
+    let recoveryPhrase = store.getRecoveryPhrase()
     recoveryPhrase = smartMaskRecoveryPhrase(recoveryPhrase)
     recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
     privateKey = smartMask(privateKey)
-
-    const w = 612
-    const h = 792
 
     // setup
     const existing = fs.readFileSync(path.join(__dirname, '../../assets/emergencyKitBlank.pdf'))
@@ -56,6 +51,15 @@ async function emergencyKit2 (options) {
 
     // fonts
     const monoFont = await pdf.embedFont(StandardFonts.Courier)
+
+    // createdFor
+    page.drawText(`created for ${store.getUsername()} on ${currentDate()}`, {
+      x: 100,
+      y: 590,
+      size: 9,
+      font: monoFont,
+      color: rgb(0, 0, 0)
+    })
 
     // privateKey
     page.drawText(privateKey, {
@@ -82,8 +86,7 @@ async function emergencyKit2 (options) {
     const url = await qrcode.toDataURL(privateKey)
     const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
     const qrImage = await pdf.embedPng(qrBuffer)
-    qrImage.scale(1) // Adjust scale as needed
-    const qrX = (page.width / 2) - (120 / 2)
+    qrImage.scale(1)
     page.drawImage(qrImage, {
       x: 260,
       y: 80,
@@ -100,4 +103,4 @@ async function emergencyKit2 (options) {
   }
 }
 
-module.exports = emergencyKit2
+module.exports = emergencyKit

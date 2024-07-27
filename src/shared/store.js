@@ -1,4 +1,5 @@
 const Conf = require('conf')
+const bip39 = require('bip39')
 const { PrivateKey } = require('eciesjs')
 const dotenv = require('dotenv')
 
@@ -119,6 +120,12 @@ const getPublicKey = function () {
   return privateKey.publicKey.toHex()
 }
 
+const getRecoveryPhrase = function () {
+  const privateKeyHex = getPrivateKey()
+
+  return bip39.entropyToMnemonic(privateKeyHex)
+}
+
 //
 // Other
 //
@@ -144,5 +151,6 @@ module.exports = {
   getPrivateKey,
   getPrivateKeyShort,
   getPublicKey,
+  getRecoveryPhrase,
   configPath
 }
