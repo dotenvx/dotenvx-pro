@@ -1,6 +1,6 @@
 const bip39 = require('bip39')
 const path = require('path')
-const PDFDocument = require('pdfkit')
+const pdfkit = require('pdfkit')
 const qrcode = require('qrcode')
 
 const store = require('./../../../shared/store')
@@ -46,7 +46,7 @@ function emergencyKit () {
     privateKey = smartMask(privateKey)
 
     // set up doc to pipe to process.stdout
-    const doc = new PDFDocument()
+    const doc = new pdfkit()
     doc.pipe(process.stdout)
 
     // meta
