@@ -1,11 +1,11 @@
 const { logger } = require('./../../../shared/logger')
-const emergencyKit1 = require('./../../../lib/helpers/emergencyKit1')
+const emergencyKitHelper = require('./../../../lib/helpers/emergencyKit')
 
 function emergencyKit () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  emergencyKit1(options)
+  emergencyKitHelper(options)
 }
 
 module.exports = emergencyKit

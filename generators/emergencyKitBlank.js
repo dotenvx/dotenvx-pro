@@ -1,15 +1,17 @@
+#!/usr/bin/env node
+
 const bip39 = require('bip39')
 const path = require('path')
 const Pdfkit = require('pdfkit')
 const qrcode = require('qrcode')
 
-const store = require('./../../shared/store')
-const { logger } = require('./../../shared/logger')
-const mask = require('./mask')
-const maskRecoveryPhrase = require('./maskRecoveryPhrase')
-const formatRecoveryPhrase = require('./formatRecoveryPhrase')
+const store = require('../src/shared/store')
+const { logger } = require('../src/shared/logger')
+const mask = require('../src/lib/helpers/mask')
+const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
+const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
-function emergencyKit1 (options) {
+function emergencyKitBlank (options = {}) {
   function smartMask (str) {
     if (options.unmask) {
       return str
@@ -50,14 +52,14 @@ function emergencyKit1 (options) {
     const page = doc.page
 
     // fonts
-    doc.registerFont('Display-Bold', path.join(__dirname, '../../assets/SF-Pro-Display-Bold.otf'))
-    doc.registerFont('Text-Regular', path.join(__dirname, '../../assets/SF-Pro-Text-Regular.otf'))
-    doc.registerFont('Text-Bold', path.join(__dirname, '../../assets/SF-Pro-Text-Bold.otf'))
-    doc.registerFont('Text-Heavy', path.join(__dirname, '../../assets/SF-Pro-Text-Heavy.otf'))
-    doc.registerFont('Text-ThinItalic', path.join(__dirname, '../../assets/SF-Pro-Text-ThinItalic.otf'))
+    doc.registerFont('Display-Bold', path.join(__dirname, './assets/SF-Pro-Display-Bold.otf'))
+    doc.registerFont('Text-Regular', path.join(__dirname, './assets/SF-Pro-Text-Regular.otf'))
+    doc.registerFont('Text-Bold', path.join(__dirname, './assets/SF-Pro-Text-Bold.otf'))
+    doc.registerFont('Text-Heavy', path.join(__dirname, './assets/SF-Pro-Text-Heavy.otf'))
+    doc.registerFont('Text-ThinItalic', path.join(__dirname, './assets/SF-Pro-Text-ThinItalic.otf'))
 
     // logo
-    const logoPath = path.join(__dirname, '../../assets/dotenvx.png')
+    const logoPath = path.join(__dirname, './assets/dotenvx.png')
     const logoWidth = 44
     const x = 50
     const y = 50
@@ -75,13 +77,13 @@ function emergencyKit1 (options) {
     doc.fillColor('black')
 
     // created-for
-    doc.fontSize(9)
-    const createdFor = `created for ${store.getUsername()} on ${currentDate()}`
-    const createdForX = (page.width - doc.widthOfString(createdFor)) / 2
-    doc.font('Text-ThinItalic')
-    doc.fillColor('gray')
-    doc.text(createdFor, createdForX, 200)
-    doc.fillColor('black')
+    // doc.fontSize(9)
+    // const createdFor = `created for ${store.getUsername()} on ${currentDate()}`
+    // const createdForX = (page.width - doc.widthOfString(createdFor)) / 2
+    // doc.font('Text-ThinItalic')
+    // doc.fillColor('gray')
+    // doc.text(createdFor, createdForX, 200)
+    // doc.fillColor('black')
 
     // text
     doc.fontSize(12)
@@ -116,7 +118,7 @@ function emergencyKit1 (options) {
     // privateKey value
     doc.fontSize(10)
     doc.font('Courier')
-    doc.text(privateKey, 110, 412, { align: 'left', width: (page.width - (100 * 2) - 20) })
+    doc.text('', 110, 412, { align: 'left', width: (page.width - (100 * 2) - 20) })
 
     // label2
     const label2 = 'RECOVERY PHRASE'
@@ -135,7 +137,7 @@ function emergencyKit1 (options) {
     // recoveryPhrase value
     doc.fontSize(12)
     doc.font('Courier')
-    doc.text(recoveryPhrase, 110, 482, { align: 'left', width: (page.width - (100 * 2) - 20) })
+    doc.text('', 110, 482, { align: 'left', width: (page.width - (100 * 2) - 20) })
 
     // help left column
     const help = 'Need help?'
@@ -159,7 +161,7 @@ function emergencyKit1 (options) {
       // qr code center column
       const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
       const qrX = (page.width / 2) - (120 / 2)
-      doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
+      // doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
 
       // explainer right column
       const setup = 'Setup code'
@@ -182,4 +184,4 @@ function emergencyKit1 (options) {
   }
 }
 
-module.exports = emergencyKit1
+emergencyKitBlank()
