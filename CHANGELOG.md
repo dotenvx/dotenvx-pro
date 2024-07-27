@@ -2,9 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.7.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.7.1...main)
+
+## 0.7.1
+
+### Changed
+
+* patch `emergencykit.js` to `emergencyKit.js` ([#11](https://github.com/dotenvx/dotenvx-pro/pull/11))
 
 ## 0.7.0
+
+### Added
 
 * add `settings privatekey` to print privateKey
 * add `settings emergencykit` to print emergency kit ([#10](https://github.com/dotenvx/dotenvx-pro/pull/10))
