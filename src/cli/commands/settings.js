@@ -52,6 +52,15 @@ settings
   .option('-pp, --pretty-print', 'pretty print output')
   .action(systemInformationAction)
 
+// dotenvx pro settings emergencykit
+const emergencyKitAction = require('./../actions/settings/emergencyKit')
+settings
+  .command('emergencykit')
+  .description('generate your emergency kit (--unmask)')
+  .option('--unmask', 'unmask recovery phrase')
+  .action(emergencyKitAction)
+
+// dotenvx pro settings recover
 const recover = require('./../actions/settings/recover')
 settings
   .command('recover')

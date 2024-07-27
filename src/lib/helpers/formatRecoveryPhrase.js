@@ -4,8 +4,8 @@ function formatRecoveryPhrase (recoveryPhrase) {
   const paddedWords = words.map(word => word.padEnd(maxWordLength, ' '))
   const rows = []
   // loop and group into 4
-  for (let i = 0; i < paddedWords.length; i += 3) {
-    rows.push(paddedWords.slice(i, i + 3).join(' '))
+  for (let i = 0; i < paddedWords.length; i += 4) {
+    rows.push(paddedWords.slice(i, i + 4).join(' '))
   }
 
   // join with newline
