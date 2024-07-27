@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.6.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.7.0...main)
 
 ## 0.7.0
 
 * add `settings privatekey` to print privateKey
+* add `settings emergencykit` to print emergency kit ([#10](https://github.com/dotenvx/dotenvx-pro/pull/10))
 
 ## 0.6.0
 
