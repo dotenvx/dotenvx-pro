@@ -43,6 +43,7 @@
     "is-wsl": "^2.1.1",
     "open": "^8.4.2",
     "ora": "^5.4.1",
+    "pdf-lib": "^1.17.1",
     "pdfkit": "^0.15.0",
     "qrcode": "^1.5.3",
     "systeminformation": "^5.22.11",
