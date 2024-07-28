@@ -9,9 +9,9 @@ const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
 // let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
-privateKey = ' '
+let privateKey = ' '
 // let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
-recoveryPhrase = ''
+let recoveryPhrase = ''
 
 function emergencyKitBlank (options = { unmask: true }) {
   function smartMask (str) {
