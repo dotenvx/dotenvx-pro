@@ -8,12 +8,12 @@ const mask = require('../src/lib/helpers/mask')
 const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
-// let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
-let privateKey = ' '
-// let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
-let recoveryPhrase = ''
+let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
+// privateKey = ' '
+let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
+// recoveryPhrase = ''
 
-function emergencyKitBlank (options = { unmask: true }) {
+function emergencyKitBlank (options = { unmask: false, example: true }) {
   function smartMask (str) {
     if (options.unmask) {
       return str
@@ -158,9 +158,9 @@ function emergencyKitBlank (options = { unmask: true }) {
     }
 
     // qr code center column
-    // const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
-    // const qrX = (page.width / 2) - (120 / 2)
-    // doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
+    const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
+    const qrX = (page.width / 2) - (120 / 2)
+    doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
 
     // explainer right column
     const setup = 'Setup code'
@@ -171,6 +171,29 @@ function emergencyKitBlank (options = { unmask: true }) {
     doc.font('Text-Regular')
     doc.fontSize(9)
     doc.text(setupMore, 380, 640, { align: 'left', width: ((page.width - (100 * 2)) / 3) })
+
+    // example
+    if (options.example) {
+      // Calculate the position to center the text diagonally
+      const angle = Math.atan(page.height / page.width)
+
+      // Save the graphics state
+      doc.save()
+
+      // Translate and rotate the coordinate system
+      doc.translate(page.width / 2, page.height / 2)
+      doc.rotate((angle * 180) / Math.PI)
+
+      // Set the opacity and draw the text
+      doc.fillColor('gray')
+      doc.opacity(0.3)
+      doc.fontSize(160)
+      doc.text('EXAMPLE', -600, -120, { align: 'center' })
+
+      // restore
+      doc.restore()
+    }
+
     doc.end()
 
     // doc.addPage()
