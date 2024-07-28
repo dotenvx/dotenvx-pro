@@ -9,11 +9,9 @@ const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
 let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
-// privateKey = ' '
 let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
-// recoveryPhrase = ''
 
-function emergencyKitBlank (options = { unmask: false, example: true }) {
+function emergencyKitPoster (options = {}) {
   function smartMask (str) {
     if (options.unmask) {
       return str
@@ -39,6 +37,10 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
   // meta
   const page = doc.page
 
+  // red background
+  doc.rect(0, 0, page.width, page.height)
+  doc.fill('#8B0000')
+
   // fonts
   doc.registerFont('Display-Bold', path.join(__dirname, './assets/SF-Pro-Display-Bold.otf'))
   doc.registerFont('Text-Regular', path.join(__dirname, './assets/SF-Pro-Text-Regular.otf'))
@@ -48,23 +50,12 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
 
   // logo
   const logoPath = path.join(__dirname, './assets/dotenvx.png')
-  const logoWidth = 36
-  doc.image(logoPath, 100, 675, { width: logoWidth, height: logoWidth })
-
-  const crossSize = 50
-  const crossThickness = 14
-  const centerX = page.width / 2
-
-  // Draw the horizontal part of the cross
-  doc.rect(centerX - crossSize / 2, 100 - crossThickness / 2, crossSize, crossThickness)
-  doc.fill('red')
-
-  // Draw the vertical part of the cross
-  doc.rect(centerX - crossThickness / 2, 100 - crossSize / 2, crossThickness, crossSize)
-  doc.fill('red')
+  const logoWidth = 44
+  const x = 50
+  const y = 50
+  doc.image(logoPath, x, y, { width: logoWidth, height: logoWidth })
 
   // title
-  doc.fillColor('black')
   doc.fontSize(40)
   const title1 = 'dotenvx. '
   const title2 = 'emergency kit.'
@@ -158,9 +149,9 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
     }
 
     // qr code center column
-    const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
-    const qrX = (page.width / 2) - (120 / 2)
-    doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
+    // const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
+    // const qrX = (page.width / 2) - (120 / 2)
+    // doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
 
     // explainer right column
     const setup = 'Setup code'
@@ -171,29 +162,6 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
     doc.font('Text-Regular')
     doc.fontSize(9)
     doc.text(setupMore, 380, 640, { align: 'left', width: ((page.width - (100 * 2)) / 3) })
-
-    // example
-    if (options.example) {
-      // Calculate the position to center the text diagonally
-      const angle = Math.atan(page.height / page.width)
-
-      // Save the graphics state
-      doc.save()
-
-      // Translate and rotate the coordinate system
-      doc.translate(page.width / 2, page.height / 2)
-      doc.rotate((angle * 180) / Math.PI)
-
-      // Set the opacity and draw the text
-      doc.fillColor('gray')
-      doc.opacity(0.3)
-      doc.fontSize(160)
-      doc.text('EXAMPLE', -600, -120, { align: 'center' })
-
-      // restore
-      doc.restore()
-    }
-
     doc.end()
 
     // doc.addPage()
@@ -201,4 +169,4 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
   })
 }
 
-emergencyKitBlank()
+emergencyKitPoster()
