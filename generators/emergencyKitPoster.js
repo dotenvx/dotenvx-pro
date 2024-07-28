@@ -8,12 +8,10 @@ const mask = require('../src/lib/helpers/mask')
 const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
-// let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
-privateKey = ' '
-// let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
-recoveryPhrase = ''
+let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
+let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
 
-function emergencyKitBlank (options = { unmask: true }) {
+function emergencyKitPoster (options = {}) {
   function smartMask (str) {
     if (options.unmask) {
       return str
@@ -39,6 +37,10 @@ function emergencyKitBlank (options = { unmask: true }) {
   // meta
   const page = doc.page
 
+  // red background
+  doc.rect(0, 0, page.width, page.height)
+  doc.fill('#8B0000')
+
   // fonts
   doc.registerFont('Display-Bold', path.join(__dirname, './assets/SF-Pro-Display-Bold.otf'))
   doc.registerFont('Text-Regular', path.join(__dirname, './assets/SF-Pro-Text-Regular.otf'))
@@ -48,23 +50,12 @@ function emergencyKitBlank (options = { unmask: true }) {
 
   // logo
   const logoPath = path.join(__dirname, './assets/dotenvx.png')
-  const logoWidth = 36
-  doc.image(logoPath, 100, 675, { width: logoWidth, height: logoWidth })
-
-  const crossSize = 50
-  const crossThickness = 14
-  const centerX = page.width / 2
-
-  // Draw the horizontal part of the cross
-  doc.rect(centerX - crossSize / 2, 100 - crossThickness / 2, crossSize, crossThickness)
-  doc.fill('red')
-
-  // Draw the vertical part of the cross
-  doc.rect(centerX - crossThickness / 2, 100 - crossSize / 2, crossThickness, crossSize)
-  doc.fill('red')
+  const logoWidth = 44
+  const x = 50
+  const y = 50
+  doc.image(logoPath, x, y, { width: logoWidth, height: logoWidth })
 
   // title
-  doc.fillColor('black')
   doc.fontSize(40)
   const title1 = 'dotenvx. '
   const title2 = 'emergency kit.'
@@ -178,4 +169,4 @@ function emergencyKitBlank (options = { unmask: true }) {
   })
 }
 
-emergencyKitBlank()
+emergencyKitPoster()
