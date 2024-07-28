@@ -2,13 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.7.2...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.7.3...main)
+
+## 0.7.3
+
+### Removed
+
+* removed `dotenvx settings systeminformation` ([#13](https://github.com/dotenvx/dotenvx-pro/pull/13))
 
 ## 0.7.2
 
 ### Changed
 
-* switch to `pdf-lib` under the hood for the emergency kit ([#12](https://github.com/dotenvx/dotenvx-pro/pull12))
+* switch to `pdf-lib` under the hood for the emergency kit ([#12](https://github.com/dotenvx/dotenvx-pro/pull/12))
 
 ## 0.7.1
 
