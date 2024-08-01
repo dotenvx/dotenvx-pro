@@ -13,6 +13,7 @@ const confStore = new Conf({
   // https://github.com/sindresorhus/conf/tree/v10.2.0#projectsuffix.
   projectSuffix: '',
   fileExtension: '',
+  // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro',
   // in the spirit of dotenv and format inherently puts limits on config complexity
   serialize: function (json) {
     return jsonToEnv(json)
