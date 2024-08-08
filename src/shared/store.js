@@ -5,6 +5,7 @@ const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
 const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
+const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
 
 const confStore = new Conf({
   projectName: 'dotenvx',
@@ -68,6 +69,12 @@ const deleteHostname = function () {
 //
 const getHostname = function () {
   return confStore.get('DOTENVX_PRO_HOSTNAME') || 'https://pro.dotenvx.com'
+}
+
+const getHostfolder = function () {
+  const hostname = getHostname()
+
+  return extractSubdomainAndDomain(hostname)
 }
 
 const getToken = function () {
@@ -145,6 +152,7 @@ module.exports = {
   deleteHostname,
   // Get
   getHostname,
+  getHostfolder,
   getToken,
   getTokenShort,
   getUsername,

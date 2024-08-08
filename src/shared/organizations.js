@@ -2,9 +2,11 @@ const Conf = require('conf')
 const bip39 = require('bip39')
 const { PrivateKey } = require('eciesjs')
 
+const coreStore = require('./store')
+
 const confStore = new Conf({
   projectName: 'dotenvx',
-  configName: 'organizations',
+  configName: `${coreStore.getHostfolder()}/organizations`,
   // looks better on user's machine
   // https://github.com/sindresorhus/conf/tree/v10.2.0#projectsuffix.
   projectSuffix: '',

@@ -107,6 +107,17 @@ t.test('#getHostname - custom', ct => {
   ct.end()
 })
 
+t.test('#getHostfolder', ct => {
+  const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
+
+  const result = store.getHostfolder()
+
+  ct.same(result, 'pro.dotenvx.com')
+  ct.ok(getStub.calledWith('DOTENVX_PRO_HOSTNAME'), 'get DOTENVX_PRO_HOSTNAME')
+
+  ct.end()
+})
+
 t.test('#getToken', ct => {
   const getStub = sinon.stub(store.confStore, 'get').withArgs('DOTENVX_PRO_TOKEN').returns('dxo_123456789')
 

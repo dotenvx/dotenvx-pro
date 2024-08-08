@@ -25,6 +25,13 @@ program
   .description(packageJson.description)
   .version(packageJson.version)
 
+const syncAction = require('./actions/sync')
+program
+  .command('sync')
+  .description('sync')
+  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .action(syncAction)
+
 const loginAction = require('./actions/login')
 program
   .command('login')
