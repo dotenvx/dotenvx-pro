@@ -25,6 +25,13 @@ program
   .description(packageJson.description)
   .version(packageJson.version)
 
+const syncAction = require('./actions/sync')
+program
+  .command('sync')
+  .description('sync')
+  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .action(syncAction)
+
 const loginAction = require('./actions/login')
 program
   .command('login')
@@ -38,6 +45,9 @@ program
   .description('log out this machine from dotenvx pro')
   .option('-h, --hostname <url>', 'set hostname', store.getHostname())
   .action(logoutAction)
+
+// dotenvx pro organizations
+program.addCommand(require('./commands/organizations'))
 
 // dotenvx pro settings
 program.addCommand(require('./commands/settings'))

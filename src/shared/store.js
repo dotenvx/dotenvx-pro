@@ -5,6 +5,7 @@ const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
 const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
+const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
 
 const confStore = new Conf({
   projectName: 'dotenvx',
@@ -13,6 +14,7 @@ const confStore = new Conf({
   // https://github.com/sindresorhus/conf/tree/v10.2.0#projectsuffix.
   projectSuffix: '',
   fileExtension: '',
+  // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro',
   // in the spirit of dotenv and format inherently puts limits on config complexity
   serialize: function (json) {
     return jsonToEnv(json)
@@ -26,10 +28,11 @@ const confStore = new Conf({
 //
 // Set
 //
-const setUser = function (fullUsername, accessToken) {
+const setUser = function (fullUsername, accessToken, hashid) {
   // current logged in user
   confStore.set('DOTENVX_PRO_TOKEN', accessToken)
   confStore.set('DOTENVX_PRO_FULL_USERNAME', fullUsername)
+  confStore.set('DOTENVX_PRO_HASHID', hashid)
 
   return accessToken
 }
@@ -69,12 +72,22 @@ const getHostname = function () {
   return confStore.get('DOTENVX_PRO_HOSTNAME') || 'https://pro.dotenvx.com'
 }
 
+const getHostfolder = function () {
+  const hostname = getHostname()
+
+  return extractSubdomainAndDomain(hostname)
+}
+
 const getToken = function () {
   return confStore.get('DOTENVX_PRO_TOKEN')
 }
 
 const getTokenShort = function () {
   return (getToken() || '').slice(0, 11)
+}
+
+const getHashid = function () {
+  return confStore.get('DOTENVX_PRO_HASHID')
 }
 
 const getFullUsername = function () {
@@ -144,8 +157,10 @@ module.exports = {
   deleteHostname,
   // Get
   getHostname,
+  getHostfolder,
   getToken,
   getTokenShort,
+  getHashid,
   getUsername,
   getFullUsername,
   getPrivateKey,

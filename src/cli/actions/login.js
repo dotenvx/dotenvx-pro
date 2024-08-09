@@ -86,7 +86,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, setti
         spinner.succeed(`logged in [${responseData.username}]`)
 
         logger.debug('setting settings.DOTENVX_PRO_TOKEN')
-        store.setUser(responseData.full_username, responseData.access_token)
+        store.setUser(responseData.full_username, responseData.access_token, responseData.hashid)
 
         logger.debug('setting settings.DOTENVX_PRO_HOSTNAME')
         store.setHostname(responseData.hostname)
