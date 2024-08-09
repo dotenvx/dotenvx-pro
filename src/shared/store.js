@@ -28,10 +28,11 @@ const confStore = new Conf({
 //
 // Set
 //
-const setUser = function (fullUsername, accessToken) {
+const setUser = function (fullUsername, accessToken, hashid) {
   // current logged in user
   confStore.set('DOTENVX_PRO_TOKEN', accessToken)
   confStore.set('DOTENVX_PRO_FULL_USERNAME', fullUsername)
+  confStore.set('DOTENVX_PRO_HASHID', hashid)
 
   return accessToken
 }
@@ -83,6 +84,10 @@ const getToken = function () {
 
 const getTokenShort = function () {
   return (getToken() || '').slice(0, 11)
+}
+
+const getHashid = function () {
+  return confStore.get('DOTENVX_PRO_HASHID')
 }
 
 const getFullUsername = function () {
@@ -155,6 +160,7 @@ module.exports = {
   getHostfolder,
   getToken,
   getTokenShort,
+  getHashid,
   getUsername,
   getFullUsername,
   getPrivateKey,

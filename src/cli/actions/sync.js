@@ -16,13 +16,16 @@ async function sync () {
 
   spinner.start('syncing')
 
+  const body = JSON.stringify({
+    db: db.getJson()
+  })
   const response = await request(apiSyncUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({})
+    body: body
   })
 
   const responseData = await response.body.json()

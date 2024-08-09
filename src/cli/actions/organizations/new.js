@@ -5,8 +5,8 @@ const { request } = require('undici')
 const confirm = require('@inquirer/confirm').default
 const { PrivateKey } = require('eciesjs')
 
+const db = require('./../../../shared/db')
 const store = require('./../../../shared/store')
-const organizations = require('./../../../shared/organizations')
 const { logger } = require('./../../../shared/logger')
 
 const spinner = ora('waiting on browser creation')
@@ -17,6 +17,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
   while (true) {
     try {
       const token = store.getToken()
+      const hashid = store.getHashid()
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {
@@ -45,8 +46,9 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
       } else {
         spinner.succeed(`created organization [${responseData.slug}]`)
 
-        logger.debug(`setting organizations.${responseData.hashid}`)
-        organizations.setOrganization(responseData.hashid, privateKey)
+        logger.debug(`setting organization.${responseData.hashid}`)
+
+        db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
 
         // next implement syncing the privateKey to all team member's machines via encryption from the publicKeys
 
