@@ -6,21 +6,13 @@ const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 const { logger } = require('./../../../shared/logger')
 const db = require('./../../../shared/db')
 const store = require('./../../../shared/store')
-const mask = require('./../../../lib/helpers/mask')
+const smartMask = require('./../../../lib/helpers/smartMask')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 
 async function emergencyKit () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
-
-  function smartMask (str) {
-    if (options.unmask) {
-      return str
-    } else {
-      return mask(str)
-    }
-  }
 
   function smartMaskRecoveryPhrase (str) {
     if (options.unmask) {
@@ -43,7 +35,7 @@ async function emergencyKit () {
   let recoveryPhrase = store.getRecoveryPhrase()
   recoveryPhrase = smartMaskRecoveryPhrase(recoveryPhrase)
   recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
-  privateKey = smartMask(privateKey)
+  privateKey = smartMask(privateKey, options.unmask)
 
   // setup
   const existing = fs.readFileSync(path.join(__dirname, '../../../assets/emergencyKitBlank.pdf'))

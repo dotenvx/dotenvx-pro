@@ -4,7 +4,7 @@ const path = require('path')
 const Pdfkit = require('pdfkit')
 const qrcode = require('qrcode')
 
-const mask = require('../src/lib/helpers/mask')
+const smartMask = require('../src/lib/helpers/smartMask')
 const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
@@ -14,13 +14,6 @@ let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure sea
 // recoveryPhrase = ''
 
 function emergencyKitBlank (options = { unmask: false, example: true }) {
-  function smartMask (str) {
-    if (options.unmask) {
-      return str
-    } else {
-      return mask(str)
-    }
-  }
   function smartMaskRecoveryPhrase (str) {
     if (options.unmask) {
       return str
@@ -30,7 +23,7 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
   }
   recoveryPhrase = smartMaskRecoveryPhrase(recoveryPhrase)
   recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
-  privateKey = smartMask(privateKey)
+  privateKey = smartMask(privateKey, options.unmask)
 
   // set up doc to pipe to process.stdout
   const doc = new Pdfkit()
