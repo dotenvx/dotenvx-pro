@@ -37,9 +37,7 @@ async function sync () {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
   } else {
     db.setSync(responseData) // sync to local
-
     spinner.succeed('synced')
-    logger.blank(JSON.stringify(responseData, null, 2))
   }
 }
 

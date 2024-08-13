@@ -50,19 +50,13 @@ async function status () {
   }
 
   const remoteRevokedAt = responseData.revoked_at
-  const remotePublicKey = responseData.public_key
-
   if (remoteRevokedAt) {
     spinner.fail(`remote: token revoked [${smartMask(token, 11)}]`)
   } else {
     spinner.succeed(`remote: token [${smartMask(token, 11)}]`)
   }
 
-  if (remotePublicKey === publicKey) {
-    spinner.succeed(`remote: publicKey [${smartMask(remotePublicKey)}]`)
-  } else {
-    spinner.fail(`remote: publicKey [${smartMask(remotePublicKey)}]`)
-  }
+  spinner.succeed(`remote: username [${responseData.username}] (${responseData.hashid})`)
 }
 
 module.exports = status

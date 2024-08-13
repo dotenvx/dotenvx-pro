@@ -35,16 +35,13 @@ function getConfStore () {
 // Set
 //
 const setUserOrganizationPrivateKey = function (hashid, organizationHashid, privateKey) {
-  const key = `user/${hashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
-
-  const publicKey = coreStore.getPublicKey()
+  const publicKey = getUserPublicKey(hashid)
   const encryptedValue = encryptValue(privateKey, publicKey)
 
-  console.log('encryptedValue', encryptedValue)
-
+  const key = `user/${hashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
   getConfStore().set(key, encryptedValue)
 
-  return privateKey
+  return encryptedValue
 }
 
 const setUser = function (hashid, fullUsername) {
@@ -81,7 +78,7 @@ const getUserPublicKey = function (hashid) {
   return getConfStore().get(key)
 }
 
-const getOrganizationPrivateKey = function (hashid) {
+const getOrganizationPrivateKey = function (organizationHashid) {
   // 1. get current user's privateKey
   const privateKey = coreStore.getPrivateKey()
   const userHashid = coreStore.getHashid()
@@ -91,8 +88,8 @@ const getOrganizationPrivateKey = function (hashid) {
   }
 
   // 2. use that to grab the encrypted organization private key
-  const key = `user/${userHashid}/organization/${hashid}/organization_private_key_encrypted_with_user_public_key`
-  const organizationPrivateKeyEncrypted = getConfStore().get(key)
+  const findKey = `user/${userHashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
+  const organizationPrivateKeyEncrypted = getConfStore().get(findKey)
 
   if (!organizationPrivateKeyEncrypted) {
     return null
@@ -127,6 +124,7 @@ const getJson = function () {
 
     j[key] = value
 
+
     // for null values
     if (!value && key.includes('organization_private_key_encrypted_with_user_public_key')) {
       // use regex to extract user_id and organization_id
@@ -135,20 +133,12 @@ const getJson = function () {
       if (match) {
         const userHashid = match[1]
         const organizationHashid = match[2]
+        const organizationPrivateKey = getOrganizationPrivateKey(organizationHashid)
 
-        const usersPublicKey = getUserPublicKey(userHashid)
-        console.log('usersPublicKey', usersPublicKey)
-
-        const currentUserHashid = 'implement' // IMPLEMENT
-
-        const organizationPrivateKey = getOrganizationPrivateKey(currentUserHashid, organizationHashid)
-        console.log('organizationPrivateKey', organizationPrivateKey)
-
-        // find user's publicKey
-        // find org's privateKey
-
-        // const encryptedValue = encryptValue(privateKey, publicKey)
-        // j[key] = encryptedValue
+        if (organizationPrivateKey) {
+          const organizationPrivateKeyEncryptedWithUserPublicKey = setUserOrganizationPrivateKey(userHashid, organizationHashid, organizationPrivateKey)
+          j[key] = organizationPrivateKeyEncryptedWithUserPublicKey
+        }
       }
     }
   }
