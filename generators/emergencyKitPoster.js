@@ -68,7 +68,7 @@ function emergencyKitPoster (options = {}) {
 
   // created-for
   // doc.fontSize(9)
-  // const createdFor = `created for ${store.getUsername()} on ${currentDate()}`
+  // const createdFor = `created for ${store.getCurrentUserUsername()} on ${currentDate()}`
   // const createdForX = (page.width - doc.widthOfString(createdFor)) / 2
   // doc.font('Text-ThinItalic')
   // doc.fillColor('gray')

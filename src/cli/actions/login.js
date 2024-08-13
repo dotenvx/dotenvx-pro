@@ -3,6 +3,7 @@ const open = require('open')
 const { request } = require('undici')
 const confirm = require('@inquirer/confirm').default
 
+const db = require('./../../shared/db')
 const store = require('./../../shared/store')
 const { logger } = require('./../../shared/logger')
 const clipboardy = require('./../../lib/helpers/clipboardy')
@@ -83,15 +84,25 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, setti
       }
 
       if (responseData.access_token) {
-        spinner.succeed(`logged in [${responseData.username}]`)
+        const {
+          username,
+          hashid,
+          hostname
+        } = responseData
+        const fullUsername = responseData.full_username
+        const accessToken = responseData.access_token
+        const accessTokenShort = responseData.access_token_short
 
-        logger.debug('setting settings.DOTENVX_PRO_TOKEN')
-        store.setUser(responseData.full_username, responseData.access_token, responseData.hashid)
+        spinner.succeed(`logged in [${username}]`)
 
         logger.debug('setting settings.DOTENVX_PRO_HOSTNAME')
-        store.setHostname(responseData.hostname)
+        store.setHostname(hostname)
 
-        spinner.succeed(`set access token [${responseData.access_token_short}]`)
+        logger.debug('setting settings.DOTENVX_PRO_CURRENT_USER_TOKEN')
+        store.setUser(hashid, fullUsername, accessToken)
+        db.setUser(hashid, fullUsername)
+
+        spinner.succeed(`set access token [${accessTokenShort}]`)
 
         await syncPublicKey(publicKeyUrl)
 

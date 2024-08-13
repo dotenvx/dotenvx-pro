@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const qrcode = require('qrcode')
 
+const db = require('./../../shared/db')
 const store = require('./../../shared/store')
 const { logger } = require('./../../shared/logger')
 const mask = require('./mask')
@@ -53,7 +54,7 @@ async function emergencyKit (options) {
     const monoFont = await pdf.embedFont(StandardFonts.Courier)
 
     // createdFor
-    page.drawText(`created for ${store.getUsername()} on ${currentDate()}`, {
+    page.drawText(`created for ${db.getCurrentUserUsername()} on ${currentDate()}`, {
       x: 100,
       y: 590,
       size: 9,

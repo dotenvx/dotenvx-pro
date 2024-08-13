@@ -20,20 +20,16 @@ async function status () {
   }
   const token = store.getToken()
   const hostname = store.getHostname()
-  const username = store.getUsername()
-  const fullUsername = store.getFullUsername()
   const publicKey = store.getPublicKey()
   const privateKey = store.getPrivateKey()
   const configPath = store.configPath()
 
   spinner.succeed(`token [${smartMask(token, 11)}]`)
-  spinner.succeed(`username [${username}]`)
-  spinner.succeed(`fullUsername [${fullUsername}]`)
   spinner.succeed(`publicKey [${smartMask(publicKey)}]`)
   spinner.succeed(`privateKey [${smartMask(privateKey)}]`)
   spinner.succeed(`configPath [${configPath}]`)
   spinner.succeed(`hostname [${hostname}]`)
-  spinner.start('fetching remote (username, fullUsername, publicKey)')
+  spinner.start('fetching remote (publicKey)')
 
   const statusUrl = `${hostname}/api/status`
   const response = await request(statusUrl, {
@@ -54,26 +50,12 @@ async function status () {
   }
 
   const remoteRevokedAt = responseData.revoked_at
-  const remoteUsername = responseData.username
-  const remoteFullUsername = responseData.full_username
   const remotePublicKey = responseData.public_key
 
   if (remoteRevokedAt) {
     spinner.fail(`remote: token revoked [${smartMask(token, 11)}]`)
   } else {
     spinner.succeed(`remote: token [${smartMask(token, 11)}]`)
-  }
-
-  if (remoteUsername === username) {
-    spinner.succeed(`remote: username [${remoteUsername}]`)
-  } else {
-    spinner.warn(`remote: username [${remoteUsername}]`)
-  }
-
-  if (remoteFullUsername === fullUsername) {
-    spinner.succeed(`remote: fullUsername [${remoteFullUsername}]`)
-  } else {
-    spinner.warn(`remote: fullUsername [${remoteFullUsername}]`)
   }
 
   if (remotePublicKey === publicKey) {

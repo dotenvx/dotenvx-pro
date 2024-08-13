@@ -32,8 +32,11 @@ async function logout () {
   } else {
     spinner.succeed(`logged off machine [${responseData.username}]`)
 
-    logger.debug('deleting settings.DOTENVX_PRO_TOKEN')
+    logger.debug('deleting settings.DOTENVX_PRO_CURRENT_USER_TOKEN')
     store.deleteToken()
+
+    logger.debug('deleting settings.DOTENVX_PRO_CURRENT_USER_HASHID')
+    store.deleteHashid()
 
     logger.debug('deleting settings.DOTENVX_PRO_HOSTNAME')
     store.deleteHostname()

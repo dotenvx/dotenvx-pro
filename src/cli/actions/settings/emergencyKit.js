@@ -4,6 +4,7 @@ const qrcode = require('qrcode')
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 
 const { logger } = require('./../../../shared/logger')
+const db = require('./../../../shared/db')
 const store = require('./../../../shared/store')
 const mask = require('./../../../lib/helpers/mask')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
@@ -54,7 +55,7 @@ async function emergencyKit () {
   const monoFont = await pdf.embedFont(StandardFonts.Courier)
 
   // createdFor
-  page.drawText(`created for ${store.getUsername()} on ${currentDate()}`, {
+  page.drawText(`created for ${db.getCurrentUserUsername()} on ${currentDate()}`, {
     x: 100,
     y: 590,
     size: 9,

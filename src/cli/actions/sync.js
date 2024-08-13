@@ -13,11 +13,12 @@ async function sync () {
   const token = store.getToken()
   const hostname = options.hostname
   const apiSyncUrl = `${hostname}/api/sync`
+  const dbJson = db.getJson()
 
   spinner.start('syncing')
 
   const body = JSON.stringify({
-    db: db.getJson()
+    db: dbJson
   })
   const response = await request(apiSyncUrl, {
     method: 'POST',
@@ -25,7 +26,7 @@ async function sync () {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: body
+    body
   })
 
   const responseData = await response.body.json()
@@ -37,7 +38,7 @@ async function sync () {
   } else {
     db.setSync(responseData) // sync to local
 
-    spinner.succeed(`synced`)
+    spinner.succeed('synced')
     logger.blank(JSON.stringify(responseData, null, 2))
   }
 }

@@ -1,6 +1,6 @@
 const { URL } = require('url')
 
-function extractSubdomainAndDomain(urlString) {
+function extractSubdomainAndDomain (urlString) {
   // Parse the URL
   const url = new URL(urlString)
 
