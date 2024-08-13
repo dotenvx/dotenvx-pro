@@ -3,7 +3,7 @@ const { request } = require('undici')
 
 const store = require('./../../../shared/store')
 const { logger } = require('./../../../shared/logger')
-const mask = require('./../../../lib/helpers/mask')
+const smartMask = require('./../../../lib/helpers/smartMask')
 
 const spinner = ora('checking status')
 
@@ -11,22 +11,15 @@ async function status () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  function smartMask (str, showChar = 7) {
-    if (options.unmask) {
-      return str
-    } else {
-      return mask(str, showChar)
-    }
-  }
   const token = store.getToken()
   const hostname = store.getHostname()
   const publicKey = store.getPublicKey()
   const privateKey = store.getPrivateKey()
   const configPath = store.configPath()
 
-  spinner.succeed(`token [${smartMask(token, 11)}]`)
-  spinner.succeed(`publicKey [${smartMask(publicKey)}]`)
-  spinner.succeed(`privateKey [${smartMask(privateKey)}]`)
+  spinner.succeed(`token [${smartMask(token, options.unmask, 11)}]`)
+  spinner.succeed(`publicKey [${smartMask(publicKey, options.unmask)}]`)
+  spinner.succeed(`privateKey [${smartMask(privateKey, options.unmask)}]`)
   spinner.succeed(`configPath [${configPath}]`)
   spinner.succeed(`hostname [${hostname}]`)
   spinner.start('fetching remote (publicKey)')
@@ -51,9 +44,9 @@ async function status () {
 
   const remoteRevokedAt = responseData.revoked_at
   if (remoteRevokedAt) {
-    spinner.fail(`remote: token revoked [${smartMask(token, 11)}]`)
+    spinner.fail(`remote: token revoked [${smartMask(token, options.unmask, 11)}]`)
   } else {
-    spinner.succeed(`remote: token [${smartMask(token, 11)}]`)
+    spinner.succeed(`remote: token [${smartMask(token, options.unmask, 11)}]`)
   }
 
   spinner.succeed(`remote: username [${responseData.username}] (${responseData.hashid})`)

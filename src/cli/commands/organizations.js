@@ -15,4 +15,13 @@ organizations
   .option('-h, --hostname <url>', 'set hostname', store.getHostname())
   .action(newAction)
 
+// dotenvx pro organizations list
+const listAction = require('./../actions/organizations/list')
+organizations
+  .command('list')
+  .description('list my organizations')
+  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .option('--unmask', 'unmask access token')
+  .action(listAction)
+
 module.exports = organizations
