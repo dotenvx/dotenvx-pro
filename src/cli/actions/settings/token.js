@@ -1,19 +1,14 @@
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
-const mask = require('./../../../lib/helpers/mask')
+const smartMask = require('./../../../lib/helpers/smartMask')
 
 function token () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = store.getToken()
+  const token = currentUser.getToken()
   if (token) {
-    let output = mask(token, 11)
-    if (options.unmask) {
-      output = token // unmask output
-    }
-
-    process.stdout.write(output)
+    process.stdout.write(smartMask(token, options.unmask, 11))
   } else {
     logger.error('not found')
 

@@ -124,7 +124,6 @@ const getJson = function () {
 
     j[key] = value
 
-
     // for null values
     if (!value && key.includes('organization_private_key_encrypted_with_user_public_key')) {
       // use regex to extract user_id and organization_id

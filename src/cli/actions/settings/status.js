@@ -1,9 +1,9 @@
 const ora = require('ora')
 const { request } = require('undici')
 
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
-const smartMask = require('./../../../lib/helpers/smartMask')
+const smartTruncate = require('./../../../lib/helpers/smartTruncate')
 
 const spinner = ora('checking status')
 
@@ -11,15 +11,15 @@ async function status () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = store.getToken()
-  const hostname = store.getHostname()
-  const publicKey = store.getPublicKey()
-  const privateKey = store.getPrivateKey()
-  const configPath = store.configPath()
+  const token = currentUser.getToken()
+  const hostname = currentUser.getHostname()
+  const publicKey = currentUser.getPublicKey()
+  const privateKey = currentUser.getPrivateKey()
+  const configPath = currentUser.configPath()
 
-  spinner.succeed(`token [${smartMask(token, options.unmask, 11)}]`)
-  spinner.succeed(`publicKey [${smartMask(publicKey, options.unmask)}]`)
-  spinner.succeed(`privateKey [${smartMask(privateKey, options.unmask)}]`)
+  spinner.succeed(`token [${smartTruncate(token, options.unmask, 11)}]`)
+  spinner.succeed(`publicKey [${publicKey}]`)
+  spinner.succeed(`privateKey [${smartTruncate(privateKey, options.unmask)}]`)
   spinner.succeed(`configPath [${configPath}]`)
   spinner.succeed(`hostname [${hostname}]`)
   spinner.start('fetching remote (publicKey)')
@@ -44,9 +44,9 @@ async function status () {
 
   const remoteRevokedAt = responseData.revoked_at
   if (remoteRevokedAt) {
-    spinner.fail(`remote: token revoked [${smartMask(token, options.unmask, 11)}]`)
+    spinner.fail(`remote: token revoked [${smartTruncate(token, options.unmask, 11)}]`)
   } else {
-    spinner.succeed(`remote: token [${smartMask(token, options.unmask, 11)}]`)
+    spinner.succeed(`remote: token [${smartTruncate(token, options.unmask, 11)}]`)
   }
 
   spinner.succeed(`remote: username [${responseData.username}] (${responseData.hashid})`)

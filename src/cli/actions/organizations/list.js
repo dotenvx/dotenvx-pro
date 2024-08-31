@@ -5,7 +5,7 @@ const { request } = require('undici')
 const store = require('./../../../shared/store')
 const { logger } = require('./../../../shared/logger')
 const decryptValue = require('./../../../lib/helpers/decryptValue')
-const smartMask = require('./../../../lib/helpers/smartMask')
+const smartTruncate = require('./../../../lib/helpers/smartTruncate')
 
 const spinner = ora('fetching organizations')
 
@@ -41,10 +41,10 @@ async function list () {
     let privateKey = ''
     if (row.private_key_encrypted) {
       privateKey = decryptValue(row.private_key_encrypted, store.getPrivateKey())
-      privateKey = smartMask(privateKey, options.unmask)
+      privateKey = smartTruncate(privateKey, options.unmask)
     }
 
-    t.push([row.slug, row.public_key, privateKey])
+    t.push([row.slug, smartTruncate(row.public_key, options.unmask), privateKey])
   }
 
   process.stdout.write(table(t))

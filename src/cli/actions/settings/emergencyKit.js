@@ -5,7 +5,7 @@ const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 
 const { logger } = require('./../../../shared/logger')
 const db = require('./../../../shared/db')
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const smartMask = require('./../../../lib/helpers/smartMask')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
@@ -31,8 +31,8 @@ async function emergencyKit () {
     return `${year}-${month}-${day}`
   }
 
-  let privateKey = store.getPrivateKey()
-  let recoveryPhrase = store.getRecoveryPhrase()
+  let privateKey = currentUser.getPrivateKey()
+  let recoveryPhrase = currentUser.getRecoveryPhrase()
   recoveryPhrase = smartMaskRecoveryPhrase(recoveryPhrase)
   recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
   privateKey = smartMask(privateKey, options.unmask)
