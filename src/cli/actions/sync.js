@@ -1,6 +1,6 @@
 const ora = require('ora')
 const db = require('./../../shared/db')
-const store = require('./../../shared/store')
+const currentUser = require('./../../shared/currentUser')
 const { request } = require('undici')
 const { logger } = require('./../../shared/logger')
 
@@ -10,7 +10,7 @@ async function sync () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = store.getToken()
+  const token = currentUser.getToken()
   const hostname = options.hostname
   const apiSyncUrl = `${hostname}/api/sync`
   const dbJson = db.getJson()

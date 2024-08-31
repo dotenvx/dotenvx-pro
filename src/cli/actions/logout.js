@@ -1,5 +1,5 @@
 const ora = require('ora')
-const store = require('./../../shared/store')
+const currentUser = require('./../../shared/currentUser')
 const { request } = require('undici')
 const { logger } = require('./../../shared/logger')
 
@@ -9,7 +9,7 @@ async function logout () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = store.getToken()
+  const token = currentUser.getToken()
   const hostname = options.hostname
   const logoutUrl = `${hostname}/logout`
   const apiLogoutUrl = `${hostname}/api/logout`
@@ -32,14 +32,7 @@ async function logout () {
   } else {
     spinner.succeed(`logged off machine [${responseData.username}]`)
 
-    logger.debug('deleting settings.DOTENVX_PRO_CURRENT_USER_TOKEN')
-    store.deleteToken()
-
-    logger.debug('deleting settings.DOTENVX_PRO_CURRENT_USER_HASHID')
-    store.deleteHashid()
-
-    logger.debug('deleting settings.DOTENVX_PRO_HOSTNAME')
-    store.deleteHostname()
+    currentUser.logout()
 
     spinner.succeed(`deleted access token [${responseData.access_token_short}]`)
 

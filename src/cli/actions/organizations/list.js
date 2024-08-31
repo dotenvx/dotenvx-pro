@@ -2,7 +2,7 @@ const ora = require('ora')
 const { table } = require('table')
 const { request } = require('undici')
 
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 const decryptValue = require('./../../../lib/helpers/decryptValue')
 const smartTruncate = require('./../../../lib/helpers/smartTruncate')
@@ -13,7 +13,7 @@ async function list () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = store.getToken()
+  const token = currentUser.getToken()
   const hostname = options.hostname
   const organizationsUrl = `${hostname}/api/organizations`
   const response = await request(organizationsUrl, {
@@ -40,7 +40,7 @@ async function list () {
   for (const row of responseData) {
     let privateKey = ''
     if (row.private_key_encrypted) {
-      privateKey = decryptValue(row.private_key_encrypted, store.getPrivateKey())
+      privateKey = decryptValue(row.private_key_encrypted, currentUser.getPrivateKey())
       privateKey = smartTruncate(privateKey, options.unmask)
     }
 

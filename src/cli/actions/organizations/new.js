@@ -6,7 +6,7 @@ const confirm = require('@inquirer/confirm').default
 const { PrivateKey } = require('eciesjs')
 
 const db = require('./../../../shared/db')
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 
 const spinner = ora('waiting on browser creation')
@@ -16,8 +16,8 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
 
   while (true) {
     try {
-      const token = store.getToken()
-      const hashid = store.getHashid()
+      const token = currentUser.getToken()
+      const hashid = currentUser.getHashid()
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {

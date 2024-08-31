@@ -1,5 +1,5 @@
 const { Command } = require('commander')
-const store = require('./../../shared/store')
+const currentUser = require('./../../shared/currentUser')
 
 const organizations = new Command('organizations')
 
@@ -12,7 +12,7 @@ const newAction = require('./../actions/organizations/new')
 organizations
   .command('new')
   .description('create organization')
-  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(newAction)
 
 // dotenvx pro organizations list
@@ -20,7 +20,7 @@ const listAction = require('./../actions/organizations/list')
 organizations
   .command('list')
   .description('list my organizations')
-  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .option('--unmask', 'unmask sensitive data')
   .action(listAction)
 
@@ -30,7 +30,7 @@ organizations
   .command('team')
   .description('list team for organization')
   .argument('<organizationSlug>', 'organization slug')
-  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .option('--unmask', 'unmask sensitive data')
   .action(teamAction)
 

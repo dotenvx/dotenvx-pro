@@ -25,6 +25,41 @@ const confStore = new Conf({
 })
 
 //
+// Set
+//
+const setUser = function (hashid, accessToken) {
+  if (!hashid) {
+    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
+  }
+
+  if (!accessToken) {
+    throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
+  }
+
+  confStore.set('DOTENVX_PRO_CURRENT_USER', hashid)
+  confStore.set('DOTENVX_PRO_TOKEN', accessToken)
+
+  return accessToken
+}
+
+const setHostname = function (hostname) {
+  confStore.set('DOTENVX_PRO_HOSTNAME', hostname)
+
+  return hostname
+}
+
+//
+// Delete
+//
+const logout = function () {
+  confStore.delete('DOTENVX_PRO_TOKEN')
+  confStore.delete('DOTENVX_PRO_CURRENT_USER')
+  confStore.delete('DOTENVX_PRO_HOSTNAME')
+
+  return true
+}
+
+//
 // Get
 //
 const getHostname = function () {
@@ -93,6 +128,9 @@ const configPath = function () {
 
 module.exports = {
   confStore,
+  // Set
+  setUser,
+  setHostname,
   // Get
   getHostname,
   getHostfolder,

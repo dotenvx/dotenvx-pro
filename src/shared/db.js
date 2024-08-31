@@ -1,7 +1,7 @@
 const Conf = require('conf')
 const { logger } = require('./logger')
 
-const coreStore = require('./store')
+const currentUser = require('./currentUser')
 const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
@@ -9,14 +9,14 @@ const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUs
 let confStore
 
 function initializeConfStore () {
-  if (!coreStore.getHashid()) {
+  if (!currentUser.getHashid()) {
     logger.error('[unauthorized] please log in with [dotenvx pro login]')
     process.exit(1)
   }
 
   confStore = new Conf({
     projectName: 'dotenvx',
-    configName: `${coreStore.getHostfolder()}/${coreStore.getHashid()}/db`,
+    configName: `${currentUser.getHostfolder()}/${currentUser.getHashid()}/db`,
     projectSuffix: '',
     fileExtension: 'json'
     // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
@@ -69,7 +69,7 @@ const setSync = function (syncData) {
 // Get
 //
 const getCurrentUserHashid = function () {
-  return coreStore.getHashid()
+  return currentUser.getHashid()
 }
 
 const getUserPublicKey = function (hashid) {
@@ -80,8 +80,8 @@ const getUserPublicKey = function (hashid) {
 
 const getOrganizationPrivateKey = function (organizationHashid) {
   // 1. get current user's privateKey
-  const privateKey = coreStore.getPrivateKey()
-  const userHashid = coreStore.getHashid()
+  const privateKey = currentUser.getPrivateKey()
+  const userHashid = currentUser.getHashid()
 
   if (!privateKey || !userHashid) {
     return null

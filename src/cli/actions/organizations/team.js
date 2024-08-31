@@ -2,7 +2,7 @@ const ora = require('ora')
 const { table } = require('table')
 const { request } = require('undici')
 
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 const decryptValue = require('./../../../lib/helpers/decryptValue')
 const smartTruncate = require('./../../../lib/helpers/smartTruncate')
@@ -15,7 +15,7 @@ async function team (organizationSlug) {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = store.getToken()
+  const token = currentUser.getToken()
   const hostname = options.hostname
   const membersUrl = `${hostname}/api/members?organization_slug=${organizationSlug}`
   const response = await request(membersUrl, {
