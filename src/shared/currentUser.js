@@ -131,6 +131,8 @@ module.exports = {
   // Set
   setUser,
   setHostname,
+  // Delete
+  logout,
   // Get
   getHostname,
   getHostfolder,

@@ -39,6 +39,17 @@ t.test('confStore#serialize', ct => {
   ct.end()
 })
 
+t.test('#logout', ct => {
+  const result = currentUser.logout()
+
+  ct.same(result, true)
+  ct.ok(deleteStub.calledWith('DOTENVX_PRO_TOKEN'), 'delete DOTENVX_PRO_TOKEN')
+  ct.ok(deleteStub.calledWith('DOTENVX_PRO_CURRENT_USER'), 'delete DOTENVX_PRO_CURRENT_USER')
+  ct.ok(deleteStub.calledWith('DOTENVX_PRO_HOSTNAME'), 'delete DOTENVX_PRO_HOSTNAME')
+
+  ct.end()
+})
+
 t.test('#getHostname', ct => {
   const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
 

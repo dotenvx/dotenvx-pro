@@ -4,8 +4,6 @@ const { request } = require('undici')
 
 const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
-const decryptValue = require('./../../../lib/helpers/decryptValue')
-const smartTruncate = require('./../../../lib/helpers/smartTruncate')
 
 const spinner = ora('fetching team')
 
