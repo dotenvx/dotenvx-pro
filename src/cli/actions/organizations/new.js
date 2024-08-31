@@ -48,7 +48,10 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
 
         logger.debug(`setting organization.${responseData.hashid}`)
 
-        db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
+        console.log('hashid', hashid, responseData.hashid, privateKey)
+
+        const encryptedValue = db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
+        console.log('encryptedValue', encryptedValue)
 
         // next implement syncing the privateKey to all team member's machines via encryption from the publicKeys
 

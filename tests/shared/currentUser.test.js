@@ -39,6 +39,47 @@ t.test('confStore#serialize', ct => {
   ct.end()
 })
 
+t.test('#setUser', ct => {
+  const result = currentUser.setUser('AAABBB', 'dxo_1234')
+
+  ct.same(result, 'dxo_1234')
+  ct.ok(setStub.calledWith('DOTENVX_PRO_TOKEN', 'dxo_1234'), 'set DOTENVX_PRO_TOKEN')
+  ct.ok(setStub.calledWith('DOTENVX_PRO_CURRENT_USER', 'AAABBB'), 'set DOTENVX_PRO_CURRENT_USER')
+
+  ct.end()
+})
+
+t.test('#setUser - undefined hashid', ct => {
+  try {
+    currentUser.setUser(undefined, 'dxo_1234')
+    ct.fail('should have raised an error but did not')
+  } catch (error) {
+    ct.equal(error.message, 'DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
+  }
+
+  ct.end()
+})
+
+t.test('#setUser - undefined accessToken', ct => {
+  try {
+    currentUser.setUser('AAABBB', undefined)
+    ct.fail('should have raised an error but did not')
+  } catch (error) {
+    ct.equal(error.message, 'DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
+  }
+
+  ct.end()
+})
+
+t.test('#setHostname', ct => {
+  const result = currentUser.setHostname('http://localhost:3000')
+
+  ct.same(result, 'http://localhost:3000')
+  ct.ok(setStub.calledWith('DOTENVX_PRO_HOSTNAME', 'http://localhost:3000'), 'set DOTENVX_PRO_HOSTNAME')
+
+  ct.end()
+})
+
 t.test('#logout', ct => {
   const result = currentUser.logout()
 
