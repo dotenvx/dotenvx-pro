@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.7.3...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.8.0...main)
+
+## 0.8.0
+
+### Added
+
+* introduce `dotenvx organizations` for managing organizations ([#14](https://github.com/dotenvx/dotenvx-pro/pull/14))
 
 ## 0.7.3
 
