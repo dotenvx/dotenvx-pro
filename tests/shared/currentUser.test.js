@@ -23,7 +23,6 @@ t.beforeEach((ct) => {
   tmpFile = tmp.fileSync()
   currentUser.confStore.path = tmpFile.name // /tmp path for testing
   fs.writeSync(tmpFile.fd, `DOTENVX_PRO_TOKEN="dxo_1234"
-DOTENVX_PRO_FULL_USERNAME="gh/username"
 DOTENVX_PRO_HOSTNAME="https://pro.dotenvx.com"`)
 })
 

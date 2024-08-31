@@ -24,6 +24,10 @@ const confStore = new Conf({
   }
 })
 
+const configPath = function () {
+  return confStore.path
+}
+
 //
 // Set
 //
@@ -119,15 +123,9 @@ const getRecoveryPhrase = function () {
   return bip39.entropyToMnemonic(privateKeyHex)
 }
 
-//
-// Other
-//
-const configPath = function () {
-  return confStore.path
-}
-
 module.exports = {
   confStore,
+  configPath,
   // Set
   setUser,
   setHostname,
@@ -140,6 +138,5 @@ module.exports = {
   getHashid,
   getPrivateKey,
   getPublicKey,
-  getRecoveryPhrase,
-  configPath
+  getRecoveryPhrase
 }

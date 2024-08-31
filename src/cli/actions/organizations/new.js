@@ -9,9 +9,11 @@ const db = require('./../../../shared/db')
 const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 
+const Sync = require('./../../../lib/services/sync')
+
 const spinner = ora('waiting on browser creation')
 
-async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey, privateKey) {
+async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey, privateKey, apiSyncUrl) {
   logger.http(`POST ${requestUidUrl} with requestUid ${requestUid} at interval ${interval}`)
 
   while (true) {
@@ -47,11 +49,17 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
         spinner.succeed(`created organization [${responseData.slug}]`)
 
         logger.debug(`setting organization.${responseData.hashid}`)
+        db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
 
-        console.log('hashid', hashid, responseData.hashid, privateKey)
+        // sync
+                const syncResult = await new Sync(apiSyncUrl).run()
 
-        const encryptedValue = db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
-        console.log('encryptedValue', encryptedValue)
+        if (syncResult.response.statusCode >= 400) {
+          spinner.fail(`[${syncResult.responseData.error.code}] ${syncResult.responseData.error.message}`)
+        } else {
+          db.setSync(syncResult.responseData) // sync to local
+          spinner.succeed('synced')
+        }
 
         // next implement syncing the privateKey to all team member's machines via encryption from the publicKeys
 
@@ -71,6 +79,7 @@ async function neww () {
   const requestUid = `req_${crypto.randomBytes(4).toString('hex')}`
   const hostname = options.hostname
   const organizationsNewUrl = `${hostname}/organizations/new?request_uid=${requestUid}`
+  const apiSyncUrl = `${hostname}/api/sync`
   const requestUidUrl = `${hostname}/api/request_uid`
   const interval = 5 // for 5 seconds
 
@@ -81,7 +90,7 @@ async function neww () {
 
   try {
     // begin polling
-    pollRequestUidUrl(requestUidUrl, requestUid, interval, publicKey, privateKey)
+    pollRequestUidUrl(requestUidUrl, requestUid, interval, publicKey, privateKey, apiSyncUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${organizationsNewUrl}]...` })

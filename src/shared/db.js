@@ -31,6 +31,10 @@ function getConfStore () {
   return confStore
 }
 
+const configPath = function () {
+  return getConfStore().path
+}
+
 //
 // Set
 //
@@ -73,9 +77,12 @@ const getCurrentUserHashid = function () {
 }
 
 const getUserPublicKey = function (hashid) {
-  const key = `user/${hashid}/public_key`
-
-  return getConfStore().get(key)
+  if (currentUser.getHashid() === hashid) {
+    return currentUser.getPublicKey()
+  } else {
+    const key = `user/${hashid}/public_key`
+    return getConfStore().get(key)
+  }
 }
 
 const getOrganizationPrivateKey = function (organizationHashid) {
@@ -146,7 +153,8 @@ const getJson = function () {
 }
 
 module.exports = {
-  confStore,
+  getConfStore,
+  configPath,
 
   // Set
   setUser,
@@ -155,6 +163,7 @@ module.exports = {
 
   // Get
   getCurrentUserHashid,
+  getUserPublicKey,
   getCurrentUserUsername,
   getCurrentUserFullUsername,
   getJson
