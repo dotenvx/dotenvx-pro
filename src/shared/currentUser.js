@@ -4,7 +4,7 @@ const { PrivateKey } = require('eciesjs')
 const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
-const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
+const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
 
 const confStore = new Conf({
   projectName: 'dotenvx',
@@ -13,6 +13,7 @@ const confStore = new Conf({
   // https://github.com/sindresorhus/conf/tree/v10.2.0#projectsuffix.
   projectSuffix: '',
   fileExtension: '',
+  // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro',
   // in the spirit of dotenv and format inherently puts limits on config complexity
   serialize: function (json) {
     return jsonToEnv(json)
@@ -26,10 +27,17 @@ const confStore = new Conf({
 //
 // Set
 //
-const setUser = function (fullUsername, accessToken) {
-  // current logged in user
+const setUser = function (hashid, accessToken) {
+  if (!hashid) {
+    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
+  }
+
+  if (!accessToken) {
+    throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
+  }
+
+  confStore.set('DOTENVX_PRO_CURRENT_USER', hashid)
   confStore.set('DOTENVX_PRO_TOKEN', accessToken)
-  confStore.set('DOTENVX_PRO_FULL_USERNAME', fullUsername)
 
   return accessToken
 }
@@ -40,23 +48,12 @@ const setHostname = function (hostname) {
   return hostname
 }
 
-// used for recovery only - see getPrivateKey for first-time onboarding
-const setPrivateKey = function (privateKey) {
-  confStore.set('DOTENVX_PRO_PRIVATE_KEY', privateKey)
-
-  return privateKey
-}
-
 //
 // Delete
 //
-const deleteToken = function () {
+const logout = function () {
   confStore.delete('DOTENVX_PRO_TOKEN')
-
-  return true
-}
-
-const deleteHostname = function () {
+  confStore.delete('DOTENVX_PRO_CURRENT_USER')
   confStore.delete('DOTENVX_PRO_HOSTNAME')
 
   return true
@@ -69,30 +66,30 @@ const getHostname = function () {
   return confStore.get('DOTENVX_PRO_HOSTNAME') || 'https://pro.dotenvx.com'
 }
 
+const getHostfolder = function () {
+  const hostname = getHostname()
+
+  return extractSubdomainAndDomain(hostname)
+}
+
 const getToken = function () {
   return confStore.get('DOTENVX_PRO_TOKEN')
 }
 
-const getTokenShort = function () {
-  return (getToken() || '').slice(0, 11)
-}
+const getHashid = function () {
+  const hashid = confStore.get('DOTENVX_PRO_CURRENT_USER')
 
-const getFullUsername = function () {
-  return confStore.get('DOTENVX_PRO_FULL_USERNAME')
-}
-
-const getUsername = function () {
-  const key = getFullUsername()
-
-  if (key) {
-    return parseUsernameFromFullUsername(key)
-  } else {
-    return null
+  if (!hashid) {
+    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
   }
+
+  return hashid
 }
 
 const getPrivateKey = function () {
-  const currentPrivateKey = confStore.get('DOTENVX_PRO_PRIVATE_KEY')
+  const key = `DOTENVX_PRO_USER_${getHashid()}_PRIVATE_KEY`
+
+  const currentPrivateKey = confStore.get(key)
 
   if (currentPrivateKey && currentPrivateKey.length > 0) {
     return currentPrivateKey
@@ -102,13 +99,9 @@ const getPrivateKey = function () {
   const kp = new PrivateKey()
   const privateKey = kp.secret.toString('hex')
 
-  confStore.set('DOTENVX_PRO_PRIVATE_KEY', privateKey)
+  confStore.set(key, privateKey)
 
   return privateKey
-}
-
-const getPrivateKeyShort = function () {
-  return getPrivateKey().slice(0, 7)
 }
 
 const getPublicKey = function () {
@@ -138,18 +131,14 @@ module.exports = {
   // Set
   setUser,
   setHostname,
-  setPrivateKey,
   // Delete
-  deleteToken,
-  deleteHostname,
+  logout,
   // Get
   getHostname,
+  getHostfolder,
   getToken,
-  getTokenShort,
-  getUsername,
-  getFullUsername,
+  getHashid,
   getPrivateKey,
-  getPrivateKeyShort,
   getPublicKey,
   getRecoveryPhrase,
   configPath

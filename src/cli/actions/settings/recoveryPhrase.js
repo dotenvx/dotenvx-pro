@@ -1,4 +1,4 @@
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
@@ -7,7 +7,7 @@ function recoveryPhrase () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  let output = store.getRecoveryPhrase()
+  let output = currentUser.getRecoveryPhrase()
 
   if (!options.unmask) {
     output = maskRecoveryPhrase(output) // mask output

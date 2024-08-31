@@ -2,11 +2,12 @@ const ora = require('ora')
 const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
 
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 const cleanseRecoveryPhrase = require('./../../../lib/helpers/cleanseRecoveryPhrase')
 const convertRecoveryPhraseToPrivateKey = require('./../../../lib/helpers/convertRecoveryPhraseToPrivateKey')
 const sleep = require('./../../../lib/helpers/sleep')
+const truncate = require('./../../../lib/helpers/truncate')
 
 const spinner = ora('recovering your privateKey')
 
@@ -37,8 +38,8 @@ async function recover () {
   spinner.succeed('validated recovery phrase [*******]')
   spinner.start('recovering privateKey')
   await sleep(1000) // better dx
-  store.setPrivateKey(privateKey)
-  spinner.succeed(`recovered privateKey [${store.getPrivateKeyShort()}]`)
+  currentUser.setPrivateKey(privateKey)
+  spinner.succeed(`recovered privateKey [${truncate(currentUser.getPrivateKey())}]`)
   logger.success('✔ account recovered 🏆')
   logger.blank('')
   logger.blank('Next run [dotenvx pro login] to login and reconnect your device')

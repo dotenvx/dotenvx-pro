@@ -1,9 +1,9 @@
 const ora = require('ora')
 const { request } = require('undici')
 
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
-const mask = require('./../../../lib/helpers/mask')
+const smartTruncate = require('./../../../lib/helpers/smartTruncate')
 
 const spinner = ora('checking status')
 
@@ -11,29 +11,18 @@ async function status () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  function smartMask (str, showChar = 7) {
-    if (options.unmask) {
-      return str
-    } else {
-      return mask(str, showChar)
-    }
-  }
-  const token = store.getToken()
-  const hostname = store.getHostname()
-  const username = store.getUsername()
-  const fullUsername = store.getFullUsername()
-  const publicKey = store.getPublicKey()
-  const privateKey = store.getPrivateKey()
-  const configPath = store.configPath()
+  const token = currentUser.getToken()
+  const hostname = currentUser.getHostname()
+  const publicKey = currentUser.getPublicKey()
+  const privateKey = currentUser.getPrivateKey()
+  const configPath = currentUser.configPath()
 
-  spinner.succeed(`token [${smartMask(token, 11)}]`)
-  spinner.succeed(`username [${username}]`)
-  spinner.succeed(`fullUsername [${fullUsername}]`)
-  spinner.succeed(`publicKey [${smartMask(publicKey)}]`)
-  spinner.succeed(`privateKey [${smartMask(privateKey)}]`)
+  spinner.succeed(`token [${smartTruncate(token, options.unmask, 11)}]`)
+  spinner.succeed(`publicKey [${publicKey}]`)
+  spinner.succeed(`privateKey [${smartTruncate(privateKey, options.unmask)}]`)
   spinner.succeed(`configPath [${configPath}]`)
   spinner.succeed(`hostname [${hostname}]`)
-  spinner.start('fetching remote (username, fullUsername, publicKey)')
+  spinner.start('fetching remote (publicKey)')
 
   const statusUrl = `${hostname}/api/status`
   const response = await request(statusUrl, {
@@ -54,33 +43,13 @@ async function status () {
   }
 
   const remoteRevokedAt = responseData.revoked_at
-  const remoteUsername = responseData.username
-  const remoteFullUsername = responseData.full_username
-  const remotePublicKey = responseData.public_key
-
   if (remoteRevokedAt) {
-    spinner.fail(`remote: token revoked [${smartMask(token, 11)}]`)
+    spinner.fail(`remote: token revoked [${smartTruncate(token, options.unmask, 11)}]`)
   } else {
-    spinner.succeed(`remote: token [${smartMask(token, 11)}]`)
+    spinner.succeed(`remote: token [${smartTruncate(token, options.unmask, 11)}]`)
   }
 
-  if (remoteUsername === username) {
-    spinner.succeed(`remote: username [${remoteUsername}]`)
-  } else {
-    spinner.warn(`remote: username [${remoteUsername}]`)
-  }
-
-  if (remoteFullUsername === fullUsername) {
-    spinner.succeed(`remote: fullUsername [${remoteFullUsername}]`)
-  } else {
-    spinner.warn(`remote: fullUsername [${remoteFullUsername}]`)
-  }
-
-  if (remotePublicKey === publicKey) {
-    spinner.succeed(`remote: publicKey [${smartMask(remotePublicKey)}]`)
-  } else {
-    spinner.fail(`remote: publicKey [${smartMask(remotePublicKey)}]`)
-  }
+  spinner.succeed(`remote: username [${responseData.username}] (${responseData.hashid})`)
 }
 
 module.exports = status

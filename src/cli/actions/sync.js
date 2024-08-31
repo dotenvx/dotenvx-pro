@@ -1,26 +1,32 @@
 const ora = require('ora')
+const db = require('./../../shared/db')
 const currentUser = require('./../../shared/currentUser')
 const { request } = require('undici')
 const { logger } = require('./../../shared/logger')
 
-const spinner = ora('waiting on browser authorization')
+const spinner = ora('syncing')
 
-async function logout () {
+async function sync () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   const token = currentUser.getToken()
   const hostname = options.hostname
-  const logoutUrl = `${hostname}/logout`
-  const apiLogoutUrl = `${hostname}/api/logout`
+  const apiSyncUrl = `${hostname}/api/sync`
+  const dbJson = db.getJson()
 
-  const response = await request(apiLogoutUrl, {
+  spinner.start('syncing')
+
+  const body = JSON.stringify({
+    db: dbJson
+  })
+  const response = await request(apiSyncUrl, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({})
+    body
   })
 
   const responseData = await response.body.json()
@@ -30,15 +36,9 @@ async function logout () {
   if (response.statusCode >= 400) {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
   } else {
-    spinner.succeed(`logged off machine [${responseData.username}]`)
-
-    currentUser.logout()
-
-    spinner.succeed(`deleted access token [${responseData.access_token_short}]`)
-
-    logger.blank('')
-    logger.blank(`Next visit [${logoutUrl}] to additionally log off browser`)
+    db.setSync(responseData) // sync to local
+    spinner.succeed('synced')
   }
 }
 
-module.exports = logout
+module.exports = sync

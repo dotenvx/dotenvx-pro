@@ -4,22 +4,15 @@ const qrcode = require('qrcode')
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 
 const { logger } = require('./../../../shared/logger')
-const store = require('./../../../shared/store')
-const mask = require('./../../../lib/helpers/mask')
+const db = require('./../../../shared/db')
+const currentUser = require('./../../../shared/currentUser')
+const smartMask = require('./../../../lib/helpers/smartMask')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 
 async function emergencyKit () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
-
-  function smartMask (str) {
-    if (options.unmask) {
-      return str
-    } else {
-      return mask(str)
-    }
-  }
 
   function smartMaskRecoveryPhrase (str) {
     if (options.unmask) {
@@ -38,11 +31,11 @@ async function emergencyKit () {
     return `${year}-${month}-${day}`
   }
 
-  let privateKey = store.getPrivateKey()
-  let recoveryPhrase = store.getRecoveryPhrase()
+  let privateKey = currentUser.getPrivateKey()
+  let recoveryPhrase = currentUser.getRecoveryPhrase()
   recoveryPhrase = smartMaskRecoveryPhrase(recoveryPhrase)
   recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
-  privateKey = smartMask(privateKey)
+  privateKey = smartMask(privateKey, options.unmask)
 
   // setup
   const existing = fs.readFileSync(path.join(__dirname, '../../../assets/emergencyKitBlank.pdf'))
@@ -54,7 +47,7 @@ async function emergencyKit () {
   const monoFont = await pdf.embedFont(StandardFonts.Courier)
 
   // createdFor
-  page.drawText(`created for ${store.getUsername()} on ${currentDate()}`, {
+  page.drawText(`created for ${db.getCurrentUserUsername()} on ${currentDate()}`, {
     x: 100,
     y: 590,
     size: 9,

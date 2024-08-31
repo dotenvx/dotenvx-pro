@@ -4,7 +4,7 @@ const { Command } = require('commander')
 const program = new Command()
 
 const packageJson = require('./../lib/helpers/packageJson')
-const store = require('./../shared/store')
+const currentUser = require('./../shared/currentUser')
 const { setLogLevel } = require('./../shared/logger')
 
 // global log levels
@@ -25,19 +25,29 @@ program
   .description(packageJson.description)
   .version(packageJson.version)
 
+const syncAction = require('./actions/sync')
+program
+  .command('sync')
+  .description('sync')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .action(syncAction)
+
 const loginAction = require('./actions/login')
 program
   .command('login')
   .description('authenticate to dotenvx pro')
-  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(loginAction)
 
 const logoutAction = require('./actions/logout')
 program
   .command('logout')
   .description('log out this machine from dotenvx pro')
-  .option('-h, --hostname <url>', 'set hostname', store.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(logoutAction)
+
+// dotenvx pro organizations
+program.addCommand(require('./commands/organizations'))
 
 // dotenvx pro settings
 program.addCommand(require('./commands/settings'))

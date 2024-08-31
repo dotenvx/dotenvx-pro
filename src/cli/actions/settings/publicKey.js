@@ -1,8 +1,8 @@
-const store = require('./../../../shared/store')
+const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('./../../../shared/logger')
 
 function publicKey () {
-  const publicKey = store.getPublicKey()
+  const publicKey = currentUser.getPublicKey()
   if (publicKey) {
     process.stdout.write(publicKey)
   } else {
