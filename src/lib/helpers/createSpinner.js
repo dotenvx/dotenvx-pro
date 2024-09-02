@@ -1,4 +1,4 @@
-const chalk = require('chalk')
+const { getColor, bold } = require('@dotenvx/dotenvx')
 
 const FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 const HIDE_CURSOR = '\u001B[?25l'
@@ -13,7 +13,7 @@ class Spinner {
   text
   interval
   frameIndex = 0
-  symbol = chalk.blue(FRAMES[0])
+  symbol = getColor('blue')(FRAMES[0])
 
   constructor (text) {
     this.text = text
@@ -28,7 +28,7 @@ class Spinner {
   }
 
   tick () {
-    this.symbol = chalk.blue(FRAMES[this.frameIndex++])
+    this.symbol = getColor('blue')(FRAMES[this.frameIndex++])
     if (this.frameIndex === FRAMES.length - 1) this.frameIndex = 0
     this.render()
   }
@@ -41,7 +41,7 @@ class Spinner {
     if (text) {
       this.text = text
     }
-    this.symbol = chalk.green(SYMBOL_SUCCESS)
+    this.symbol = getColor('green')(SYMBOL_SUCCESS)
     this.end()
   }
 
@@ -49,7 +49,7 @@ class Spinner {
     if (text) {
       this.text = text
     }
-    this.symbol = chalk.blue(SYMBOL_INFO)
+    this.symbol = getColor('blue')(SYMBOL_INFO)
     this.end()
   }
 
@@ -57,7 +57,7 @@ class Spinner {
     if (text) {
       this.text = text
     }
-    this.symbol = chalk.yellow(SYMBOL_WARN)
+    this.symbol = getColor('orangered')(SYMBOL_WARN)
     this.end()
   }
 
@@ -65,7 +65,7 @@ class Spinner {
     if (text) {
       this.text = text
     }
-    this.symbol = chalk.red(SYMBOL_ERROR)
+    this.symbol = getColor('red')(SYMBOL_ERROR)
     this.end()
   }
 
@@ -86,11 +86,11 @@ const createSpinner = (initialMessage = '') => {
 
   return {
     start: (message) => spinner.start(message),
-    succeed: (message) => spinner.succeed(chalk.keyword('green')(message)),
-    warn: (message) => spinner.warn(chalk.keyword('orangered')(message)),
-    info: (message) => spinner.info(chalk.keyword('blue')(message)),
+    succeed: (message) => spinner.succeed(getColor('green')(message)),
+    warn: (message) => spinner.warn(getColor('orangered')(message)),
+    info: (message) => spinner.info(getColor('blue')(message)),
     done: (message) => spinner.succeed(message),
-    fail: (message) => spinner.fail(chalk.bold.red(message))
+    fail: (message) => spinner.fail(bold(getColor('red')(message)))
   }
 }
 
