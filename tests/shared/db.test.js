@@ -10,7 +10,7 @@ const currentUser = require('../../src/shared/currentUser')
 const decryptValue = require('../../src/lib/helpers/decryptValue')
 
 let setStub
-let deleteStub
+// let deleteStub
 let tmpFile
 
 const privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
@@ -19,7 +19,7 @@ const organizationPrivateKey = '1fc1cafa954a7a2bf0a6fbff46189c9e03e3a66b4d113310
 t.beforeEach((ct) => {
   sinon.restore()
   setStub = sinon.stub(db.getConfStore(), 'set')
-  deleteStub = sinon.stub(db.getConfStore(), 'delete')
+  // deleteStub = sinon.stub(db.getConfStore(), 'delete')
 
   // stub kp.secret.toString('hex')
   sinon.stub(PrivateKey.prototype, 'secret').get(() => Buffer.from(privateKey, 'hex'))
@@ -54,7 +54,7 @@ t.test('#configPath', ct => {
 })
 
 t.test('#getCurrentUserHashid', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
+  sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
   const result = db.getCurrentUserHashid()
 
@@ -64,7 +64,7 @@ t.test('#getCurrentUserHashid', ct => {
 })
 
 t.test('#getCurrentUserFullUsername', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
+  sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
   const result = db.getCurrentUserFullUsername()
 
@@ -74,7 +74,7 @@ t.test('#getCurrentUserFullUsername', ct => {
 })
 
 t.test('#getCurrentUserUsername', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
+  sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
   const result = db.getCurrentUserUsername()
 
@@ -84,7 +84,7 @@ t.test('#getCurrentUserUsername', ct => {
 })
 
 t.test('#getUserPublicKey - current user', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
+  sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
   const result = db.getUserPublicKey('AAABBB')
 
@@ -94,7 +94,7 @@ t.test('#getUserPublicKey - current user', ct => {
 })
 
 t.test('#getUserPublicKey - other user', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
+  sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
   const result = db.getUserPublicKey('CCCDDD')
 
@@ -122,4 +122,3 @@ t.test('#setUserOrganizationPrivateKey', ct => {
 
   ct.end()
 })
-

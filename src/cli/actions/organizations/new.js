@@ -52,7 +52,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
         db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
 
         // sync
-                const syncResult = await new Sync(apiSyncUrl).run()
+        const syncResult = await new Sync(apiSyncUrl).run()
 
         if (syncResult.response.statusCode >= 400) {
           spinner.fail(`[${syncResult.responseData.error.code}] ${syncResult.responseData.error.message}`)
