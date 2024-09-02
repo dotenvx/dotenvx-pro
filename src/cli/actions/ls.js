@@ -1,6 +1,6 @@
 const treeify = require('object-treeify')
 
-const { logger } = require('./../../shared/logger')
+const { logger } = require('@dotenvx/dotenvx')
 
 const dotenvx = require('@dotenvx/dotenvx')
 const ArrayToTree = require('./../../lib/helpers/arrayToTree')

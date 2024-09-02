@@ -5,7 +5,7 @@ const program = new Command()
 
 const packageJson = require('./../lib/helpers/packageJson')
 const currentUser = require('./../shared/currentUser')
-const { setLogLevel } = require('./../shared/logger')
+const { setLogLevel } = require('@dotenvx/dotenvx')
 
 // global log levels
 program
