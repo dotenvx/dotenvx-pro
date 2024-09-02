@@ -1,11 +1,12 @@
-const ora = require('ora')
 const { table } = require('table')
 const { request } = require('undici')
 
 const currentUser = require('./../../../shared/currentUser')
 const { logger } = require('@dotenvx/dotenvx')
 
-const spinner = ora('fetching team')
+const { createSpinner } = require('./../../../lib/helpers/createSpinner')
+
+const spinner = createSpinner('fetching team')
 
 async function team (organizationSlug) {
   logger.debug(`organizationSlug: ${organizationSlug}`)
@@ -26,7 +27,7 @@ async function team (organizationSlug) {
 
   const responseData = await response.body.json()
 
-  logger.http(responseData)
+  logger.debug(responseData)
 
   if (response.statusCode >= 400) {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)

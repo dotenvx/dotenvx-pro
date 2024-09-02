@@ -1,11 +1,11 @@
-const ora = require('ora')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
 const smartTruncate = require('./../../../lib/helpers/smartTruncate')
+const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 
-const spinner = ora('checking status')
+const spinner = createSpinner('checking status')
 
 async function status () {
   const options = this.opts()
@@ -35,7 +35,7 @@ async function status () {
 
   const responseData = await response.body.json()
 
-  logger.http(responseData)
+  logger.debug(responseData)
 
   if (response.statusCode >= 400) {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)

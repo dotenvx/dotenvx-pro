@@ -1,17 +1,17 @@
-const ora = require('ora')
 const open = require('open')
 const { request } = require('undici')
-const confirm = require('@inquirer/confirm').default
 const { logger } = require('@dotenvx/dotenvx')
 
 const db = require('./../../shared/db')
 const currentUser = require('./../../shared/currentUser')
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
+const { createSpinner } = require('./../../lib/helpers/createSpinner')
+const confirm = require('./../../lib/helpers/confirm')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
-const spinner = ora('waiting on browser authorization')
+const spinner = createSpinner('waiting on browser authorization')
 
 const formatCode = function (str) {
   const parts = []
@@ -41,7 +41,7 @@ async function syncPublicKey (publicKeyUrl) {
 
   const responseData = await response.body.json()
 
-  logger.http(responseData)
+  logger.debug(responseData)
 
   if (response.statusCode >= 400) {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
@@ -52,7 +52,7 @@ async function syncPublicKey (publicKeyUrl) {
 }
 
 async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, settingsDevicesUrl) {
-  logger.http(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
+  logger.debug(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
     try {
@@ -70,7 +70,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, setti
 
       const responseData = await response.body.json()
 
-      logger.http(responseData)
+      logger.debug(responseData)
 
       if (response.statusCode >= 400) {
         // continue polling if authorization_pending
@@ -144,7 +144,7 @@ async function login () {
     const responseData = await response.body.json()
 
     if (response.statusCode >= 400) {
-      logger.http(responseData)
+      logger.debug(responseData)
       logger.error(responseData.error_description)
       process.exit(1)
     }
