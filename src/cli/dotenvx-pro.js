@@ -46,6 +46,15 @@ program
   .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(logoutAction)
 
+// dotenvx pro ls
+const lsAction = require('./actions/ls')
+program.command('ls')
+  .description('print all .env files in a tree structure')
+  .argument('[directory]', 'directory to list .env files from', '.')
+  .option('-f, --env-file <filenames...>', 'path(s) to your env file(s)', '.env*')
+  .option('-ef, --exclude-env-file <excludeFilenames...>', 'path(s) to exclude from your env file(s) (default: none)')
+  .action(lsAction)
+
 // dotenvx pro organizations
 program.addCommand(require('./commands/organizations'))
 
