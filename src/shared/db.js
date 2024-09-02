@@ -6,7 +6,7 @@ const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
 
-let confStore
+let _store
 
 function initializeConfStore () {
   if (!currentUser.getHashid()) {
@@ -14,7 +14,8 @@ function initializeConfStore () {
     process.exit(1)
   }
 
-  confStore = new Conf({
+  _store = new Conf({
+    cwd: process.env.DOTENVX_CONFIG || undefined,
     projectName: 'dotenvx',
     configName: `${currentUser.getHostfolder()}/${currentUser.getHashid()}/db`,
     projectSuffix: '',
@@ -23,16 +24,16 @@ function initializeConfStore () {
   })
 }
 
-// Ensure confStore is initialized before accessing it
-function getConfStore () {
-  if (!confStore) {
+// Ensure store is initialized before accessing it
+function store () {
+  if (!_store) {
     initializeConfStore()
   }
-  return confStore
+  return _store
 }
 
 const configPath = function () {
-  return getConfStore().path
+  return store().path
 }
 
 //
@@ -43,7 +44,7 @@ const setUserOrganizationPrivateKey = function (hashid, organizationHashid, priv
   const encryptedValue = encryptValue(privateKey, publicKey)
 
   const key = `user/${hashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
-  getConfStore().set(key, encryptedValue)
+  store().set(key, encryptedValue)
 
   return encryptedValue
 }
@@ -51,7 +52,7 @@ const setUserOrganizationPrivateKey = function (hashid, organizationHashid, priv
 const setUser = function (hashid, fullUsername) {
   const key = `user/${hashid}/full_username`
 
-  getConfStore().set(key, fullUsername)
+  store().set(key, fullUsername)
 
   return hashid
 }
@@ -61,7 +62,7 @@ const setSync = function (syncData) {
   for (const key in syncData) {
     const value = syncData[key]
 
-    getConfStore().set(key, value)
+    store().set(key, value)
   }
 
   // should i handle deletes?
@@ -72,16 +73,12 @@ const setSync = function (syncData) {
 //
 // Get
 //
-const getCurrentUserHashid = function () {
-  return currentUser.getHashid()
-}
-
 const getUserPublicKey = function (hashid) {
   if (currentUser.getHashid() === hashid) {
     return currentUser.getPublicKey()
   } else {
     const key = `user/${hashid}/public_key`
-    return getConfStore().get(key)
+    return store().get(key)
   }
 }
 
@@ -96,7 +93,7 @@ const getOrganizationPrivateKey = function (organizationHashid) {
 
   // 2. use that to grab the encrypted organization private key
   const findKey = `user/${userHashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
-  const organizationPrivateKeyEncrypted = getConfStore().get(findKey)
+  const organizationPrivateKeyEncrypted = store().get(findKey)
 
   if (!organizationPrivateKeyEncrypted) {
     return null
@@ -109,9 +106,9 @@ const getOrganizationPrivateKey = function (organizationHashid) {
 }
 
 const getCurrentUserFullUsername = function () {
-  const key = `user/${getCurrentUserHashid()}/full_username`
+  const key = `user/${currentUser.getHashid()}/full_username`
 
-  return getConfStore().get(key)
+  return store().get(key)
 }
 
 const getCurrentUserUsername = function () {
@@ -126,8 +123,8 @@ const getCurrentUserUsername = function () {
 
 const getJson = function () {
   const j = {}
-  for (const key in getConfStore().store) {
-    const value = getConfStore().store[key]
+  for (const key in store().store) {
+    const value = store().store[key]
 
     j[key] = value
 
@@ -153,7 +150,7 @@ const getJson = function () {
 }
 
 module.exports = {
-  getConfStore,
+  store,
   configPath,
 
   // Set
@@ -162,7 +159,6 @@ module.exports = {
   setUserOrganizationPrivateKey,
 
   // Get
-  getCurrentUserHashid,
   getUserPublicKey,
   getCurrentUserUsername,
   getCurrentUserFullUsername,
