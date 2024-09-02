@@ -4,10 +4,10 @@ const crypto = require('crypto')
 const { request } = require('undici')
 const confirm = require('@inquirer/confirm').default
 const { PrivateKey } = require('eciesjs')
+const { logger } = require('@dotenvx/dotenvx')
 
 const db = require('./../../../shared/db')
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 
 const Sync = require('./../../../lib/services/sync')
 

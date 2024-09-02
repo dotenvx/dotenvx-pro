@@ -1,5 +1,5 @@
 const Conf = require('conf')
-const { logger } = require('./logger')
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./currentUser')
 const encryptValue = require('./../lib/helpers/encryptValue')

@@ -1,6 +1,6 @@
 const ora = require('ora')
 const db = require('./../../shared/db')
-const { logger } = require('./../../shared/logger')
+const { logger } = require('@dotenvx/dotenvx')
 
 const Sync = require('./../../lib/services/sync')
 

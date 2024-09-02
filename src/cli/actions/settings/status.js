@@ -1,8 +1,8 @@
 const ora = require('ora')
 const { request } = require('undici')
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 const smartTruncate = require('./../../../lib/helpers/smartTruncate')
 
 const spinner = ora('checking status')

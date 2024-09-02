@@ -1,9 +1,9 @@
 const ora = require('ora')
 const { table } = require('table')
 const { request } = require('undici')
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 const decryptValue = require('./../../../lib/helpers/decryptValue')
 const smartTruncate = require('./../../../lib/helpers/smartTruncate')
 

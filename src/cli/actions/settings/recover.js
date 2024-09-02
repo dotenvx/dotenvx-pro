@@ -1,9 +1,9 @@
 const ora = require('ora')
 const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 const cleanseRecoveryPhrase = require('./../../../lib/helpers/cleanseRecoveryPhrase')
 const convertRecoveryPhraseToPrivateKey = require('./../../../lib/helpers/convertRecoveryPhraseToPrivateKey')
 const sleep = require('./../../../lib/helpers/sleep')

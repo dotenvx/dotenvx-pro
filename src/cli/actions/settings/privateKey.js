@@ -1,5 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function privateKey () {

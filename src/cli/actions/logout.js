@@ -1,7 +1,7 @@
 const ora = require('ora')
+const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../shared/currentUser')
 const { request } = require('undici')
-const { logger } = require('./../../shared/logger')
 
 const spinner = ora('waiting on browser authorization')
 

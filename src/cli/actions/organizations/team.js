@@ -3,7 +3,7 @@ const { table } = require('table')
 const { request } = require('undici')
 
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
+const { logger } = require('@dotenvx/dotenvx')
 
 const spinner = ora('fetching team')
 

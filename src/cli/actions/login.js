@@ -2,10 +2,10 @@ const ora = require('ora')
 const open = require('open')
 const { request } = require('undici')
 const confirm = require('@inquirer/confirm').default
+const { logger } = require('@dotenvx/dotenvx')
 
 const db = require('./../../shared/db')
 const currentUser = require('./../../shared/currentUser')
-const { logger } = require('./../../shared/logger')
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
 
