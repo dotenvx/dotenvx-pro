@@ -1,10 +1,11 @@
-const ora = require('ora')
 const db = require('./../../shared/db')
-const { logger } = require('./../../shared/logger')
+const { logger } = require('@dotenvx/dotenvx')
+
+const { createSpinner } = require('./../../lib/helpers/createSpinner')
 
 const Sync = require('./../../lib/services/sync')
 
-const spinner = ora('syncing')
+const spinner = createSpinner('syncing')
 
 async function sync () {
   const options = this.opts()
@@ -17,7 +18,7 @@ async function sync () {
 
   const { response, responseData } = await new Sync(apiSyncUrl).run()
 
-  logger.http(responseData)
+  logger.debug(responseData)
 
   if (response.statusCode >= 400) {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)

@@ -1,5 +1,5 @@
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
+const { logger } = require('@dotenvx/dotenvx')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
 

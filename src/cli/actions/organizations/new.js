@@ -1,20 +1,20 @@
-const ora = require('ora')
 const open = require('open')
 const crypto = require('crypto')
 const { request } = require('undici')
-const confirm = require('@inquirer/confirm').default
 const { PrivateKey } = require('eciesjs')
+const { logger } = require('@dotenvx/dotenvx')
 
 const db = require('./../../../shared/db')
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
+const { createSpinner } = require('./../../../lib/helpers/createSpinner')
+const confirm = require('./../../../lib/helpers/confirm')
 
 const Sync = require('./../../../lib/services/sync')
 
-const spinner = ora('waiting on browser creation')
+const spinner = createSpinner('waiting on browser creation')
 
 async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey, privateKey, apiSyncUrl) {
-  logger.http(`POST ${requestUidUrl} with requestUid ${requestUid} at interval ${interval}`)
+  logger.debug(`POST ${requestUidUrl} with requestUid ${requestUid} at interval ${interval}`)
 
   while (true) {
     try {
@@ -34,7 +34,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
 
       const responseData = await response.body.json()
 
-      logger.http(responseData)
+      logger.debug(responseData)
 
       if (response.statusCode === 401) {
         spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
@@ -52,7 +52,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
         db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
 
         // sync
-                const syncResult = await new Sync(apiSyncUrl).run()
+        const syncResult = await new Sync(apiSyncUrl).run()
 
         if (syncResult.response.statusCode >= 400) {
           spinner.fail(`[${syncResult.responseData.error.code}] ${syncResult.responseData.error.message}`)

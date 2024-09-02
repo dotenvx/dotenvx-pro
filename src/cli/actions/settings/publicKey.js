@@ -1,5 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 
 function publicKey () {
   const publicKey = currentUser.getPublicKey()

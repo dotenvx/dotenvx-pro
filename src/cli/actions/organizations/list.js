@@ -1,13 +1,13 @@
-const ora = require('ora')
 const { table } = require('table')
 const { request } = require('undici')
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 const decryptValue = require('./../../../lib/helpers/decryptValue')
 const smartTruncate = require('./../../../lib/helpers/smartTruncate')
+const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 
-const spinner = ora('fetching organizations')
+const spinner = createSpinner('fetching organizations')
 
 async function list () {
   const options = this.opts()
@@ -26,7 +26,7 @@ async function list () {
 
   const responseData = await response.body.json()
 
-  logger.http(responseData)
+  logger.debug(responseData)
 
   if (response.statusCode >= 400) {
     spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)

@@ -8,30 +8,37 @@ const currentUser = require('../../src/shared/currentUser')
 
 let setStub
 let deleteStub
-let tmpFile
+
+const tmpDir = tmp.dirSync()
 
 const privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
 
 t.beforeEach((ct) => {
+  process.env = {}
+  process.env.DOTENVX_CONFIG = tmpDir.name
+
   sinon.restore()
-  setStub = sinon.stub(currentUser.confStore, 'set')
-  deleteStub = sinon.stub(currentUser.confStore, 'delete')
+  setStub = sinon.stub(currentUser.store(), 'set')
+  deleteStub = sinon.stub(currentUser.store(), 'delete')
 
   // stub kp.secret.toString('hex')
   sinon.stub(PrivateKey.prototype, 'secret').get(() => Buffer.from(privateKey, 'hex'))
+})
 
-  tmpFile = tmp.fileSync()
-  currentUser.confStore.path = tmpFile.name // /tmp path for testing
-  fs.writeSync(tmpFile.fd, `DOTENVX_PRO_TOKEN="dxo_1234"
-DOTENVX_PRO_HOSTNAME="https://pro.dotenvx.com"`)
+t.test('#configPath', ct => {
+  const result = currentUser.configPath()
+
+  ct.same(result, `${tmpDir.name}/.env`)
+
+  ct.end()
 })
 
 t.test('confStore#serialize', ct => {
   setStub.restore() // restore so we can test real serialization
 
-  currentUser.confStore.set('KEY', 'value')
+  currentUser.store().set('KEY', 'value')
 
-  const result = currentUser.confStore.get('KEY')
+  const result = currentUser.store().get('KEY')
 
   ct.same(result, 'value')
 
@@ -91,7 +98,7 @@ t.test('#logout', ct => {
 })
 
 t.test('#getHostname', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
+  const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
 
   const result = currentUser.getHostname()
 
@@ -102,7 +109,7 @@ t.test('#getHostname', ct => {
 })
 
 t.test('#getHostname - custom', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns('http://localhost:3000')
+  const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns('http://localhost:3000')
 
   const result = currentUser.getHostname()
 
@@ -113,7 +120,7 @@ t.test('#getHostname - custom', ct => {
 })
 
 t.test('#getHostfolder', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
+  const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
 
   const result = currentUser.getHostfolder()
 
@@ -124,7 +131,7 @@ t.test('#getHostfolder', ct => {
 })
 
 t.test('#getToken', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_TOKEN').returns('dxo_123456789')
+  const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_TOKEN').returns('dxo_123456789')
 
   const result = currentUser.getToken()
 
@@ -135,7 +142,7 @@ t.test('#getToken', ct => {
 })
 
 t.test('#getHashid', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
+  const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
   const result = currentUser.getHashid()
 
@@ -145,8 +152,20 @@ t.test('#getHashid', ct => {
   ct.end()
 })
 
+t.test('#getHashid - without writing instead of stubbing', ct => {
+  fs.writeFileSync(currentUser.configPath(), `DOTENVX_PRO_TOKEN="dxo_1234"
+DOTENVX_PRO_HOSTNAME="http://pro.dotenvx.com"
+DOTENVX_PRO_CURRENT_USER="AAABBB"`)
+
+  const result = currentUser.getHashid()
+
+  ct.same(result, 'AAABBB')
+
+  ct.end()
+})
+
 t.test('#getPrivateKey - user exists and privateKey exists', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get')
+  const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
@@ -159,7 +178,7 @@ t.test('#getPrivateKey - user exists and privateKey exists', ct => {
 })
 
 t.test('#getPrivateKey - missing user', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get')
+  const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
   try {
@@ -174,7 +193,7 @@ t.test('#getPrivateKey - missing user', ct => {
 })
 
 t.test('#getPrivateKey - missing privateKey then it generates it', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get')
+  const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(undefined)
 
@@ -186,7 +205,7 @@ t.test('#getPrivateKey - missing privateKey then it generates it', ct => {
 })
 
 t.test('#getPublicKey', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get')
+  const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
@@ -199,7 +218,7 @@ t.test('#getPublicKey', ct => {
 })
 
 t.test('#getRecoveryPhrase', ct => {
-  const getStub = sinon.stub(currentUser.confStore, 'get')
+  const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
@@ -207,14 +226,6 @@ t.test('#getRecoveryPhrase', ct => {
 
   ct.same(result, 'clutch only already insect forest summer brush actual maximum scorpion road tennis jar april across wrap satisfy same concert ecology finger concert nation alarm')
   ct.ok(getStub.called, 'confStore.get')
-
-  ct.end()
-})
-
-t.test('#configPath', ct => {
-  const result = currentUser.configPath()
-
-  ct.same(result, tmpFile.name)
 
   ct.end()
 })

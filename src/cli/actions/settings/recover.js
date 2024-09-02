@@ -1,15 +1,15 @@
-const ora = require('ora')
 const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('./../../../shared/logger')
 const cleanseRecoveryPhrase = require('./../../../lib/helpers/cleanseRecoveryPhrase')
 const convertRecoveryPhraseToPrivateKey = require('./../../../lib/helpers/convertRecoveryPhraseToPrivateKey')
 const sleep = require('./../../../lib/helpers/sleep')
 const truncate = require('./../../../lib/helpers/truncate')
+const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 
-const spinner = ora('recovering your privateKey')
+const spinner = createSpinner('recovering your privateKey')
 
 async function recover () {
   const input = await enquirer.prompt({
