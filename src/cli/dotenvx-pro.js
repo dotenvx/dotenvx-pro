@@ -25,6 +25,15 @@ program
   .description(packageJson.description)
   .version(packageJson.version)
 
+const pushAction = require('./actions/push')
+program
+  .command('push')
+  .description('push .env.keys to dotenvx pro')
+  .argument('[directory]', 'directory to push', '.')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .action(pushAction)
+
 const syncAction = require('./actions/sync')
 program
   .command('sync')
