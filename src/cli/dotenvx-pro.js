@@ -70,6 +70,9 @@ program.addCommand(require('./commands/organizations'))
 // dotenvx pro settings
 program.addCommand(require('./commands/settings'))
 
+// dotenvx pro api
+program.addCommand(require('./commands/api'))
+
 // overide helpInformation to hide help command
 program.helpInformation = function () {
   const originalHelp = Command.prototype.helpInformation.call(this)
