@@ -14,13 +14,13 @@ api
   .option('-pp, --pretty-print', 'pretty print output')
   .action(meAction)
 
-// dotenvx api me
-const meAction = require('./../actions/api/me')
+// dotenvx api organization
+const organizationAction = require('./../actions/api/organization')
 api
-  .command('me')
-  .description('/api/me')
+  .command('organization')
+  .argument('<organizationHashid>', 'organization hashid')
+  .description('/api/organization/:hashid')
   .option('-pp, --pretty-print', 'pretty print output')
-  .action(meAction)
-
+  .action(organizationAction)
 
 module.exports = api
