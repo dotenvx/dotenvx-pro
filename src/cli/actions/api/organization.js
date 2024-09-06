@@ -1,6 +1,6 @@
 const { logger } = require('@dotenvx/dotenvx')
-const { request } = require('undici')
 const currentUser = require('./../../../shared/currentUser')
+const GetOrganization = require('./../../../lib/api/getOrganization')
 
 async function organization (organizationHashid) {
   logger.debug(`organizationHashid: ${organizationHashid}`)
@@ -8,29 +8,13 @@ async function organization (organizationHashid) {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.getToken()
-  const hostname = currentUser.getHostname()
-  const organizationUrl = `${hostname}/api/organization/${organizationHashid}`
-  const response = await request(organizationUrl, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
-
-  const results = await response.body.json()
+  const json = await new GetOrganization(currentUser.getHostname(), currentUser.getToken(), organizationHashid).run()
 
   let space = 0
   if (options.prettyPrint) {
     space = 2
   }
-
-  process.stdout.write(JSON.stringify(results, null, space))
-
-  if (response.statusCode >= 400) {
-    process.exit(1)
-  }
+  process.stdout.write(JSON.stringify(json, null, space))
 }
 
 module.exports = organization

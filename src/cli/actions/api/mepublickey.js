@@ -1,12 +1,12 @@
 const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
-const GetMe = require('./../../../lib/api/getMe')
+const PostMePublicKey = require('./../../../lib/api/postMePublicKey')
 
-async function me () {
+async function mepublickey () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const json = await new GetMe(currentUser.getHostname(), currentUser.getToken()).run()
+  const json = await new PostMePublicKey(currentUser.getHostname(), currentUser.getToken(), currentUser.getPublicKey()).run()
 
   let space = 0
   if (options.prettyPrint) {
@@ -15,4 +15,4 @@ async function me () {
   process.stdout.write(JSON.stringify(json, null, space))
 }
 
-module.exports = me
+module.exports = mepublickey

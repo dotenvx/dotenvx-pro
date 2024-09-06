@@ -94,7 +94,7 @@ async function push (directory) {
     const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
     const publicKey = keypairs[publicKeyName]
     if (!publicKey) {
-      spinner.fail(`oops, could not locate public key`)
+      spinner.fail('oops, could not locate public key')
       process.exit(1)
     }
 
