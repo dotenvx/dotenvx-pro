@@ -86,7 +86,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, setti
       if (responseData.access_token) {
         const {
           username,
-          hashid,
+          id,
           hostname
         } = responseData
         const fullUsername = responseData.full_username
@@ -96,8 +96,8 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, setti
         spinner.succeed(`logged in [${username}]`)
 
         currentUser.setHostname(hostname)
-        currentUser.setUser(hashid, accessToken)
-        db.setUser(hashid, fullUsername)
+        currentUser.setUser(id, accessToken)
+        db.setUser(id, fullUsername)
 
         spinner.succeed(`set access token [${accessTokenShort}]`)
 

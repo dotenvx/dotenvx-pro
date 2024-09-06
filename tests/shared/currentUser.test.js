@@ -55,7 +55,7 @@ t.test('#setUser', ct => {
   ct.end()
 })
 
-t.test('#setUser - undefined hashid', ct => {
+t.test('#setUser - undefined id', ct => {
   try {
     currentUser.setUser(undefined, 'dxo_1234')
     ct.fail('should have raised an error but did not')
@@ -141,10 +141,10 @@ t.test('#getToken', ct => {
   ct.end()
 })
 
-t.test('#getHashid', ct => {
+t.test('#getId', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
-  const result = currentUser.getHashid()
+  const result = currentUser.getId()
 
   ct.same(result, 'AAABBB')
   ct.ok(getStub.calledWith('DOTENVX_PRO_CURRENT_USER'), 'get DOTENVX_PRO_CURRENT_USER')
@@ -152,12 +152,12 @@ t.test('#getHashid', ct => {
   ct.end()
 })
 
-t.test('#getHashid - without writing instead of stubbing', ct => {
+t.test('#getId - without writing instead of stubbing', ct => {
   fs.writeFileSync(currentUser.configPath(), `DOTENVX_PRO_TOKEN="dxo_1234"
 DOTENVX_PRO_HOSTNAME="http://pro.dotenvx.com"
 DOTENVX_PRO_CURRENT_USER="AAABBB"`)
 
-  const result = currentUser.getHashid()
+  const result = currentUser.getId()
 
   ct.same(result, 'AAABBB')
 

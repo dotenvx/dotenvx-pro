@@ -26,8 +26,8 @@ api
 const organizationAction = require('./../actions/api/organization')
 api
   .command('organization')
-  .argument('<organizationHashid>', 'organization hashid')
-  .description('GET /api/organization/:hashid')
+  .argument('<organizationId>', 'organization id')
+  .description('GET /api/organization/:id')
   .option('-pp, --pretty-print', 'pretty print output')
   .action(organizationAction)
 

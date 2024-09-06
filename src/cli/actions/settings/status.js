@@ -49,7 +49,7 @@ async function status () {
     spinner.succeed(`remote: token [${smartTruncate(token, options.unmask, 11)}]`)
   }
 
-  spinner.succeed(`remote: username [${responseData.username}] (${responseData.hashid})`)
+  spinner.succeed(`remote: username [${responseData.username}] (${responseData.id})`)
 }
 
 module.exports = status

@@ -40,8 +40,8 @@ const configPath = function () {
 //
 // Set
 //
-const setUser = function (hashid, accessToken) {
-  if (!hashid) {
+const setUser = function (id, accessToken) {
+  if (!id) {
     throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
   }
 
@@ -49,7 +49,7 @@ const setUser = function (hashid, accessToken) {
     throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
   }
 
-  store().set('DOTENVX_PRO_CURRENT_USER', hashid)
+  store().set('DOTENVX_PRO_CURRENT_USER', id)
   store().set('DOTENVX_PRO_TOKEN', accessToken)
 
   return accessToken
@@ -89,18 +89,18 @@ const getToken = function () {
   return store().get('DOTENVX_PRO_TOKEN')
 }
 
-const getHashid = function () {
-  const hashid = store().get('DOTENVX_PRO_CURRENT_USER')
+const getId = function () {
+  const id = store().get('DOTENVX_PRO_CURRENT_USER')
 
-  if (!hashid) {
+  if (!id) {
     throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
   }
 
-  return hashid
+  return id
 }
 
 const getPrivateKey = function () {
-  const key = `DOTENVX_PRO_USER_${getHashid()}_PRIVATE_KEY`
+  const key = `DOTENVX_PRO_USER_${getId()}_PRIVATE_KEY`
 
   const currentPrivateKey = store().get(key)
 
@@ -147,7 +147,7 @@ module.exports = {
   getHostname,
   getHostfolder,
   getToken,
-  getHashid,
+  getId,
   getPrivateKey,
   getPublicKey,
   getRecoveryPhrase

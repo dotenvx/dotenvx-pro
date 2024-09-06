@@ -19,7 +19,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
   while (true) {
     try {
       const token = currentUser.getToken()
-      const hashid = currentUser.getHashid()
+      const id = currentUser.getId()
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {
@@ -48,8 +48,8 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
       } else {
         spinner.succeed(`created organization [${responseData.slug}]`)
 
-        logger.debug(`setting organization.${responseData.hashid}`)
-        db.setUserOrganizationPrivateKey(hashid, responseData.hashid, privateKey)
+        logger.debug(`setting organization.${responseData.id}`)
+        db.setUserOrganizationPrivateKey(id, responseData.id, privateKey)
 
         // sync
         const syncResult = await new Sync(apiSyncUrl).run()

@@ -9,7 +9,7 @@ const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUs
 let _store
 
 function initializeConfStore () {
-  if (!currentUser.getHashid()) {
+  if (!currentUser.getId()) {
     logger.error('[unauthorized] please log in with [dotenvx pro login]')
     process.exit(1)
   }
@@ -17,7 +17,7 @@ function initializeConfStore () {
   _store = new Conf({
     cwd: process.env.DOTENVX_CONFIG || undefined,
     projectName: 'dotenvx',
-    configName: `${currentUser.getHostfolder()}/${currentUser.getHashid()}/db`,
+    configName: `${currentUser.getHostfolder()}/${currentUser.getId()}/db`,
     projectSuffix: '',
     fileExtension: 'json'
     // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
@@ -39,22 +39,22 @@ const configPath = function () {
 //
 // Set
 //
-const setUserOrganizationPrivateKey = function (hashid, organizationHashid, privateKey) {
-  const publicKey = getUserPublicKey(hashid)
+const setUserOrganizationPrivateKey = function (id, organizationId, privateKey) {
+  const publicKey = getUserPublicKey(id)
   const encryptedValue = encryptValue(privateKey, publicKey)
 
-  const key = `user/${hashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
+  const key = `user/${id}/organization/${organizationId}/organization_private_key_encrypted_with_user_public_key`
   store().set(key, encryptedValue)
 
   return encryptedValue
 }
 
-const setUser = function (hashid, fullUsername) {
-  const key = `user/${hashid}/full_username`
+const setUser = function (id, fullUsername) {
+  const key = `user/${id}/full_username`
 
   store().set(key, fullUsername)
 
-  return hashid
+  return id
 }
 
 const setSync = function (syncData) {
@@ -73,26 +73,26 @@ const setSync = function (syncData) {
 //
 // Get
 //
-const getUserPublicKey = function (hashid) {
-  if (currentUser.getHashid() === hashid) {
+const getUserPublicKey = function (id) {
+  if (currentUser.getId() === id) {
     return currentUser.getPublicKey()
   } else {
-    const key = `user/${hashid}/public_key`
+    const key = `user/${id}/public_key`
     return store().get(key)
   }
 }
 
-const getOrganizationPrivateKey = function (organizationHashid) {
+const getOrganizationPrivateKey = function (organizationId) {
   // 1. get current user's privateKey
   const privateKey = currentUser.getPrivateKey()
-  const userHashid = currentUser.getHashid()
+  const userId = currentUser.getId()
 
-  if (!privateKey || !userHashid) {
+  if (!privateKey || !userId) {
     return null
   }
 
   // 2. use that to grab the encrypted organization private key
-  const findKey = `user/${userHashid}/organization/${organizationHashid}/organization_private_key_encrypted_with_user_public_key`
+  const findKey = `user/${userId}/organization/${organizationId}/organization_private_key_encrypted_with_user_public_key`
   const organizationPrivateKeyEncrypted = store().get(findKey)
 
   if (!organizationPrivateKeyEncrypted) {
@@ -106,7 +106,7 @@ const getOrganizationPrivateKey = function (organizationHashid) {
 }
 
 const getCurrentUserFullUsername = function () {
-  const key = `user/${currentUser.getHashid()}/full_username`
+  const key = `user/${currentUser.getId()}/full_username`
 
   return store().get(key)
 }
@@ -134,12 +134,12 @@ const getJson = function () {
       const pattern = /^user\/([^/]+)\/organization\/([^/]+)\/.*$/
       const match = key.match(pattern)
       if (match) {
-        const userHashid = match[1]
-        const organizationHashid = match[2]
-        const organizationPrivateKey = getOrganizationPrivateKey(organizationHashid)
+        const userId = match[1]
+        const organizationId = match[2]
+        const organizationPrivateKey = getOrganizationPrivateKey(organizationId)
 
         if (organizationPrivateKey) {
-          const organizationPrivateKeyEncryptedWithUserPublicKey = setUserOrganizationPrivateKey(userHashid, organizationHashid, organizationPrivateKey)
+          const organizationPrivateKeyEncryptedWithUserPublicKey = setUserOrganizationPrivateKey(userId, organizationId, organizationPrivateKey)
           j[key] = organizationPrivateKeyEncryptedWithUserPublicKey
         }
       }
