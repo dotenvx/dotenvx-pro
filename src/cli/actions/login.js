@@ -68,7 +68,6 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
 
         process.exit(0)
       } else {
-        // continue polling if no access_token. shouldn't ever get here if server is implemented correctly
         await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {

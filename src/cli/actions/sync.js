@@ -4,6 +4,7 @@ const currentUser = require('./../../shared/currentUser')
 
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const PostMePublicKey = require('./../../lib/api/postMePublicKey')
+const organizationIds = require('./../../lib/helpers/organizationIds')
 
 const spinner = createSpinner('syncing')
 
@@ -34,6 +35,16 @@ async function sync () {
       throw error
     }
     spinner.succeed('emergency kit')
+
+    // organization(s) - check if any
+    spinner.start('organization(s)')
+    const _organizationIds = organizationIds(me)
+    if (!_organizationIds || _organizationIds.length < 1) {
+      const error = new Error()
+      error.message = `missing organization(s). Ask your teammate to invite you [${me.username}] or create your own [dotenvx pro organizations new]`
+      throw error
+    }
+    spinner.succeed('organization(s)')
   } catch (error) {
     if (error.message) {
       spinner.fail(error.message)

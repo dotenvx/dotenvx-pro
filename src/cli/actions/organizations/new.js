@@ -13,7 +13,7 @@ const Sync = require('./../../../lib/services/sync')
 
 const spinner = createSpinner('waiting on browser creation')
 
-async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey, privateKey, apiSyncUrl) {
+async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
   logger.debug(`POST ${requestUidUrl} with requestUid ${requestUid} at interval ${interval}`)
 
   while (true) {
@@ -27,7 +27,6 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          public_key: publicKey,
           request_uid: requestUid
         })
       })
@@ -41,29 +40,15 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
         process.exit(1)
       }
 
-      if (response.statusCode >= 400) {
-        // continue polling
-        const newInterval = interval + 1 // grow the interval
-        await new Promise(resolve => setTimeout(resolve, newInterval * 1000))
-      } else {
-        spinner.succeed(`created organization [${responseData.slug}]`)
+      if (responseData.slug) {
+        const slug = responseData.slug
 
-        logger.debug(`setting organization.${responseData.id}`)
-        db.setUserOrganizationPrivateKey(id, responseData.id, privateKey)
-
-        // sync
-        const syncResult = await new Sync(apiSyncUrl).run()
-
-        if (syncResult.response.statusCode >= 400) {
-          spinner.fail(`[${syncResult.responseData.error.code}] ${syncResult.responseData.error.message}`)
-        } else {
-          db.setSync(syncResult.responseData) // sync to local
-          spinner.succeed('synced')
-        }
-
-        // next implement syncing the privateKey to all team member's machines via encryption from the publicKeys
+        spinner.succeed(`created organization [${slug}]`)
+        logger.help('⮕ next run [dotenvx pro sync]')
 
         process.exit(0)
+      } else {
+        await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
       logger.error(error.toString())
@@ -79,18 +64,12 @@ async function neww () {
   const requestUid = `req_${crypto.randomBytes(4).toString('hex')}`
   const hostname = options.hostname
   const organizationsNewUrl = `${hostname}/organizations/new?request_uid=${requestUid}`
-  const apiSyncUrl = `${hostname}/api/sync`
   const requestUidUrl = `${hostname}/api/request_uid`
   const interval = 5 // for 5 seconds
 
-  // generate private/public key to be paired with the org
-  const kp = new PrivateKey()
-  const publicKey = kp.publicKey.toHex()
-  const privateKey = kp.secret.toString('hex')
-
   try {
     // begin polling
-    pollRequestUidUrl(requestUidUrl, requestUid, interval, publicKey, privateKey, apiSyncUrl)
+    pollRequestUidUrl(requestUidUrl, requestUid, interval)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${organizationsNewUrl}]...` })
