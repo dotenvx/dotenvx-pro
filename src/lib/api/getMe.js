@@ -1,5 +1,7 @@
 const { request } = require('undici')
 
+const buildApiError = require('../../lib/helpers/buildApiError')
+
 class GetMe {
   constructor (hostname, token) {
     this.hostname = hostname
@@ -21,10 +23,7 @@ class GetMe {
     const json = await resp.body.json()
 
     if (resp.statusCode >= 400) {
-      const error = new Error(json.error.message)
-      error.code = resp.statusCode
-      error.help = json
-      throw error
+      throw buildApiError(resp.statusCode, json)
     }
 
     return json

@@ -18,8 +18,8 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval, publicKey
 
   while (true) {
     try {
-      const token = currentUser.getToken()
-      const id = currentUser.getId()
+      const token = currentUser.token()
+      const id = currentUser.id()
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {

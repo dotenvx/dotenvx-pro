@@ -17,7 +17,7 @@ function initializeConfStore () {
   _store = new Conf({
     cwd: process.env.DOTENVX_CONFIG || undefined,
     projectName: 'dotenvx',
-    configName: `${currentUser.getHostfolder()}/${currentUser.getId()}/db`,
+    configName: `${currentUser.hostfolder()}/${currentUser.id()}/db`,
     projectSuffix: '',
     fileExtension: 'json'
     // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
@@ -67,7 +67,7 @@ const setSync = function (syncData) {
 //
 const getUserPublicKey = function (id) {
   if (currentUser.getId() === id) {
-    return currentUser.getPublicKey()
+    return currentUser.publicKey()
   } else {
     const key = `user/${id}/public_key`
     return store().get(key)
@@ -76,7 +76,7 @@ const getUserPublicKey = function (id) {
 
 const getOrganizationPrivateKey = function (organizationId) {
   // 1. get current user's privateKey
-  const privateKey = currentUser.getPrivateKey()
+  const privateKey = currentUser.privateKey()
   const userId = currentUser.getId()
 
   if (!privateKey || !userId) {

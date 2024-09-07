@@ -74,7 +74,7 @@ async function push (directory) {
   // http related
   const hostname = options.hostname
   const pushUrl = `${hostname}/api/push`
-  const token = currentUser.getToken()
+  const token = currentUser.token()
   const usernameName = extractUsernameName(giturl)
 
   const envFilepaths = _envFilepaths(directory, options.envFile)

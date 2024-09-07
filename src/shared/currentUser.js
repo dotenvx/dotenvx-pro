@@ -38,7 +38,7 @@ const configPath = function () {
 }
 
 //
-// Set
+// Set/Delete
 //
 const login = function (hostname, id, accessToken) {
   if (!hostname) {
@@ -60,9 +60,6 @@ const login = function (hostname, id, accessToken) {
   return accessToken
 }
 
-//
-// Delete
-//
 const logout = function (hostname, id, accessToken) {
   if (!hostname) {
     throw new Error('DOTENVX_PRO_HOSTNAME not set. Run [dotenvx pro login]')
@@ -83,62 +80,83 @@ const logout = function (hostname, id, accessToken) {
   return true
 }
 
+const recover = function (privateKeyHex) {
+  const key = 'DOTENVX_PRO_CURRENT_PRIVATE_KEY'
+
+  store().set(key, privateKeyHex)
+
+  return privateKeyHex
+}
+
 //
 // Get
 //
-const getHostname = function () {
+const hostname = function () {
   return store().get('DOTENVX_PRO_HOSTNAME') || 'https://pro.dotenvx.com'
 }
 
-const getHostfolder = function () {
-  const hostname = getHostname()
+const hostfolder = function () {
+  const _hostname = hostname()
 
-  return extractSubdomainAndDomain(hostname)
+  return extractSubdomainAndDomain(_hostname)
 }
 
-const getToken = function () {
+const token = function () {
   return store().get('DOTENVX_PRO_TOKEN') || ''
 }
 
-const getId = function () {
-  const id = store().get('DOTENVX_PRO_CURRENT_USER')
-
-  if (!id) {
-    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
-  }
-
-  return id
+const id = function () {
+  return store().get('DOTENVX_PRO_CURRENT_USER') || ''
 }
 
-const getPrivateKey = function () {
-  const key = `DOTENVX_PRO_USER_${getId()}_PRIVATE_KEY`
+const privateKey = function () {
+  // must have id to try and lazily generate private key
+  const _id = id()
+  if (!_id || _id.length < 1) {
+    return ''
+  }
 
-  const currentPrivateKey = store().get(key)
+  const key = 'DOTENVX_PRO_CURRENT_PRIVATE_KEY'
+  const memoryKey = `DOTENVX_PRO_USER_${_id}_PRIVATE_KEY`
+  const currentPrivateKey = store().get(key) || store().get(memoryKey)
 
   if (currentPrivateKey && currentPrivateKey.length > 0) {
+    store().set(key, currentPrivateKey)
+    store().set(memoryKey, currentPrivateKey)
+
     return currentPrivateKey
   }
 
   // generate privateKey for the first time
   const kp = new PrivateKey()
-  const privateKey = kp.secret.toString('hex')
+  const _privateKey = kp.secret.toString('hex')
 
-  store().set(key, privateKey)
+  store().set(key, _privateKey)
+  store().set(memoryKey, _privateKey)
 
-  return privateKey
+  return _privateKey
 }
 
-const getPublicKey = function () {
+const publicKey = function () {
+  // must have private key to try and get public key
+  const privateKeyHex = privateKey()
+  if (!privateKeyHex || privateKeyHex.length < 1) {
+    return ''
+  }
+
   // create keyPair object from hex string
-  const privateKeyHex = getPrivateKey()
-  const privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
+  const _privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
 
   // compute publicKey from privateKey
-  return privateKey.publicKey.toHex()
+  return _privateKey.publicKey.toHex()
 }
 
-const getRecoveryPhrase = function () {
-  const privateKeyHex = getPrivateKey()
+const recoveryPhrase = function () {
+  // must have private key to try and get public key
+  const privateKeyHex = privateKey()
+  if (!privateKeyHex || privateKeyHex.length < 1) {
+    return ''
+  }
 
   return bip39.entropyToMnemonic(privateKeyHex)
 }
@@ -147,18 +165,17 @@ module.exports = {
   store,
   configPath,
 
-  // Set
+  // Set/Delete
   login,
-
-  // Delete
   logout,
+  recover,
 
   // Get
-  getHostname,
-  getHostfolder,
-  getToken,
-  getId,
-  getPrivateKey,
-  getPublicKey,
-  getRecoveryPhrase
+  hostname,
+  hostfolder,
+  token,
+  id,
+  publicKey,
+  privateKey,
+  recoveryPhrase
 }

@@ -9,7 +9,7 @@ class Sync {
   }
 
   async run () {
-    const token = currentUser.getToken()
+    const token = currentUser.token()
     const dbJson = db.getJson()
 
     const body = JSON.stringify({

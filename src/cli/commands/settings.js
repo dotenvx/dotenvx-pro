@@ -6,6 +6,14 @@ settings
   .description('⚙️  settings')
   .allowUnknownOption()
 
+// dotenvx pro settings token
+const tokenAction = require('./../actions/settings/token')
+settings
+  .command('token')
+  .description('print your dotenvx access token (--unmask)')
+  .option('--unmask', 'unmask access token')
+  .action(tokenAction)
+
 // dotenvx pro settings publickey
 const publicKeyAction = require('./../actions/settings/publicKey')
 settings
@@ -44,19 +52,11 @@ settings
   .description('recover your account 🔐')
   .action(recover)
 
-// dotenvx pro settings status
-const statusAction = require('./../actions/settings/status')
-settings.command('status')
-  .description('check account status (--unmask)')
-  .option('--unmask', 'unmask access token')
-  .action(statusAction)
-
-// dotenvx pro settings token
-const tokenAction = require('./../actions/settings/token')
-settings
-  .command('token')
-  .description('print your dotenvx access token (--unmask)')
-  .option('--unmask', 'unmask access token')
-  .action(tokenAction)
+// // dotenvx pro settings status
+// const statusAction = require('./../actions/settings/status')
+// settings.command('status')
+//   .description('check account status (--unmask)')
+//   .option('--unmask', 'unmask access token')
+//   .action(statusAction)
 
 module.exports = settings

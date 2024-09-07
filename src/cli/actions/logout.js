@@ -11,7 +11,7 @@ async function logout () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.getToken()
+  const token = currentUser.token()
   const hostname = options.hostname
   const apiLogoutUrl = `${hostname}/api/logout`
   const settingsDevicesUrl = `${hostname}/settings/devices`
@@ -38,8 +38,8 @@ async function logout () {
     const accessToken = responseData.access_token
 
     currentUser.logout(hostname, id, accessToken)
-    spinner.succeed(`logged out [${username}] from this machine, revoking token [${truncate(accessToken, 11)}]`)
-    logger.blank(`Next visit [${settingsDevicesUrl}] to optionally view your devices`)
+    spinner.succeed(`logged out [${username}] from this device and revoked token [${truncate(accessToken, 11)}]`)
+    logger.help(`⮕ next visit [${settingsDevicesUrl}] to view your devices`)
   }
 }
 

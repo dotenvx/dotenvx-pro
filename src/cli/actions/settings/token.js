@@ -1,17 +1,14 @@
-const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function token () {
   const options = this.opts()
-  logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.getToken()
-  if (token) {
+  const token = currentUser.token()
+  if (token && token.length > 1) {
     process.stdout.write(smartMask(token, options.unmask, 11))
   } else {
-    logger.error('not found')
-
+    console.error('missing token. Try generating one with [dotenvx pro login].')
     process.exit(1)
   }
 }

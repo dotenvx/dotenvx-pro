@@ -8,7 +8,7 @@ async function organization (organizationId) {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const json = await new GetOrganization(currentUser.getHostname(), currentUser.getToken(), organizationId).run()
+  const json = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
 
   let space = 0
   if (options.prettyPrint) {

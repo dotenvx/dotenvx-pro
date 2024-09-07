@@ -2,17 +2,15 @@ const { request } = require('undici')
 
 const buildApiError = require('../../lib/helpers/buildApiError')
 
-class PostMePublicKey {
-  constructor (hostname, token, publicKey) {
+class PostMeEmergencyKit {
+  constructor (hostname, token) {
     this.hostname = hostname
     this.token = token
-    this.publicKey = publicKey
   }
 
   async run () {
     const token = this.token
-    const url = `${this.hostname}/api/me/public_key`
-    const publicKey = this.publicKey
+    const url = `${this.hostname}/api/me/emergency_kit`
 
     const resp = await request(url, {
       method: 'POST',
@@ -20,9 +18,7 @@ class PostMePublicKey {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        public_key: publicKey
-      })
+      body: JSON.stringify({})
     })
 
     const json = await resp.body.json()
@@ -35,4 +31,4 @@ class PostMePublicKey {
   }
 }
 
-module.exports = PostMePublicKey
+module.exports = PostMeEmergencyKit

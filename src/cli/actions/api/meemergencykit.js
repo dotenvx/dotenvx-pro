@@ -1,13 +1,13 @@
 const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
-const GetMe = require('./../../../lib/api/getMe')
+const PostMeEmergencyKit = require('./../../../lib/api/postMeEmergencyKit')
 
-async function me () {
+async function meemergencykit () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   try {
-    const json = await new GetMe(options.hostname, currentUser.token()).run()
+    const json = await new PostMeEmergencyKit(options.hostname, currentUser.token()).run()
 
     let space = 0
     if (options.prettyPrint) {
@@ -25,4 +25,4 @@ async function me () {
   }
 }
 
-module.exports = me
+module.exports = meemergencykit

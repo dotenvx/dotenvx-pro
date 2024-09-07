@@ -12,7 +12,7 @@ const newAction = require('./../actions/organizations/new')
 organizations
   .command('new')
   .description('create organization')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
   .action(newAction)
 
 // dotenvx pro organizations list
@@ -20,7 +20,7 @@ const listAction = require('./../actions/organizations/list')
 organizations
   .command('list')
   .description('list my organizations')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
   .option('--unmask', 'unmask sensitive data')
   .action(listAction)
 
@@ -30,7 +30,7 @@ organizations
   .command('team')
   .description('list team for organization')
   .argument('<organizationSlug>', 'organization slug')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
   .option('--unmask', 'unmask sensitive data')
   .action(teamAction)
 

@@ -1,9 +1,9 @@
-const db = require('./../../shared/db')
 const { logger } = require('@dotenvx/dotenvx')
 
-const { createSpinner } = require('./../../lib/helpers/createSpinner')
+const currentUser = require('./../../shared/currentUser')
 
-const Sync = require('./../../lib/services/sync')
+const { createSpinner } = require('./../../lib/helpers/createSpinner')
+const PostMePublicKey = require('./../../lib/api/postMePublicKey')
 
 const spinner = createSpinner('syncing')
 
@@ -11,21 +11,56 @@ async function sync () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const hostname = options.hostname
-  const apiSyncUrl = `${hostname}/api/sync`
+  try {
+    // verify/sync public key
+    spinner.start('public key')
+    if (currentUser.publicKey().length < 1) {
+      const error = new Error()
+      error.message = 'missing public key. Try generating one with [dotenvx pro login].'
+      throw error
+    }
+    const me = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
+    spinner.succeed('public key')
 
-  spinner.start('syncing')
+    // verify private key (assumed good since public key generated from private key)
+    spinner.start('private key')
+    spinner.succeed('private key')
 
-  const { response, responseData } = await new Sync(apiSyncUrl).run()
-
-  logger.debug(responseData)
-
-  if (response.statusCode >= 400) {
-    spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
-  } else {
-    db.setSync(responseData) // sync to local
-    spinner.succeed('synced')
+    // verify emergency kit
+    spinner.start('emergency kit')
+    if (!me.emergency_kit_generated_at) {
+      const error = new Error()
+      error.message = 'emergency kit must be generated once. Generate it with [dotenvx pro settings emergencykit --unmask > kit.pdf]'
+      throw error
+    }
+    spinner.succeed('emergency kit')
+  } catch (error) {
+    if (error.message) {
+      spinner.fail(error.message)
+    } else {
+      spinner.fail(error)
+    }
+    if (error.help) {
+      logger.help(error.help)
+    }
+    process.exit(1)
   }
+
+  // const hostname = options.hostname
+  // const apiSyncUrl = `${hostname}/api/sync`
+
+  // spinner.start('syncing')
+
+  // const { response, responseData } = await new Sync(apiSyncUrl).run()
+
+  // logger.debug(responseData)
+
+  // if (response.statusCode >= 400) {
+  //   spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
+  // } else {
+  //   db.setSync(responseData) // sync to local
+  //   spinner.succeed('synced')
+  // }
 }
 
 module.exports = sync

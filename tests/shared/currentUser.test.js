@@ -97,10 +97,10 @@ t.test('#logout', ct => {
   ct.end()
 })
 
-t.test('#getHostname', ct => {
+t.test('#hostname', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
 
-  const result = currentUser.getHostname()
+  const result = currentUser.hostname()
 
   ct.same(result, 'https://pro.dotenvx.com')
   ct.ok(getStub.calledWith('DOTENVX_PRO_HOSTNAME'), 'get DOTENVX_PRO_HOSTNAME')
@@ -108,10 +108,10 @@ t.test('#getHostname', ct => {
   ct.end()
 })
 
-t.test('#getHostname - custom', ct => {
+t.test('#hostname - custom', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns('http://localhost:3000')
 
-  const result = currentUser.getHostname()
+  const result = currentUser.hostname()
 
   ct.same(result, 'http://localhost:3000')
   ct.ok(getStub.calledWith('DOTENVX_PRO_HOSTNAME'), 'get DOTENVX_PRO_HOSTNAME')
@@ -119,10 +119,10 @@ t.test('#getHostname - custom', ct => {
   ct.end()
 })
 
-t.test('#getHostfolder', ct => {
+t.test('#hostname', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_HOSTNAME').returns(undefined)
 
-  const result = currentUser.getHostfolder()
+  const result = currentUser.hostname()
 
   ct.same(result, 'pro.dotenvx.com')
   ct.ok(getStub.calledWith('DOTENVX_PRO_HOSTNAME'), 'get DOTENVX_PRO_HOSTNAME')
@@ -141,10 +141,10 @@ t.test('#getToken', ct => {
   ct.end()
 })
 
-t.test('#getId', ct => {
+t.test('#id', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get').withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
 
-  const result = currentUser.getId()
+  const result = currentUser.id()
 
   ct.same(result, 'AAABBB')
   ct.ok(getStub.calledWith('DOTENVX_PRO_CURRENT_USER'), 'get DOTENVX_PRO_CURRENT_USER')
@@ -152,24 +152,24 @@ t.test('#getId', ct => {
   ct.end()
 })
 
-t.test('#getId - without writing instead of stubbing', ct => {
+t.test('#id - without writing instead of stubbing', ct => {
   fs.writeFileSync(currentUser.configPath(), `DOTENVX_PRO_TOKEN="dxo_1234"
 DOTENVX_PRO_HOSTNAME="http://pro.dotenvx.com"
 DOTENVX_PRO_CURRENT_USER="AAABBB"`)
 
-  const result = currentUser.getId()
+  const result = currentUser.id()
 
   ct.same(result, 'AAABBB')
 
   ct.end()
 })
 
-t.test('#getPrivateKey - user exists and privateKey exists', ct => {
+t.test('#privateKey - user exists and privateKey exists', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
-  const result = currentUser.getPrivateKey()
+  const result = currentUser.privateKey()
 
   ct.same(result, privateKey)
   ct.ok(getStub.calledWith('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY'), 'get DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY')
@@ -177,12 +177,12 @@ t.test('#getPrivateKey - user exists and privateKey exists', ct => {
   ct.end()
 })
 
-t.test('#getPrivateKey - missing user', ct => {
+t.test('#privateKey - missing user', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
   try {
-    currentUser.getPrivateKey()
+    currentUser.privateKey()
 
     ct.fail('should have raised an error but did not')
   } catch (error) {
@@ -192,24 +192,24 @@ t.test('#getPrivateKey - missing user', ct => {
   ct.end()
 })
 
-t.test('#getPrivateKey - missing privateKey then it generates it', ct => {
+t.test('#privateKey - missing privateKey then it generates it', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(undefined)
 
-  const result = currentUser.getPrivateKey()
+  const result = currentUser.privateKey()
   ct.same(result, privateKey)
   ct.ok(setStub.calledWith('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY', privateKey), 'set DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY')
 
   ct.end()
 })
 
-t.test('#getPublicKey', ct => {
+t.test('#publicKey', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
-  const result = currentUser.getPublicKey()
+  const result = currentUser.publicKey()
 
   ct.same(result, '034ffa5eed0b1b7eec8df8f1c5332e93f672478f9637ba7f137f993ba62a30d45e')
   ct.ok(getStub.called, 'confStore.get')
@@ -217,12 +217,12 @@ t.test('#getPublicKey', ct => {
   ct.end()
 })
 
-t.test('#getRecoveryPhrase', ct => {
+t.test('#recoveryPhrase', ct => {
   const getStub = sinon.stub(currentUser.store(), 'get')
   getStub.withArgs('DOTENVX_PRO_CURRENT_USER').returns('AAABBB')
   getStub.withArgs('DOTENVX_PRO_USER_AAABBB_PRIVATE_KEY').returns(privateKey)
 
-  const result = currentUser.getRecoveryPhrase()
+  const result = currentUser.recoveryPhrase()
 
   ct.same(result, 'clutch only already insect forest summer brush actual maximum scorpion road tennis jar april across wrap satisfy same concert ecology finger concert nation alarm')
   ct.ok(getStub.called, 'confStore.get')

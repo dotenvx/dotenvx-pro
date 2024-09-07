@@ -14,7 +14,7 @@ async function team (organizationSlug) {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.getToken()
+  const token = currentUser.token()
   const hostname = options.hostname
   const membersUrl = `${hostname}/api/members?organization_slug=${organizationSlug}`
   const response = await request(membersUrl, {

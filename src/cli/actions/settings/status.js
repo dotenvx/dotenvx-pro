@@ -9,12 +9,11 @@ const spinner = createSpinner('checking status')
 
 async function status () {
   const options = this.opts()
-  logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.getToken()
-  const hostname = currentUser.getHostname()
-  const publicKey = currentUser.getPublicKey()
-  const privateKey = currentUser.getPrivateKey()
+  const token = currentUser.token()
+  const hostname = currentUser.hostname()
+  const publicKey = currentUser.publicKey()
+  const privateKey = currentUser.privatekey()
   const configPath = currentUser.configPath()
 
   spinner.succeed(`token [${smartTruncate(token, options.unmask, 11)}]`)

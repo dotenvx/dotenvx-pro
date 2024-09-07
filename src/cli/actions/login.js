@@ -63,8 +63,8 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
 
         currentUser.login(hostname, id, accessToken)
 
-        spinner.succeed(`logged in [${username}] to this machine, activating token [${truncate(accessToken, 11)}]`)
-        logger.blank(`Next visit [${settingsDevicesUrl}] to optionally view your devices`)
+        spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)
+        logger.help('⮕ next run [dotenvx pro sync]')
 
         process.exit(0)
       } else {

@@ -13,7 +13,7 @@ async function list () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.getToken()
+  const token = currentUser.token()
   const hostname = options.hostname
   const organizationsUrl = `${hostname}/api/organizations`
   const response = await request(organizationsUrl, {
@@ -40,7 +40,7 @@ async function list () {
   for (const row of responseData) {
     let privateKey = ''
     if (row.private_key_encrypted) {
-      privateKey = decryptValue(row.private_key_encrypted, currentUser.getPrivateKey())
+      privateKey = decryptValue(row.private_key_encrypted, currentUser.privateKey())
       privateKey = smartTruncate(privateKey, options.unmask)
     }
 

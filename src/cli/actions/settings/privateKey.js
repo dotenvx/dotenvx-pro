@@ -1,17 +1,14 @@
-const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function privateKey () {
   const options = this.opts()
-  logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const privateKey = currentUser.getPrivateKey()
-  if (privateKey) {
+  const privateKey = currentUser.privateKey()
+  if (privateKey && privateKey.length > 0) {
     process.stdout.write(smartMask(privateKey, options.unmask))
   } else {
-    logger.error('not found')
-
+    console.error('missing private key. Try generating one with [dotenvx pro login].')
     process.exit(1)
   }
 }
