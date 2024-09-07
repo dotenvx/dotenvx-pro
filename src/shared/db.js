@@ -49,14 +49,6 @@ const setUserOrganizationPrivateKey = function (id, organizationId, privateKey) 
   return encryptedValue
 }
 
-const setUser = function (id, fullUsername) {
-  const key = `user/${id}/full_username`
-
-  store().set(key, fullUsername)
-
-  return id
-}
-
 const setSync = function (syncData) {
   // iterate over each key and set it
   for (const key in syncData) {
@@ -154,7 +146,6 @@ module.exports = {
   configPath,
 
   // Set
-  setUser,
   setSync,
   setUserOrganizationPrivateKey,
 

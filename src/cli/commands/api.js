@@ -1,4 +1,5 @@
 const { Command } = require('commander')
+const currentUser = require('./../../shared/currentUser')
 
 const api = new Command('api')
 
@@ -12,6 +13,7 @@ api
   .command('me')
   .description('GET /api/me')
   .option('-pp, --pretty-print', 'pretty print output')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(meAction)
 
 // dotenvx api mepublickey
@@ -20,6 +22,7 @@ api
   .command('mepublickey')
   .description('POST /api/me/public_key')
   .option('-pp, --pretty-print', 'pretty print output')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(mepublickeyAction)
 
 // dotenvx api organization
@@ -29,6 +32,7 @@ api
   .argument('<organizationId>', 'organization id')
   .description('GET /api/organization/:id')
   .option('-pp, --pretty-print', 'pretty print output')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
   .action(organizationAction)
 
 module.exports = api

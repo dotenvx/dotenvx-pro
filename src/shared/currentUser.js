@@ -40,7 +40,11 @@ const configPath = function () {
 //
 // Set
 //
-const setUser = function (id, accessToken) {
+const login = function (hostname, id, accessToken) {
+  if (!hostname) {
+    throw new Error('DOTENVX_PRO_HOSTNAME not set. Run [dotenvx pro login]')
+  }
+
   if (!id) {
     throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
   }
@@ -49,25 +53,32 @@ const setUser = function (id, accessToken) {
     throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
   }
 
+  store().set('DOTENVX_PRO_HOSTNAME', hostname)
   store().set('DOTENVX_PRO_CURRENT_USER', id)
   store().set('DOTENVX_PRO_TOKEN', accessToken)
 
   return accessToken
 }
 
-const setHostname = function (hostname) {
-  store().set('DOTENVX_PRO_HOSTNAME', hostname)
-
-  return hostname
-}
-
 //
 // Delete
 //
-const logout = function () {
-  store().delete('DOTENVX_PRO_TOKEN')
-  store().delete('DOTENVX_PRO_CURRENT_USER')
+const logout = function (hostname, id, accessToken) {
+  if (!hostname) {
+    throw new Error('DOTENVX_PRO_HOSTNAME not set. Run [dotenvx pro login]')
+  }
+
+  if (!id) {
+    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
+  }
+
+  if (!accessToken) {
+    throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
+  }
+
   store().delete('DOTENVX_PRO_HOSTNAME')
+  store().delete('DOTENVX_PRO_CURRENT_USER')
+  store().delete('DOTENVX_PRO_TOKEN')
 
   return true
 }
@@ -86,7 +97,7 @@ const getHostfolder = function () {
 }
 
 const getToken = function () {
-  return store().get('DOTENVX_PRO_TOKEN')
+  return store().get('DOTENVX_PRO_TOKEN') || ''
 }
 
 const getId = function () {
@@ -137,8 +148,7 @@ module.exports = {
   configPath,
 
   // Set
-  setUser,
-  setHostname,
+  login,
 
   // Delete
   logout,

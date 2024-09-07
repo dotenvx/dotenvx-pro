@@ -21,7 +21,10 @@ class GetMe {
     const json = await resp.body.json()
 
     if (resp.statusCode >= 400) {
-      throw new Error(json.error.message)
+      const error = new Error(json.error.message)
+      error.code = resp.statusCode
+      error.help = json
+      throw error
     }
 
     return json
