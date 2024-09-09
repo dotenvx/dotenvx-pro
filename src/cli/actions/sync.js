@@ -25,7 +25,7 @@ async function sync () {
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
       throw error
     }
-    const me = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
+    let me = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
     spinner.succeed('public key')
 
     // verify private key (assumed good since public key generated from private key)
@@ -53,42 +53,43 @@ async function sync () {
 
     for (let i = 0; i < _organizationIds.length; i++) {
       const organizationId = _organizationIds[i]
-      const getOrganization = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
+      let organization = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
+      let publicKey = organization['public_key/1']
 
-      spinner.start(`${getOrganization.slug}`)
-
-      let publicKey = getOrganization['public_key/1']
-      let mePrivateKeyEncrypted = me[`organization/${organizationId}/private_key_encrypted/1`]
-
-      const organizationHasPublicKey = publicKey && publicKey.length > 0
-      const meHasPrivateKeyEncrypted = mePrivateKeyEncrypted && mePrivateKeyEncrypted.length > 0
+      spinner.start(`🏆 ${organization.slug}`)
 
       // generate org keypair for the first time
+      const organizationHasPublicKey = publicKey && publicKey.length > 0
       if (!organizationHasPublicKey) {
         const kp = new PrivateKey()
         const genPublicKey = kp.publicKey.toHex()
         const genPrivateKey = kp.secret.toString('hex')
         const genPrivateKeyEncrypted = currentUser.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
-        const postOrganization = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
-      } else {
-        if (!meHasPrivateKeyEncrypted) {
-          const error = new Error()
-          error.message = `missing private key for organization [${getOrganization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
-          throw error
-        }
-
-        currentUser.linkOrganization(organizationId, mePrivateKeyEncrypted)
-
-        const canDecryptOrganization = decryptValue(encryptValue('true', publicKey), currentUser.organizationPrivateKey(organizationId))
-        if (canDecryptOrganization != 'true') {
-          const error = new Error()
-          error.message = `unable to encrypt/decrypt for organization [${getOrganization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
-          throw error
-        }
+        organization = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
+        publicKey = organization['public_key/1']
+        me = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
       }
 
-      spinner.succeed(`${getOrganization.slug}`)
+      // check if user has private_key_encrypted for org
+      const mePrivateKeyEncrypted = me[`organization/${organizationId}/private_key_encrypted/1`]
+      const meHasPrivateKeyEncrypted = mePrivateKeyEncrypted && mePrivateKeyEncrypted.length > 0
+      if (!meHasPrivateKeyEncrypted) {
+        const error = new Error()
+        error.message = `missing private key for organization [${organization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
+        throw error
+      }
+
+      currentUser.linkOrganization(organizationId, mePrivateKeyEncrypted)
+
+      const canDecryptOrganization = decryptValue(encryptValue('true', publicKey), currentUser.organizationPrivateKey(organizationId))
+      if (canDecryptOrganization != 'true') {
+        const error = new Error()
+        error.message = `unable to encrypt/decrypt for organization [${organization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
+        throw error
+      }
+
+      spinner.succeed(`🏆 ${organization.slug}`)
     }
   } catch (error) {
     if (error.message) {

@@ -1,15 +1,11 @@
 const open = require('open')
 const crypto = require('crypto')
 const { request } = require('undici')
-const { PrivateKey } = require('eciesjs')
 const { logger } = require('@dotenvx/dotenvx')
 
-const db = require('./../../../shared/db')
 const currentUser = require('./../../../shared/currentUser')
 const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 const confirm = require('./../../../lib/helpers/confirm')
-
-const Sync = require('./../../../lib/services/sync')
 
 const spinner = createSpinner('waiting on browser creation')
 
@@ -19,7 +15,6 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
   while (true) {
     try {
       const token = currentUser.token()
-      const id = currentUser.id()
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {

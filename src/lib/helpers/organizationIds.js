@@ -1,4 +1,4 @@
-function organizationIds(meJson) {
+function organizationIds (meJson) {
   const ids = []
 
   for (const key in meJson) {
