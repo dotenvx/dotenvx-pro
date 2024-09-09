@@ -83,7 +83,13 @@ const logout = function (hostname, id, accessToken) {
 }
 
 const recover = function (privateKeyHex) {
-  const key = 'DOTENVX_PRO_CURRENT_PRIVATE_KEY'
+  // must have id to try and lazily generate private key
+  const _id = id()
+  if (!_id || _id.length < 1) {
+    return ''
+  }
+
+  const key = `DOTENVX_PRO_USER_${_id}_PRIVATE_KEY`
 
   store().set(key, privateKeyHex)
 
@@ -122,13 +128,11 @@ const privateKey = function () {
     return ''
   }
 
-  const key = 'DOTENVX_PRO_CURRENT_PRIVATE_KEY'
-  const memoryKey = `DOTENVX_PRO_USER_${_id}_PRIVATE_KEY`
-  const currentPrivateKey = store().get(key) || store().get(memoryKey)
+  const key = `DOTENVX_PRO_USER_${_id}_PRIVATE_KEY`
+  const currentPrivateKey = store().get(key)
 
   if (currentPrivateKey && currentPrivateKey.length > 0) {
     store().set(key, currentPrivateKey)
-    store().set(memoryKey, currentPrivateKey)
 
     return currentPrivateKey
   }
@@ -138,7 +142,6 @@ const privateKey = function () {
   const _privateKey = kp.secret.toString('hex')
 
   store().set(key, _privateKey)
-  store().set(memoryKey, _privateKey)
 
   return _privateKey
 }

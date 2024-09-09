@@ -7,9 +7,11 @@ const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const encryptValue = require('./../../lib/helpers/encryptValue')
 const decryptValue = require('./../../lib/helpers/decryptValue')
 const organizationIds = require('./../../lib/helpers/organizationIds')
+const userIdsMissingPrivateKeyEncrypted = require('./../../lib/helpers/userIdsMissingPrivateKeyEncrypted')
 const GetOrganization = require('./../../lib/api/getOrganization')
 const PostMePublicKey = require('./../../lib/api/postMePublicKey')
 const PostOrganizationPublicKey = require('./../../lib/api/postOrganizationPublicKey')
+const PostOrganizationUserPrivateKeyEncrypted = require('./../../lib/api/postOrganizationUserPrivateKeyEncrypted')
 
 const spinner = createSpinner('syncing')
 
@@ -56,7 +58,7 @@ async function sync () {
       let organization = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
       let publicKey = organization['public_key/1']
 
-      spinner.start(`🏆 ${organization.slug}`)
+      spinner.start(`[${organization.slug}]`)
 
       // generate org keypair for the first time
       const organizationHasPublicKey = publicKey && publicKey.length > 0
@@ -88,8 +90,31 @@ async function sync () {
         error.message = `unable to encrypt/decrypt for organization [${organization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
         throw error
       }
+      spinner.succeed(`[${organization.slug}]`)
 
-      spinner.succeed(`🏆 ${organization.slug}`)
+      // check team is all synced
+      spinner.start(`[${organization.slug}] team`)
+
+      // check for users missing their private_key_encrypted
+      const _userIdsMissingPrivateKeyEncrypted = userIdsMissingPrivateKeyEncrypted(organization)
+      if (_userIdsMissingPrivateKeyEncrypted || _userIdsMissingPrivateKeyEncrypted.length > 0) {
+        for (let ii = 0; ii < _userIdsMissingPrivateKeyEncrypted.length; ii++) {
+          const userId = _userIdsMissingPrivateKeyEncrypted[ii]
+          const userUsername = organization[`user/${userId}/username`]
+          const userPublicKey = organization[`user/${userId}/public_key/1`]
+          if (!userPublicKey || userPublicKey.length < 1) {
+            spinner.warn(`[${organization.slug}][${userUsername}] missing public key. Tell them to run [dotenvx pro sync].`)
+          } else {
+            // encrypt organization private key using team member's public key
+            const userPrivateKeyEncrypted = encryptValue(currentUser.organizationPrivateKey(organizationId), userPublicKey)
+
+            // upload their encrypted private key to pro
+            organization = await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, currentUser.token(), organizationId, userId, userPublicKey, userPrivateKeyEncrypted).run()
+          }
+        }
+      }
+
+      spinner.succeed(`[${organization.slug}] team`)
     }
   } catch (error) {
     if (error.message) {
