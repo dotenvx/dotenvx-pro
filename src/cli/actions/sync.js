@@ -1,10 +1,15 @@
 const { logger } = require('@dotenvx/dotenvx')
+const { PrivateKey } = require('eciesjs')
 
 const currentUser = require('./../../shared/currentUser')
 
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
-const PostMePublicKey = require('./../../lib/api/postMePublicKey')
+const encryptValue = require('./../../lib/helpers/encryptValue')
+const decryptValue = require('./../../lib/helpers/decryptValue')
 const organizationIds = require('./../../lib/helpers/organizationIds')
+const GetOrganization = require('./../../lib/api/getOrganization')
+const PostMePublicKey = require('./../../lib/api/postMePublicKey')
+const PostOrganizationPublicKey = require('./../../lib/api/postOrganizationPublicKey')
 
 const spinner = createSpinner('syncing')
 
@@ -41,10 +46,50 @@ async function sync () {
     const _organizationIds = organizationIds(me)
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
-      error.message = `missing organization(s). Ask your teammate to invite you [${me.username}] or create your own [dotenvx pro organizations new]`
+      error.message = `missing organization(s). Ask your teammate to invite you [${me.username}] or create your own [dotenvx pro organizations new].`
       throw error
     }
     spinner.succeed('organization(s)')
+
+    for (let i = 0; i < _organizationIds.length; i++) {
+      const organizationId = _organizationIds[i]
+      const getOrganization = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
+
+      spinner.start(`${getOrganization.slug}`)
+
+      let publicKey = getOrganization['public_key/1']
+      let mePrivateKeyEncrypted = me[`organization/${organizationId}/private_key_encrypted/1`]
+
+      const organizationHasPublicKey = publicKey && publicKey.length > 0
+      const meHasPrivateKeyEncrypted = mePrivateKeyEncrypted && mePrivateKeyEncrypted.length > 0
+
+      // generate org keypair for the first time
+      if (!organizationHasPublicKey) {
+        const kp = new PrivateKey()
+        const genPublicKey = kp.publicKey.toHex()
+        const genPrivateKey = kp.secret.toString('hex')
+        const genPrivateKeyEncrypted = currentUser.encrypt(genPrivateKey) // encrypt org private key with user's public key
+
+        const postOrganization = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
+      } else {
+        if (!meHasPrivateKeyEncrypted) {
+          const error = new Error()
+          error.message = `missing private key for organization [${getOrganization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
+          throw error
+        }
+
+        currentUser.linkOrganization(organizationId, mePrivateKeyEncrypted)
+
+        const canDecryptOrganization = decryptValue(encryptValue('true', publicKey), currentUser.organizationPrivateKey(organizationId))
+        if (canDecryptOrganization != 'true') {
+          const error = new Error()
+          error.message = `unable to encrypt/decrypt for organization [${getOrganization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
+          throw error
+        }
+      }
+
+      spinner.succeed(`${getOrganization.slug}`)
+    }
   } catch (error) {
     if (error.message) {
       spinner.fail(error.message)
@@ -56,22 +101,6 @@ async function sync () {
     }
     process.exit(1)
   }
-
-  // const hostname = options.hostname
-  // const apiSyncUrl = `${hostname}/api/sync`
-
-  // spinner.start('syncing')
-
-  // const { response, responseData } = await new Sync(apiSyncUrl).run()
-
-  // logger.debug(responseData)
-
-  // if (response.statusCode >= 400) {
-  //   spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
-  // } else {
-  //   db.setSync(responseData) // sync to local
-  //   spinner.succeed('synced')
-  // }
 }
 
 module.exports = sync

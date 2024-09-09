@@ -5,6 +5,8 @@ const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
 const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
+const encryptValue = require('./../lib/helpers/encryptValue')
+const decryptValue = require('./../lib/helpers/decryptValue')
 
 let _store
 
@@ -88,6 +90,10 @@ const recover = function (privateKeyHex) {
   return privateKeyHex
 }
 
+const encrypt = function (value) {
+  return encryptValue(value, publicKey())
+}
+
 //
 // Get
 //
@@ -161,6 +167,51 @@ const recoveryPhrase = function () {
   return bip39.entropyToMnemonic(privateKeyHex)
 }
 
+const organizationPrivateKey = function (organizationId) {
+  // must have organizationId
+  if (!organizationId) {
+    return ''
+  }
+
+  const key = `DOTENVX_PRO_ORGANIZATION_${organizationId}_PRIVATE_KEY_ENCRYPTED`
+  const value = store().get(key)
+
+  if (!value || value.length < 1) {
+    return ''
+  }
+
+  return decryptValue(value, privateKey())
+}
+
+const organizationPublicKey = function (organizationId) {
+  // must have private key to try and get public key
+  const privateKeyHex = organizationPrivateKey(organizationId)
+  if (!privateKeyHex || privateKeyHex.length < 1) {
+    return ''
+  }
+
+  // create keyPair object from hex string
+  const _privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
+
+  // compute publicKey from privateKey
+  return _privateKey.publicKey.toHex()
+}
+
+const linkOrganization = function (organizationId, privateKeyEncrypted) {
+  if (!organizationId) {
+    throw new Error('organizationId is required. Try running [dotenvx pro sync]')
+  }
+
+  if (!privateKeyEncrypted) {
+    throw new Error('privateKeyEncrypted is required. Try running [dotenvx pro sync]')
+  }
+
+  const key = `DOTENVX_PRO_ORGANIZATION_${organizationId}_PRIVATE_KEY_ENCRYPTED`
+  store().set(key, privateKeyEncrypted)
+
+  return privateKeyEncrypted
+}
+
 module.exports = {
   store,
   configPath,
@@ -169,6 +220,7 @@ module.exports = {
   login,
   logout,
   recover,
+  encrypt,
 
   // Get
   hostname,
@@ -177,5 +229,10 @@ module.exports = {
   id,
   publicKey,
   privateKey,
-  recoveryPhrase
+  recoveryPhrase,
+
+  // organization
+  organizationPublicKey,
+  organizationPrivateKey,
+  linkOrganization
 }
