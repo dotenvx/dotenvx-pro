@@ -10,8 +10,9 @@ async function list () {
 
   const token = currentUser.token()
   const hostname = options.hostname
-  const organizationsUrl = `${hostname}/api/organizations`
-  const response = await request(organizationsUrl, {
+  const organizationId = 1 // currentUser.organizationId()
+  const url = `${hostname}/api/organizations/${organizationId}/members`
+  const response = await request(url, {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -29,19 +30,19 @@ async function list () {
   }
 
   // build table
-  const t = [['slug', 'public_key', 'private_key']]
+  const t = [['username', 'user public_key', 'organization public_key', 'organization private_key']]
   for (const row of responseData) {
     let publicKeyExists = ''
     if (row.public_key && row.public_key.length > 0) {
       publicKeyExists = '✔'
     }
 
-    let privateKeyExists = ''
-    if (row.private_key_encrypted && row.private_key_encrypted.length > 0) {
-      privateKeyExists = '✔'
+    let organizationPrivateKeyExists = ''
+    if (row.organization_private_key_encrypted_with_user_public_key && row.organization_private_key_encrypted_with_user_public_key.length > 0) {
+      organizationPrivateKeyExists = '✔'
     }
 
-    t.push([row.slug, publicKeyExists, privateKeyExists])
+    t.push([row.username, publicKeyExists, '✔', organizationPrivateKeyExists])
   }
 
   process.stdout.write(table(t))

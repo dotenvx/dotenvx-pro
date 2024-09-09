@@ -85,7 +85,7 @@ async function sync () {
       currentUser.linkOrganization(organizationId, mePrivateKeyEncrypted)
 
       const canDecryptOrganization = decryptValue(encryptValue('true', publicKey), currentUser.organizationPrivateKey(organizationId))
-      if (canDecryptOrganization != 'true') {
+      if (canDecryptOrganization !== 'true') {
         const error = new Error()
         error.message = `unable to encrypt/decrypt for organization [${organization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
         throw error

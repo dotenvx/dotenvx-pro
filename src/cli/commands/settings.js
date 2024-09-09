@@ -6,11 +6,18 @@ settings
   .description('⚙️  settings')
   .allowUnknownOption()
 
+// dotenvx pro settings username
+const usernameAction = require('./../actions/settings/username')
+settings
+  .command('username')
+  .description('print your username')
+  .action(usernameAction)
+
 // dotenvx pro settings token
 const tokenAction = require('./../actions/settings/token')
 settings
   .command('token')
-  .description('print your dotenvx access token (--unmask)')
+  .description('print your access token (--unmask)')
   .option('--unmask', 'unmask access token')
   .action(tokenAction)
 
@@ -51,12 +58,5 @@ settings
   .command('recover')
   .description('recover your account 🔐')
   .action(recover)
-
-// // dotenvx pro settings status
-// const statusAction = require('./../actions/settings/status')
-// settings.command('status')
-//   .description('check account status (--unmask)')
-//   .option('--unmask', 'unmask access token')
-//   .action(statusAction)
 
 module.exports = settings

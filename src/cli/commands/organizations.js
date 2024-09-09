@@ -24,14 +24,4 @@ organizations
   .option('--unmask', 'unmask sensitive data')
   .action(listAction)
 
-// dotenvx pro organizations team <organizationSlug>
-const teamAction = require('./../actions/organizations/team')
-organizations
-  .command('team')
-  .description('list team for organization')
-  .argument('<organizationSlug>', 'organization slug')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
-  .option('--unmask', 'unmask sensitive data')
-  .action(teamAction)
-
 module.exports = organizations
