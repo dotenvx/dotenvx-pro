@@ -60,8 +60,12 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         const id = responseData.id
         const username = responseData.username
         const accessToken = responseData.access_token
+        const organizationId = responseData.current_organization_id
 
         currentUser.login(hostname, id, accessToken)
+        if (organizationId) {
+          currentUser.chooseOrganization(organizationId)
+        }
 
         spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)
         logger.help('⮕ next run [dotenvx pro sync]')

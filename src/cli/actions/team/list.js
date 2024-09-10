@@ -10,7 +10,7 @@ async function list () {
 
   const token = currentUser.token()
   const hostname = options.hostname
-  const organizationId = 1 // currentUser.organizationId()
+  const organizationId = currentUser.organizationId()
   const url = `${hostname}/api/organizations/${organizationId}/members`
   const response = await request(url, {
     method: 'GET',
