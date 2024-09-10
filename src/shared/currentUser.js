@@ -77,6 +77,7 @@ const logout = function (hostname, id, accessToken) {
 
   store().delete('DOTENVX_PRO_HOSTNAME')
   store().delete('DOTENVX_PRO_CURRENT_USER')
+  store().delete('DOTENVX_PRO_CURRENT_ORGANIZATION')
   store().delete('DOTENVX_PRO_TOKEN')
 
   return true
@@ -99,7 +100,7 @@ const linkOrganization = function (_organizationId, privateKeyEncrypted) {
 
 const chooseOrganization = function (_organizationId) {
   if (!_organizationId) {
-    throw new Error('DOTENVX_PRO_CURRENT_ORGANIZATION not set. Run [dotenvx pro select]')
+    throw new Error('DOTENVX_PRO_CURRENT_ORGANIZATION not set. Run [dotenvx pro organizations choose]')
   }
 
   store().set('DOTENVX_PRO_CURRENT_ORGANIZATION', _organizationId)

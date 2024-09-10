@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const qrcode = require('qrcode')
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
+const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
 const smartMask = require('./../../../lib/helpers/smartMask')
@@ -106,7 +107,13 @@ async function emergencyKit () {
     }
 
     const pdfBytes = await pdf.save()
-    process.stdout.write(Buffer.from(pdfBytes))
+
+    if (options.stdout) {
+      process.stdout.write(Buffer.from(pdfBytes))
+    } else {
+      fs.writeFileSync('dotenvx-emergency-kit.pdf', Buffer.from(pdfBytes))
+      logger.success(`✔ created dotenvx-emergency-kit.pdf at [${process.cwd()}/dotenvx-emergency-kit.pdf]`)
+    }
   } catch (error) {
     console.error(error.message)
 

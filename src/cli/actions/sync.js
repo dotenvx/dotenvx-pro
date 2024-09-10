@@ -38,7 +38,7 @@ async function sync () {
     spinner.start('emergency kit')
     if (!me.emergency_kit_generated_at) {
       const error = new Error()
-      error.message = 'emergency kit must be generated once. Generate it with [dotenvx pro settings emergencykit --unmask > kit.pdf]'
+      error.message = 'emergency kit must be generated once. Generate it with [dotenvx pro settings emergencykit --unmask]'
       throw error
     }
     spinner.succeed('emergency kit')
@@ -117,7 +117,7 @@ async function sync () {
       spinner.succeed(`[${organization.slug}] team`)
     }
 
-    const firstOrganizationId = _organizationIds()[0]
+    const firstOrganizationId = organizationIds()[0]
     if (firstOrganizationId) {
       currentUser.chooseOrganization(firstOrganizationId)
     }

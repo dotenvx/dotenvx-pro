@@ -59,6 +59,7 @@ settings
   .command('emergencykit')
   .description('generate your emergency kit (--unmask)')
   .option('--unmask', 'unmask recovery phrase')
+  .option('--stdout', 'send to stdout')
   .action(emergencyKitAction)
 
 // dotenvx pro settings recover
