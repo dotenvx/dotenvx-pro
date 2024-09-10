@@ -24,4 +24,20 @@ organizations
   .option('--unmask', 'unmask sensitive data')
   .action(listAction)
 
+// dotenvx pro organizations current
+const currentAction = require('./../actions/organizations/current')
+organizations
+  .command('current')
+  .description('print current organization')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .action(currentAction)
+
+// dotenvx pro organizations choose
+const chooseAction = require('./../actions/organizations/choose')
+organizations
+  .command('choose')
+  .description('set current organization')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .action(chooseAction)
+
 module.exports = organizations

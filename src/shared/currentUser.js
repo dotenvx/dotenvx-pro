@@ -82,6 +82,31 @@ const logout = function (hostname, id, accessToken) {
   return true
 }
 
+const linkOrganization = function (_organizationId, privateKeyEncrypted) {
+  if (!_organizationId) {
+    throw new Error('organizationId is required. Try running [dotenvx pro sync]')
+  }
+
+  if (!privateKeyEncrypted) {
+    throw new Error('privateKeyEncrypted is required. Try running [dotenvx pro sync]')
+  }
+
+  const key = `DOTENVX_PRO_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
+  store().set(key, privateKeyEncrypted)
+
+  return privateKeyEncrypted
+}
+
+const chooseOrganization = function (_organizationId) {
+  if (!_organizationId) {
+    throw new Error('DOTENVX_PRO_CURRENT_ORGANIZATION not set. Run [dotenvx pro select]')
+  }
+
+  store().set('DOTENVX_PRO_CURRENT_ORGANIZATION', _organizationId)
+
+  return _organizationId
+}
+
 const recover = function (privateKeyHex) {
   // must have id to try and lazily generate private key
   const _id = id()
@@ -119,6 +144,10 @@ const token = function () {
 
 const id = function () {
   return store().get('DOTENVX_PRO_CURRENT_USER') || ''
+}
+
+const organizationId = function () {
+  return store().get('DOTENVX_PRO_CURRENT_ORGANIZATION') || ''
 }
 
 const privateKey = function () {
@@ -170,13 +199,13 @@ const recoveryPhrase = function () {
   return bip39.entropyToMnemonic(privateKeyHex)
 }
 
-const organizationPrivateKey = function (organizationId) {
+const organizationPrivateKey = function (_organizationId) {
   // must have organizationId
-  if (!organizationId) {
+  if (!_organizationId) {
     return ''
   }
 
-  const key = `DOTENVX_PRO_ORGANIZATION_${organizationId}_PRIVATE_KEY_ENCRYPTED`
+  const key = `DOTENVX_PRO_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
   const value = store().get(key)
 
   if (!value || value.length < 1) {
@@ -186,9 +215,9 @@ const organizationPrivateKey = function (organizationId) {
   return decryptValue(value, privateKey())
 }
 
-const organizationPublicKey = function (organizationId) {
+const organizationPublicKey = function (_organizationId) {
   // must have private key to try and get public key
-  const privateKeyHex = organizationPrivateKey(organizationId)
+  const privateKeyHex = organizationPrivateKey(_organizationId)
   if (!privateKeyHex || privateKeyHex.length < 1) {
     return ''
   }
@@ -198,21 +227,6 @@ const organizationPublicKey = function (organizationId) {
 
   // compute publicKey from privateKey
   return _privateKey.publicKey.toHex()
-}
-
-const linkOrganization = function (organizationId, privateKeyEncrypted) {
-  if (!organizationId) {
-    throw new Error('organizationId is required. Try running [dotenvx pro sync]')
-  }
-
-  if (!privateKeyEncrypted) {
-    throw new Error('privateKeyEncrypted is required. Try running [dotenvx pro sync]')
-  }
-
-  const key = `DOTENVX_PRO_ORGANIZATION_${organizationId}_PRIVATE_KEY_ENCRYPTED`
-  store().set(key, privateKeyEncrypted)
-
-  return privateKeyEncrypted
 }
 
 module.exports = {
@@ -230,6 +244,7 @@ module.exports = {
   hostfolder,
   token,
   id,
+  organizationId,
   publicKey,
   privateKey,
   recoveryPhrase,
@@ -237,5 +252,6 @@ module.exports = {
   // organization
   organizationPublicKey,
   organizationPrivateKey,
-  linkOrganization
+  linkOrganization,
+  chooseOrganization
 }

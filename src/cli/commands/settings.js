@@ -1,4 +1,5 @@
 const { Command } = require('commander')
+const currentUser = require('./../../shared/currentUser')
 
 const settings = new Command('settings')
 
@@ -12,6 +13,14 @@ settings
   .command('username')
   .description('print your username')
   .action(usernameAction)
+
+// dotenvx pro settings organization
+const organizationCurrentAction = require('./../actions/organizations/current')
+settings
+  .command('organization')
+  .description('print your organization')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .action(organizationCurrentAction)
 
 // dotenvx pro settings token
 const tokenAction = require('./../actions/settings/token')

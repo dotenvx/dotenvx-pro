@@ -116,6 +116,11 @@ async function sync () {
 
       spinner.succeed(`[${organization.slug}] team`)
     }
+
+    const firstOrganizationId = _organizationIds()[0]
+    if (firstOrganizationId) {
+      currentUser.chooseOrganization(firstOrganizationId)
+    }
   } catch (error) {
     if (error.message) {
       spinner.fail(error.message)

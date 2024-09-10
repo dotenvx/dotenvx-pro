@@ -1,15 +1,14 @@
 const { request } = require('undici')
 
-class GetOrganization {
-  constructor (hostname, token, id) {
+class GetOrganizations {
+  constructor (hostname, token) {
     this.hostname = hostname
     this.token = token
-    this.id = id
   }
 
   async run () {
     const token = this.token
-    const url = `${this.hostname}/api/organization/${this.id}`
+    const url = `${this.hostname}/api/organizations`
 
     const resp = await request(url, {
       method: 'GET',
@@ -31,4 +30,4 @@ class GetOrganization {
   }
 }
 
-module.exports = GetOrganization
+module.exports = GetOrganizations
