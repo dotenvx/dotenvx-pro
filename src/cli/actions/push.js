@@ -113,7 +113,8 @@ async function push (directory) {
       private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey
     }
 
-    console.log('TODO: process payload to api', payload)
+    console.log('payload', payload)
+    spinner.succeed('TODO: process payload to api')
   }
 }
 
