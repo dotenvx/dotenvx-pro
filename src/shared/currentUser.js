@@ -92,7 +92,7 @@ const linkOrganization = function (_organizationId, privateKeyEncrypted) {
     throw new Error('privateKeyEncrypted is required. Try running [dotenvx pro sync]')
   }
 
-  const key = `DOTENVX_PRO_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
+  const key = `DOTENVX_PRO_USER_${id()}_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
   store().set(key, privateKeyEncrypted)
 
   return privateKeyEncrypted
@@ -206,7 +206,7 @@ const organizationPrivateKey = function (_organizationId) {
     return ''
   }
 
-  const key = `DOTENVX_PRO_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
+  const key = `DOTENVX_PRO_USER_${id()}_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
   const value = store().get(key)
 
   if (!value || value.length < 1) {

@@ -13,6 +13,7 @@ const gitRoot = require('./../../lib/helpers/gitRoot')
 const extractUsernameName = require('./../../lib/helpers/extractUsernameName')
 const forgivingDirectory = require('./../../lib/helpers/forgivingDirectory')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
+const encryptValue = require('./../../lib/helpers/encryptValue')
 
 const spinner = createSpinner('pushing')
 
@@ -100,7 +101,9 @@ async function push (directory) {
 
     const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
     const privateKey = keypairs[privateKeyName]
-    const privateKeyEncryptedWithOrganizationPublicKey = privateKey
+
+    const organizationPublicKey = currentUser.organizationPublicKey(currentUser.organizationId())
+    const privateKeyEncryptedWithOrganizationPublicKey = encryptValue(privateKey, organizationPublicKey)
 
     const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
     const payload = {
@@ -110,41 +113,8 @@ async function push (directory) {
       private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey
     }
 
-    console.log('payload', payload)
+    console.log('TODO: process payload to api', payload)
   }
-
-  // try {
-  //   const response = await request(pushUrl, {
-  //     method: 'POST',
-  //     headers: {
-  //       Authorization: `Bearer ${oauthToken}`,
-  //       'Content-Type': 'application/json'
-  //     },
-  //     body: JSON.stringify({
-  //       username_name: usernameName,
-  //       DOTENV_KEYS: dotenvKeysContent,
-  //       filepath: relativeEnvKeysFilepath
-  //     })
-  //   })
-
-  //   const responseData = await response.body.json()
-
-  //   if (response.statusCode >= 400) {
-  //     logger.http(responseData)
-  //     spinner.fail(responseData.error.message)
-  //     if (response.statusCode === 404) {
-  //       logger.help(`? try visiting [${hostname}/gh/${usernameName}] in your browser`)
-  //     }
-  //     process.exit(1)
-  //   }
-  // } catch (error) {
-  //   spinner.fail(error.toString())
-  //   process.exit(1)
-  // }
-
-  // spinner.succeed(`pushed [${usernameName}]`)
-  // logger.help2('ℹ run [dotenvx ext hub open] to view on hub')
-  spinner.succeed('implement')
 }
 
 module.exports = push
