@@ -1,7 +1,7 @@
-const currentUser = require('./../../../shared/currentUser')
+const userPrivateKey = require('./../../../shared/userPrivateKey')
 
 function publicKey () {
-  const publicKey = currentUser.publicKey()
+  const publicKey = userPrivateKey.publicKey()
   if (publicKey) {
     process.stdout.write(publicKey)
   } else {

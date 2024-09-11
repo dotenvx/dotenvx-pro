@@ -1,6 +1,7 @@
 const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
+const userPrivateKey = require('./../../shared/userPrivateKey')
 const currentUser = require('./../../shared/currentUser')
 
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
@@ -8,6 +9,7 @@ const encryptValue = require('./../../lib/helpers/encryptValue')
 const decryptValue = require('./../../lib/helpers/decryptValue')
 const organizationIds = require('./../../lib/helpers/organizationIds')
 const userIdsMissingPrivateKeyEncrypted = require('./../../lib/helpers/userIdsMissingPrivateKeyEncrypted')
+const GetMe = require('./../../lib/api/getMe')
 const GetOrganization = require('./../../lib/api/getOrganization')
 const PostMePublicKey = require('./../../lib/api/postMePublicKey')
 const PostOrganizationPublicKey = require('./../../lib/api/postOrganizationPublicKey')
@@ -20,15 +22,27 @@ async function sync () {
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   try {
+    // logged in
+    spinner.start('logged in')
+    if (currentUser.token().length < 1) {
+      const error = new Error()
+      error.message = 'logged out. Log in with [dotenvx pro login].'
+      throw error
+    }
+    let me = await new GetMe(options.hostname, currentUser.token()).run()
+    spinner.succeed(`logged in [${me.username}]`)
+
     // verify/sync public key
     spinner.start('public key')
-    if (currentUser.publicKey().length < 1) {
+    if (userPrivateKey.publicKey().length < 1) {
       const error = new Error()
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
       throw error
     }
-    let me = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
+    me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
     spinner.succeed('public key')
+
+    process.exit(1)
 
     // verify private key (assumed good since public key generated from private key)
     spinner.start('private key')
@@ -48,7 +62,7 @@ async function sync () {
     const _organizationIds = organizationIds(me)
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
-      error.message = `missing organization(s). Ask your teammate to invite you [${me.username}] or create your own [dotenvx pro organizations new].`
+      error.message = `missing organization(s). Ask your teammate to invite you or create your own [dotenvx pro organizations new].`
       throw error
     }
     spinner.succeed('organization(s)')
@@ -70,7 +84,7 @@ async function sync () {
 
         organization = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
         publicKey = organization['public_key/1']
-        me = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
+        me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
       }
 
       // check if user has private_key_encrypted for org

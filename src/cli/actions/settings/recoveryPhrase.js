@@ -1,11 +1,11 @@
-const currentUser = require('./../../../shared/currentUser')
+const userPrivateKey = require('./../../../shared/userPrivateKey')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 const smartMaskRecoveryPhrase = require('./../../../lib/helpers/smartMaskRecoveryPhrase')
 
 function recoveryPhrase () {
   const options = this.opts()
 
-  const recoveryPhrase = currentUser.recoveryPhrase()
+  const recoveryPhrase = userPrivateKey.recoveryPhrase()
   if (recoveryPhrase && recoveryPhrase.length > 0) {
     process.stdout.write(formatRecoveryPhrase(smartMaskRecoveryPhrase(recoveryPhrase, options.unmask)))
   } else {

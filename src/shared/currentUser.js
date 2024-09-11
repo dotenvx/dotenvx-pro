@@ -1,11 +1,9 @@
 const Conf = require('conf')
-const bip39 = require('bip39')
 const { PrivateKey } = require('eciesjs')
 const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
 const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
-const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 
 let _store
@@ -48,16 +46,16 @@ const login = function (hostname, id, accessToken) {
   }
 
   if (!id) {
-    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
+    throw new Error('DOTENVX_PRO_USER not set. Run [dotenvx pro login]')
   }
 
   if (!accessToken) {
     throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
   }
 
-  store().set('DOTENVX_PRO_HOSTNAME', hostname)
-  store().set('DOTENVX_PRO_CURRENT_USER', id)
+  store().set('DOTENVX_PRO_USER', id)
   store().set('DOTENVX_PRO_TOKEN', accessToken)
+  store().set('DOTENVX_PRO_HOSTNAME', hostname)
 
   return accessToken
 }
@@ -68,17 +66,17 @@ const logout = function (hostname, id, accessToken) {
   }
 
   if (!id) {
-    throw new Error('DOTENVX_PRO_CURRENT_USER not set. Run [dotenvx pro login]')
+    throw new Error('DOTENVX_PRO_USER not set. Run [dotenvx pro login]')
   }
 
   if (!accessToken) {
     throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
   }
 
-  store().delete('DOTENVX_PRO_HOSTNAME')
-  store().delete('DOTENVX_PRO_CURRENT_USER')
-  store().delete('DOTENVX_PRO_CURRENT_ORGANIZATION')
+  store().delete('DOTENVX_PRO_USER')
   store().delete('DOTENVX_PRO_TOKEN')
+  store().delete('DOTENVX_PRO_HOSTNAME')
+  store().delete('DOTENVX_PRO_CURRENT_ORGANIZATION')
 
   return true
 }
@@ -108,24 +106,6 @@ const chooseOrganization = function (_organizationId) {
   return _organizationId
 }
 
-const recover = function (privateKeyHex) {
-  // must have id to try and lazily generate private key
-  const _id = id()
-  if (!_id || _id.length < 1) {
-    return ''
-  }
-
-  const key = `DOTENVX_PRO_USER_${_id}_PRIVATE_KEY`
-
-  store().set(key, privateKeyHex)
-
-  return privateKeyHex
-}
-
-const encrypt = function (value) {
-  return encryptValue(value, publicKey())
-}
-
 //
 // Get
 //
@@ -144,60 +124,11 @@ const token = function () {
 }
 
 const id = function () {
-  return store().get('DOTENVX_PRO_CURRENT_USER') || ''
+  return store().get('DOTENVX_PRO_USER') || ''
 }
 
 const organizationId = function () {
   return store().get('DOTENVX_PRO_CURRENT_ORGANIZATION') || ''
-}
-
-const privateKey = function () {
-  // must have id to try and lazily generate private key
-  const _id = id()
-  if (!_id || _id.length < 1) {
-    return ''
-  }
-
-  const key = `DOTENVX_PRO_USER_${_id}_PRIVATE_KEY`
-  const currentPrivateKey = store().get(key)
-
-  if (currentPrivateKey && currentPrivateKey.length > 0) {
-    store().set(key, currentPrivateKey)
-
-    return currentPrivateKey
-  }
-
-  // generate privateKey for the first time
-  const kp = new PrivateKey()
-  const _privateKey = kp.secret.toString('hex')
-
-  store().set(key, _privateKey)
-
-  return _privateKey
-}
-
-const publicKey = function () {
-  // must have private key to try and get public key
-  const privateKeyHex = privateKey()
-  if (!privateKeyHex || privateKeyHex.length < 1) {
-    return ''
-  }
-
-  // create keyPair object from hex string
-  const _privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
-
-  // compute publicKey from privateKey
-  return _privateKey.publicKey.toHex()
-}
-
-const recoveryPhrase = function () {
-  // must have private key to try and get public key
-  const privateKeyHex = privateKey()
-  if (!privateKeyHex || privateKeyHex.length < 1) {
-    return ''
-  }
-
-  return bip39.entropyToMnemonic(privateKeyHex)
 }
 
 const organizationPrivateKey = function (_organizationId) {
@@ -237,8 +168,6 @@ module.exports = {
   // Set/Delete
   login,
   logout,
-  recover,
-  encrypt,
 
   // Get
   hostname,
@@ -246,9 +175,6 @@ module.exports = {
   token,
   id,
   organizationId,
-  publicKey,
-  privateKey,
-  recoveryPhrase,
 
   // organization
   organizationPublicKey,

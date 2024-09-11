@@ -5,6 +5,7 @@ const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 const { logger } = require('@dotenvx/dotenvx')
 
 const currentUser = require('./../../../shared/currentUser')
+const userPrivateKey = require('./../../../shared/userPrivateKey')
 const smartMask = require('./../../../lib/helpers/smartMask')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
@@ -32,8 +33,8 @@ async function emergencyKit () {
   }
 
   try {
-    let privateKey = currentUser.privateKey()
-    let recoveryPhrase = currentUser.recoveryPhrase()
+    let privateKey = userPrivateKey.privateKey()
+    let recoveryPhrase = userPrivateKey.recoveryPhrase()
 
     if (!privateKey || privateKey.length < 1) {
       const error = new Error()

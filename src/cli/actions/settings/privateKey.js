@@ -1,10 +1,10 @@
-const currentUser = require('./../../../shared/currentUser')
+const userPrivateKey = require('./../../../shared/userPrivateKey')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function privateKey () {
   const options = this.opts()
 
-  const privateKey = currentUser.privateKey()
+  const privateKey = userPrivateKey.privateKey()
   if (privateKey && privateKey.length > 0) {
     process.stdout.write(smartMask(privateKey, options.unmask))
   } else {

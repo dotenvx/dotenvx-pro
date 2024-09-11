@@ -2,7 +2,7 @@ const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../../shared/currentUser')
+const userPrivateKey = require('./../../../shared/userPrivateKey')
 const cleanseRecoveryPhrase = require('./../../../lib/helpers/cleanseRecoveryPhrase')
 const convertRecoveryPhraseToPrivateKey = require('./../../../lib/helpers/convertRecoveryPhraseToPrivateKey')
 const sleep = require('./../../../lib/helpers/sleep')
@@ -39,8 +39,8 @@ async function recover () {
     spinner.succeed('validated recovery phrase [*******]')
     spinner.start('recovering privateKey')
     await sleep(1000) // better dx
-    currentUser.recover(privateKey)
-    spinner.succeed(`account recovered 🏆 [${truncate(currentUser.privateKey())}]`)
+    userPrivateKey.recover(privateKey)
+    spinner.succeed(`account recovered 🏆 [${truncate(userPrivateKey.privateKey())}]`)
     logger.help('⮕  next run [dotenvx pro login] to reconnect your device')
   } catch (error) {
     if (error.message) {

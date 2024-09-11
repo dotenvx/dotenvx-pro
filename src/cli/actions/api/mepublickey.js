@@ -1,5 +1,6 @@
 const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
+const userPrivateKey = require('./../../../shared/userPrivateKey')
 const PostMePublicKey = require('./../../../lib/api/postMePublicKey')
 
 async function mepublickey () {
@@ -7,7 +8,7 @@ async function mepublickey () {
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   try {
-    const json = await new PostMePublicKey(options.hostname, currentUser.token(), currentUser.publicKey()).run()
+    const json = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
 
     let space = 0
     if (options.prettyPrint) {
