@@ -1,5 +1,4 @@
 const Conf = require('conf')
-const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./current')
 const userPrivateKey = require('./userPrivateKey')
@@ -10,12 +9,12 @@ let _store
 
 function initializeConfStore () {
   if (!current.id()) {
-    logger.error('[unauthorized] please log in with [dotenvx pro login]')
+    console.error('missing user. Log in with [dotenvx pro login].')
     process.exit(1)
   }
 
   if (!current.organizationId()) {
-    logger.error('organization is not set')
+    console.error('missing organization. Try running [dotenvx pro sync].')
     process.exit(1)
   }
 

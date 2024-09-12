@@ -1,15 +1,11 @@
 const organizationDb = require('./../../../shared/organization')
 
 function organization () {
-  try {
-    process.stdout.write(organizationDb.slug())
-  } catch (error) {
-    if (error.message) {
-      console.error(error.message)
-    }
-    if (error.help) {
-      console.error(error.help)
-    }
+  const slug = organizationDb.slug()
+  if (slug) {
+    process.stdout.write(slug)
+  } else {
+    console.error('missing slug. Try running [dotenvx pro sync].')
     process.exit(1)
   }
 }

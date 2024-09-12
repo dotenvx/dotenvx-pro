@@ -1,5 +1,4 @@
 const Conf = require('conf')
-const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 const bip39 = require('bip39')
 
@@ -10,7 +9,7 @@ let _store
 
 function initializeConfStore () {
   if (!current.id()) {
-    logger.error('[unauthorized] please log in with [dotenvx pro login]')
+    console.error('missing user. Log in with [dotenvx pro login].')
     process.exit(1)
   }
 
