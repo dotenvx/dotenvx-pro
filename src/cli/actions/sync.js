@@ -1,14 +1,18 @@
 const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
-const userPrivateKey = require('./../../shared/userPrivateKey')
+// database
 const currentUser = require('./../../shared/currentUser')
+const userPrivateKey = require('./../../shared/userPrivateKey')
+const user = require('./../../shared/user')
+const organization = require('./../../shared/organization')
 
+// helpers
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const encryptValue = require('./../../lib/helpers/encryptValue')
 const decryptValue = require('./../../lib/helpers/decryptValue')
-const organizationIds = require('./../../lib/helpers/organizationIds')
-const userIdsMissingPrivateKeyEncrypted = require('./../../lib/helpers/userIdsMissingPrivateKeyEncrypted')
+
+// api calls
 const GetMe = require('./../../lib/api/getMe')
 const GetOrganization = require('./../../lib/api/getOrganization')
 const PostMePublicKey = require('./../../lib/api/postMePublicKey')
@@ -23,118 +27,108 @@ async function sync () {
 
   try {
     // logged in
-    spinner.start('logged in')
+    spinner.start('[user] logged in')
     if (currentUser.token().length < 1) {
       const error = new Error()
-      error.message = 'logged out. Log in with [dotenvx pro login].'
+      error.message = 'login required. Log in with [dotenvx pro login].'
       throw error
     }
     let me = await new GetMe(options.hostname, currentUser.token()).run()
-    spinner.succeed(`logged in [${me.username}]`)
+    user.store().store = me
+    spinner.succeed(`[user:${user.username()}] logged in`)
 
     // verify/sync public key
-    spinner.start('public key')
+    spinner.start(`[user:${user.username()}] encrypted`)
     if (userPrivateKey.publicKey().length < 1) {
       const error = new Error()
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
       throw error
     }
     me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
-    spinner.succeed('public key')
-
-    process.exit(1)
-
-    // verify private key (assumed good since public key generated from private key)
-    spinner.start('private key')
-    spinner.succeed('private key')
+    user.store().store = me
+    spinner.succeed(`[user:${user.username()}] encrypted`)
 
     // verify emergency kit
-    spinner.start('emergency kit')
-    if (!me.emergency_kit_generated_at) {
+    spinner.start(`[user:${user.username()}] emergency kit`)
+    if (!user.emergencyKitGeneratedAt()) {
       const error = new Error()
       error.message = 'emergency kit must be generated once. Generate it with [dotenvx pro settings emergencykit --unmask]'
       throw error
     }
-    spinner.succeed('emergency kit')
+    spinner.succeed(`[user:${user.username()}] emergency kit`)
 
     // organization(s) - check if any
-    spinner.start('organization(s)')
-    const _organizationIds = organizationIds(me)
+    spinner.start('[organization] logged in')
+    const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
-      error.message = `missing organization(s). Ask your teammate to invite you or create your own [dotenvx pro organizations new].`
+      error.message = `Log into an organization with [dotenvx pro organizations login].`
       throw error
     }
-    spinner.succeed('organization(s)')
 
-    for (let i = 0; i < _organizationIds.length; i++) {
-      const organizationId = _organizationIds[i]
-      let organization = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
-      let publicKey = organization['public_key/1']
+    let remoteOrg = await new GetOrganization(currentUser.hostname(), currentUser.token(), currentUser.organizationId()).run()
+    organization.store().store = remoteOrg
+    spinner.succeed(`[organization:${organization.slug()}] logged in`)
 
-      spinner.start(`[${organization.slug}]`)
+    spinner.start(`[organization:${organization.slug()}] encrypted`)
+    // generate org keypair for the first time
+    const organizationHasPublicKey = organization.publicKey() && organization.publicKey().length > 0
+    if (!organizationHasPublicKey) {
+      const kp = new PrivateKey()
+      const genPublicKey = kp.publicKey.toHex()
+      const genPrivateKey = kp.secret.toString('hex')
+      const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
-      // generate org keypair for the first time
-      const organizationHasPublicKey = publicKey && publicKey.length > 0
-      if (!organizationHasPublicKey) {
-        const kp = new PrivateKey()
-        const genPublicKey = kp.publicKey.toHex()
-        const genPrivateKey = kp.secret.toString('hex')
-        const genPrivateKeyEncrypted = currentUser.encrypt(genPrivateKey) // encrypt org private key with user's public key
+      remoteOrg = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), currentUser.organizationId(), genPublicKey, genPrivateKeyEncrypted).run()
+      organization.store().store = remoteOrg
+      me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
+      user.store().store = me
+    }
 
-        organization = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
-        publicKey = organization['public_key/1']
-        me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
-      }
+    const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
+    if (!meHasPrivateKeyEncrypted) {
+      const error = new Error()
+      error.message = `missing private key for organization [${organization.slug()}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
+      throw error
+    }
 
-      // check if user has private_key_encrypted for org
-      const mePrivateKeyEncrypted = me[`organization/${organizationId}/private_key_encrypted/1`]
-      const meHasPrivateKeyEncrypted = mePrivateKeyEncrypted && mePrivateKeyEncrypted.length > 0
-      if (!meHasPrivateKeyEncrypted) {
-        const error = new Error()
-        error.message = `missing private key for organization [${organization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
-        throw error
-      }
+    const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
+    if (canDecryptOrganization !== 'true') {
+      const error = new Error()
+      error.message = `unable to encrypt/decrypt for organization [${organization.slug()}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
+      throw error
+    }
+    spinner.succeed(`[organization:${organization.slug()}] encrypted`)
 
-      currentUser.linkOrganization(organizationId, mePrivateKeyEncrypted)
+    // check team is all synced
+    spinner.start(`[organization:${organization.slug()}] team (${organization.userIds().length})`)
 
-      const canDecryptOrganization = decryptValue(encryptValue('true', publicKey), currentUser.organizationPrivateKey(organizationId))
-      if (canDecryptOrganization !== 'true') {
-        const error = new Error()
-        error.message = `unable to encrypt/decrypt for organization [${organization.slug}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
-        throw error
-      }
-      spinner.succeed(`[${organization.slug}]`)
+    // check for users missing their private_key_encrypted
+    const _userIdsMissingPrivateKeyEncrypted = organization.userIdsMissingPrivateKeyEncrypted()
+    if (_userIdsMissingPrivateKeyEncrypted || _userIdsMissingPrivateKeyEncrypted.length > 0) {
+      for (let i = 0; i < _userIdsMissingPrivateKeyEncrypted.length; i++) {
+        const userId = _userIdsMissingPrivateKeyEncrypted[i]
 
-      // check team is all synced
-      spinner.start(`[${organization.slug}] team`)
+        // username and publicKey
+        const username = organization.store().get(`user/${userId}/username`)
+        const publicKey = organization.store().get(`user/${userId}/public_key/1`)
 
-      // check for users missing their private_key_encrypted
-      const _userIdsMissingPrivateKeyEncrypted = userIdsMissingPrivateKeyEncrypted(organization)
-      if (_userIdsMissingPrivateKeyEncrypted || _userIdsMissingPrivateKeyEncrypted.length > 0) {
-        for (let ii = 0; ii < _userIdsMissingPrivateKeyEncrypted.length; ii++) {
-          const userId = _userIdsMissingPrivateKeyEncrypted[ii]
-          const userUsername = organization[`user/${userId}/username`]
-          const userPublicKey = organization[`user/${userId}/public_key/1`]
-          if (!userPublicKey || userPublicKey.length < 1) {
-            spinner.warn(`[${organization.slug}][${userUsername}] missing public key. Tell them to run [dotenvx pro sync].`)
-          } else {
-            // encrypt organization private key using team member's public key
-            const userPrivateKeyEncrypted = encryptValue(currentUser.organizationPrivateKey(organizationId), userPublicKey)
+        if (!publicKey || userPublicKey.length < 1) {
+          spinner.warn(`[organization:${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)
+        } else {
+          // encrypt organization private key using teammate's public key
+          const privateKeyEncrypted = encryptValue(organization.privateKey(), publicKey)
 
-            // upload their encrypted private key to pro
-            organization = await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, currentUser.token(), organizationId, userId, userPublicKey, userPrivateKeyEncrypted).run()
-          }
+          // upload their encrypted private key to pro
+          await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, currentUser.token(), currentUser.organizationId(), userId, publicKey, privateKeyEncrypted).run()
         }
       }
-
-      spinner.succeed(`[${organization.slug}] team`)
     }
 
-    const firstOrganizationId = organizationIds()[0]
-    if (firstOrganizationId) {
-      currentUser.chooseOrganization(firstOrganizationId)
-    }
+    remoteOrg = await new GetOrganization(currentUser.hostname(), currentUser.token(), currentUser.organizationId()).run()
+    organization.store().store = remoteOrg
+
+    spinner.succeed(`[organization:${organization.slug()}] team (${organization.userIds().length})`)
   } catch (error) {
     if (error.message) {
       spinner.fail(error.message)

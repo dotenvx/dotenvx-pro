@@ -21,8 +21,8 @@ function initializeConfStore () {
     projectName: 'dotenvx',
     configName: `${currentUser.hostfolder()}/user-${currentUser.id()}-private-key`,
     projectSuffix: '',
-    fileExtension: 'json'
-    // encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
+    fileExtension: 'json',
+    encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
   })
 }
 

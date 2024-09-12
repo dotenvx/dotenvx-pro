@@ -15,6 +15,14 @@ organizations
   .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
   .action(newAction)
 
+// dotenvx pro organizations login
+const loginAction = require('./../actions/organizations/login')
+organizations
+  .command('login')
+  .description('log in to organization')
+  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .action(loginAction)
+
 // dotenvx pro organizations list
 const listAction = require('./../actions/organizations/list')
 organizations
@@ -31,13 +39,5 @@ organizations
   .description('print current organization')
   .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
   .action(currentAction)
-
-// dotenvx pro organizations choose
-const chooseAction = require('./../actions/organizations/choose')
-organizations
-  .command('choose')
-  .description('set current organization')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
-  .action(chooseAction)
 
 module.exports = organizations

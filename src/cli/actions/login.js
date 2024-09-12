@@ -64,7 +64,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
 
         currentUser.login(hostname, id, accessToken)
         if (organizationId) {
-          currentUser.chooseOrganization(organizationId)
+          currentUser.loginOrganization(organizationId)
         }
 
         spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)

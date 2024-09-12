@@ -5,7 +5,7 @@ const { logger } = require('@dotenvx/dotenvx')
 const currentUser = require('./../../../shared/currentUser')
 const GetOrganizations = require('./../../../lib/api/getOrganizations')
 
-async function choose () {
+async function login () {
   const options = this.opts()
   const hostname = options.hostname
 
@@ -27,12 +27,12 @@ async function choose () {
       })
 
       const organizationId = lookups[input.organization]
-      currentUser.chooseOrganization(organizationId)
+      currentUser.loginOrganization(organizationId)
 
       logger.success(`✔ ${input.organization} set`)
     } else {
-      logger.error('✖ missing organization(s)')
-      logger.help('? create an organization [dotenvx pro organizations new] or ask your teammate to invite you.')
+      logger.error('oops, you must be a member of at least one organization.')
+      logger.help('? create one [dotenvx pro organizations new] or ask your teammates to invite you.')
     }
   } catch (error) {
     if (error.message) {
@@ -42,4 +42,4 @@ async function choose () {
   }
 }
 
-module.exports = choose
+module.exports = login

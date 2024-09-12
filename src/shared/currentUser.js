@@ -4,7 +4,6 @@ const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
 const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
-const decryptValue = require('./../lib/helpers/decryptValue')
 
 let _store
 
@@ -60,6 +59,16 @@ const login = function (hostname, id, accessToken) {
   return accessToken
 }
 
+const loginOrganization = function (_organizationId) {
+  if (!_organizationId) {
+    throw new Error('DOTENVX_PRO_ORGANIZATION not set. Run [dotenvx pro organizations choose]')
+  }
+
+  store().set('DOTENVX_PRO_ORGANIZATION', _organizationId)
+
+  return _organizationId
+}
+
 const logout = function (hostname, id, accessToken) {
   if (!hostname) {
     throw new Error('DOTENVX_PRO_HOSTNAME not set. Run [dotenvx pro login]')
@@ -76,7 +85,7 @@ const logout = function (hostname, id, accessToken) {
   store().delete('DOTENVX_PRO_USER')
   store().delete('DOTENVX_PRO_TOKEN')
   store().delete('DOTENVX_PRO_HOSTNAME')
-  store().delete('DOTENVX_PRO_CURRENT_ORGANIZATION')
+  store().delete('DOTENVX_PRO_ORGANIZATION')
 
   return true
 }
@@ -94,16 +103,6 @@ const linkOrganization = function (_organizationId, privateKeyEncrypted) {
   store().set(key, privateKeyEncrypted)
 
   return privateKeyEncrypted
-}
-
-const chooseOrganization = function (_organizationId) {
-  if (!_organizationId) {
-    throw new Error('DOTENVX_PRO_CURRENT_ORGANIZATION not set. Run [dotenvx pro organizations choose]')
-  }
-
-  store().set('DOTENVX_PRO_CURRENT_ORGANIZATION', _organizationId)
-
-  return _organizationId
 }
 
 //
@@ -128,37 +127,7 @@ const id = function () {
 }
 
 const organizationId = function () {
-  return store().get('DOTENVX_PRO_CURRENT_ORGANIZATION') || ''
-}
-
-const organizationPrivateKey = function (_organizationId) {
-  // must have organizationId
-  if (!_organizationId) {
-    return ''
-  }
-
-  const key = `DOTENVX_PRO_USER_${id()}_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
-  const value = store().get(key)
-
-  if (!value || value.length < 1) {
-    return ''
-  }
-
-  return decryptValue(value, privateKey())
-}
-
-const organizationPublicKey = function (_organizationId) {
-  // must have private key to try and get public key
-  const privateKeyHex = organizationPrivateKey(_organizationId)
-  if (!privateKeyHex || privateKeyHex.length < 1) {
-    return ''
-  }
-
-  // create keyPair object from hex string
-  const _privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
-
-  // compute publicKey from privateKey
-  return _privateKey.publicKey.toHex()
+  return store().get('DOTENVX_PRO_ORGANIZATION') || ''
 }
 
 module.exports = {
@@ -167,6 +136,7 @@ module.exports = {
 
   // Set/Delete
   login,
+  loginOrganization,
   logout,
 
   // Get
@@ -177,8 +147,5 @@ module.exports = {
   organizationId,
 
   // organization
-  organizationPublicKey,
-  organizationPrivateKey,
-  linkOrganization,
-  chooseOrganization
+  linkOrganization
 }
