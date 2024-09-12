@@ -62,7 +62,7 @@ async function sync () {
     const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
-      error.message = `Log into an organization with [dotenvx pro organizations login].`
+      error.message = 'Log into an organization with [dotenvx pro organizations login].'
       throw error
     }
 
@@ -113,7 +113,7 @@ async function sync () {
         const username = organization.store().get(`user/${userId}/username`)
         const publicKey = organization.store().get(`user/${userId}/public_key/1`)
 
-        if (!publicKey || userPublicKey.length < 1) {
+        if (!publicKey || publicKey.length < 1) {
           spinner.warn(`[organization:${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)
         } else {
           // encrypt organization private key using teammate's public key

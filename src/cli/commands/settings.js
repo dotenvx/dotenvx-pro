@@ -1,5 +1,4 @@
 const { Command } = require('commander')
-const current = require('./../../shared/current')
 
 const settings = new Command('settings')
 

@@ -12,7 +12,6 @@ function organization () {
     }
     process.exit(1)
   }
-
 }
 
 module.exports = organization

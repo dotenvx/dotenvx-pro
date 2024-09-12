@@ -5,8 +5,6 @@ const bip39 = require('bip39')
 
 const current = require('./current')
 const encryptValue = require('./../lib/helpers/encryptValue')
-const decryptValue = require('./../lib/helpers/decryptValue')
-const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
 
 let _store
 
@@ -108,5 +106,5 @@ module.exports = {
   privateKey,
   recoveryPhrase,
   encrypt,
-  recover,
+  recover
 }

@@ -1,5 +1,4 @@
 const Conf = require('conf')
-const { PrivateKey } = require('eciesjs')
 const dotenv = require('dotenv')
 
 const jsonToEnv = require('./helpers/jsonToEnv')
@@ -90,21 +89,6 @@ const logout = function (hostname, id, accessToken) {
   return true
 }
 
-const linkOrganization = function (_organizationId, privateKeyEncrypted) {
-  if (!_organizationId) {
-    throw new Error('organizationId is required. Try running [dotenvx pro sync]')
-  }
-
-  if (!privateKeyEncrypted) {
-    throw new Error('privateKeyEncrypted is required. Try running [dotenvx pro sync]')
-  }
-
-  const key = `DOTENVX_PRO_USER_${id()}_ORGANIZATION_${_organizationId}_PRIVATE_KEY_ENCRYPTED`
-  store().set(key, privateKeyEncrypted)
-
-  return privateKeyEncrypted
-}
-
 //
 // Get
 //
@@ -144,8 +128,5 @@ module.exports = {
   hostfolder,
   token,
   id,
-  organizationId,
-
-  // organization
-  linkOrganization
+  organizationId
 }
