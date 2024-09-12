@@ -2,7 +2,7 @@ const open = require('open')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../shared/currentUser')
+const current = require('./../../shared/current')
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
@@ -62,9 +62,9 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         const accessToken = responseData.access_token
         const organizationId = responseData.current_organization_id
 
-        currentUser.login(hostname, id, accessToken)
+        current.login(hostname, id, accessToken)
         if (organizationId) {
-          currentUser.loginOrganization(organizationId)
+          current.loginOrganization(organizationId)
         }
 
         spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)

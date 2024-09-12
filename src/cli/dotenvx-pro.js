@@ -2,10 +2,10 @@
 
 const { Command } = require('commander')
 const program = new Command()
+const { setLogLevel } = require('@dotenvx/dotenvx')
 
 const packageJson = require('./../lib/helpers/packageJson')
-const currentUser = require('./../shared/currentUser')
-const { setLogLevel } = require('@dotenvx/dotenvx')
+const current = require('./../shared/current')
 
 // global log levels
 program
@@ -29,7 +29,7 @@ const syncAction = require('./actions/sync')
 program
   .command('sync')
   .description('sync account')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(syncAction)
 
 const pushAction = require('./actions/push')
@@ -38,21 +38,21 @@ program
   .description('push .env.keys')
   .argument('[directory]', 'directory to push', '.')
   .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(pushAction)
 
 const loginAction = require('./actions/login')
 program
   .command('login')
   .description('log in')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(loginAction)
 
 const logoutAction = require('./actions/logout')
 program
   .command('logout')
   .description('log out')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(logoutAction)
 
 // dotenvx pro ls

@@ -1,5 +1,5 @@
 const { logger } = require('@dotenvx/dotenvx')
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 const GetOrganization = require('./../../../lib/api/getOrganization')
 
 async function organization (organizationId) {
@@ -9,7 +9,7 @@ async function organization (organizationId) {
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   try {
-    const json = await new GetOrganization(currentUser.hostname(), currentUser.token(), organizationId).run()
+    const json = await new GetOrganization(current.hostname(), current.token(), organizationId).run()
 
     let space = 0
     if (options.prettyPrint) {

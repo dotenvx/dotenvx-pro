@@ -1,5 +1,5 @@
 const { logger } = require('@dotenvx/dotenvx')
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 const GetMe = require('./../../../lib/api/getMe')
 
 async function me () {
@@ -7,7 +7,7 @@ async function me () {
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   try {
-    const json = await new GetMe(options.hostname, currentUser.token()).run()
+    const json = await new GetMe(options.hostname, current.token()).run()
 
     let space = 0
     if (options.prettyPrint) {

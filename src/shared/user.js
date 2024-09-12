@@ -1,12 +1,12 @@
 const Conf = require('conf')
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./currentUser')
+const current = require('./current')
 
 let _store
 
 function initializeConfStore () {
-  if (!currentUser.id()) {
+  if (!current.id()) {
     logger.error('[unauthorized] please log in with [dotenvx pro login]')
     process.exit(1)
   }
@@ -14,7 +14,7 @@ function initializeConfStore () {
   _store = new Conf({
     cwd: process.env.DOTENVX_CONFIG || undefined,
     projectName: 'dotenvx',
-    configName: `${currentUser.hostfolder()}/user-${currentUser.id()}`,
+    configName: `${current.hostfolder()}/user-${current.id()}`,
     projectSuffix: '',
     fileExtension: 'json'
   })

@@ -3,7 +3,7 @@ const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 const bip39 = require('bip39')
 
-const currentUser = require('./currentUser')
+const current = require('./current')
 const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUsername')
@@ -11,7 +11,7 @@ const parseUsernameFromFullUsername = require('./helpers/parseUsernameFromFullUs
 let _store
 
 function initializeConfStore () {
-  if (!currentUser.id()) {
+  if (!current.id()) {
     logger.error('[unauthorized] please log in with [dotenvx pro login]')
     process.exit(1)
   }
@@ -19,7 +19,7 @@ function initializeConfStore () {
   _store = new Conf({
     cwd: process.env.DOTENVX_CONFIG || undefined,
     projectName: 'dotenvx',
-    configName: `${currentUser.hostfolder()}/user-${currentUser.id()}-private-key`,
+    configName: `${current.hostfolder()}/user-${current.id()}-private-key`,
     projectSuffix: '',
     fileExtension: 'json',
     encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
@@ -54,7 +54,7 @@ const publicKey = function () {
 
 const privateKey = function () {
   // must have id to try and lazily generate private key
-  const _id = currentUser.id()
+  const _id = current.id()
   if (!_id || _id.length < 1) {
     return ''
   }
@@ -91,7 +91,7 @@ const encrypt = function (value) {
 
 const recover = function (privateKeyHex) {
   // must have id to try and lazily generate private key
-  const _id = currentUser.id()
+  const _id = current.id()
   if (!_id || _id.length < 1) {
     return ''
   }

@@ -3,7 +3,8 @@ const path = require('path')
 const { request } = require('undici')
 const { logger, keypair } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../shared/currentUser')
+const current = require('./../../shared/current')
+const organization = require('./../../shared/organization')
 
 const sleep = require('./../../lib/helpers/sleep')
 const isGitRepo = require('./../../lib/helpers/isGitRepo')
@@ -75,7 +76,7 @@ async function push (directory) {
   // http related
   const hostname = options.hostname
   const pushUrl = `${hostname}/api/push`
-  const token = currentUser.token()
+  const token = current.token()
   const usernameName = extractUsernameName(giturl)
 
   const envFilepaths = _envFilepaths(directory, options.envFile)
@@ -102,7 +103,7 @@ async function push (directory) {
     const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
     const privateKey = keypairs[privateKeyName]
 
-    const organizationPublicKey = currentUser.organizationPublicKey(currentUser.organizationId())
+    const organizationPublicKey = organization.publicKey()
     const privateKeyEncryptedWithOrganizationPublicKey = encryptValue(privateKey, organizationPublicKey)
 
     const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root

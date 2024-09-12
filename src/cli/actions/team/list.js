@@ -2,15 +2,15 @@ const { table } = require('table')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 
 async function list () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.token()
+  const token = current.token()
   const hostname = options.hostname
-  const organizationId = currentUser.organizationId()
+  const organizationId = current.organizationId()
   const url = `${hostname}/api/organizations/${organizationId}/members`
   const response = await request(url, {
     method: 'GET',

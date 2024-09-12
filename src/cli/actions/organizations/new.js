@@ -3,7 +3,7 @@ const crypto = require('crypto')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 const confirm = require('./../../../lib/helpers/confirm')
 
@@ -14,7 +14,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
 
   while (true) {
     try {
-      const token = currentUser.token()
+      const token = current.token()
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {
@@ -39,7 +39,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
         const slug = responseData.slug
         const organizationId = responseData.id
 
-        currentUser.loginOrganization(organizationId)
+        current.loginOrganization(organizationId)
 
         spinner.succeed(`created organization [${slug}]`)
         logger.help('⮕ next run [dotenvx pro sync]')

@@ -1,7 +1,7 @@
 const Conf = require('conf')
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./currentUser')
+const current = require('./current')
 const userPrivateKey = require('./userPrivateKey')
 
 const decryptValue = require('./../lib/helpers/decryptValue')
@@ -9,12 +9,12 @@ const decryptValue = require('./../lib/helpers/decryptValue')
 let _store
 
 function initializeConfStore () {
-  if (!currentUser.id()) {
+  if (!current.id()) {
     logger.error('[unauthorized] please log in with [dotenvx pro login]')
     process.exit(1)
   }
 
-  if (!currentUser.organizationId()) {
+  if (!current.organizationId()) {
     logger.error('organization is not set')
     process.exit(1)
   }
@@ -22,7 +22,7 @@ function initializeConfStore () {
   _store = new Conf({
     cwd: process.env.DOTENVX_CONFIG || undefined,
     projectName: 'dotenvx',
-    configName: `${currentUser.hostfolder()}/user-${currentUser.id()}-organization-${currentUser.organizationId()}`,
+    configName: `${current.hostfolder()}/user-${current.id()}-organization-${current.organizationId()}`,
     projectSuffix: '',
     fileExtension: 'json'
   })
@@ -53,7 +53,7 @@ const publicKey = function () {
 }
 
 const privateKeyEncrypted = function () {
-  return store().get(`user/${currentUser.id()}/private_key_encrypted/1`)
+  return store().get(`user/${current.id()}/private_key_encrypted/1`)
 }
 
 const privateKey = function () {

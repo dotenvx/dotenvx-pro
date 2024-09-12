@@ -1,5 +1,5 @@
 const { Command } = require('commander')
-const currentUser = require('./../../shared/currentUser')
+const current = require('./../../shared/current')
 
 const team = new Command('team')
 
@@ -12,7 +12,7 @@ const listAction = require('./../actions/team/list')
 team
   .command('list')
   .description('list team members')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.hostname())
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .option('--unmask', 'unmask sensitive data')
   .action(listAction)
 

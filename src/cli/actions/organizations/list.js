@@ -2,14 +2,14 @@ const { table } = require('table')
 const { logger } = require('@dotenvx/dotenvx')
 
 const GetOrganizations = require('./../../../lib/api/getOrganizations')
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 
 async function list () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   try {
-    const token = currentUser.token()
+    const token = current.token()
     const hostname = options.hostname
     const organizations = await new GetOrganizations(hostname, token).run()
 

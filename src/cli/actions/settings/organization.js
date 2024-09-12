@@ -1,8 +1,8 @@
-const user = require('./../../../shared/user')
+const organizationDb = require('./../../../shared/organization')
 
-async function username () {
+function organization () {
   try {
-    process.stdout.write(user.username())
+    process.stdout.write(organizationDb.slug())
   } catch (error) {
     if (error.message) {
       console.error(error.message)
@@ -12,6 +12,7 @@ async function username () {
     }
     process.exit(1)
   }
+
 }
 
-module.exports = username
+module.exports = organization

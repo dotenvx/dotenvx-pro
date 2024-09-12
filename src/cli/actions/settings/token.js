@@ -1,10 +1,10 @@
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function token () {
   const options = this.opts()
 
-  const token = currentUser.token()
+  const token = current.token()
   if (token && token.length > 1) {
     process.stdout.write(smartMask(token, options.unmask, 11))
   } else {

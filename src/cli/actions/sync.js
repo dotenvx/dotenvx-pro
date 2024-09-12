@@ -2,7 +2,7 @@ const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
 // database
-const currentUser = require('./../../shared/currentUser')
+const current = require('./../../shared/current')
 const userPrivateKey = require('./../../shared/userPrivateKey')
 const user = require('./../../shared/user')
 const organization = require('./../../shared/organization')
@@ -28,12 +28,12 @@ async function sync () {
   try {
     // logged in
     spinner.start('[user] logged in')
-    if (currentUser.token().length < 1) {
+    if (current.token().length < 1) {
       const error = new Error()
       error.message = 'login required. Log in with [dotenvx pro login].'
       throw error
     }
-    let me = await new GetMe(options.hostname, currentUser.token()).run()
+    let me = await new GetMe(options.hostname, current.token()).run()
     user.store().store = me
     spinner.succeed(`[user:${user.username()}] logged in`)
 
@@ -44,7 +44,7 @@ async function sync () {
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
       throw error
     }
-    me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
+    me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
     user.store().store = me
     spinner.succeed(`[user:${user.username()}] encrypted`)
 
@@ -66,7 +66,7 @@ async function sync () {
       throw error
     }
 
-    let remoteOrg = await new GetOrganization(currentUser.hostname(), currentUser.token(), currentUser.organizationId()).run()
+    let remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
     organization.store().store = remoteOrg
     spinner.succeed(`[organization:${organization.slug()}] logged in`)
 
@@ -79,9 +79,9 @@ async function sync () {
       const genPrivateKey = kp.secret.toString('hex')
       const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
-      remoteOrg = await new PostOrganizationPublicKey(options.hostname, currentUser.token(), currentUser.organizationId(), genPublicKey, genPrivateKeyEncrypted).run()
+      remoteOrg = await new PostOrganizationPublicKey(options.hostname, current.token(), current.organizationId(), genPublicKey, genPrivateKeyEncrypted).run()
       organization.store().store = remoteOrg
-      me = await new PostMePublicKey(options.hostname, currentUser.token(), userPrivateKey.publicKey()).run()
+      me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
       user.store().store = me
     }
 
@@ -120,12 +120,12 @@ async function sync () {
           const privateKeyEncrypted = encryptValue(organization.privateKey(), publicKey)
 
           // upload their encrypted private key to pro
-          await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, currentUser.token(), currentUser.organizationId(), userId, publicKey, privateKeyEncrypted).run()
+          await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, current.token(), current.organizationId(), userId, publicKey, privateKeyEncrypted).run()
         }
       }
     }
 
-    remoteOrg = await new GetOrganization(currentUser.hostname(), currentUser.token(), currentUser.organizationId()).run()
+    remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
     organization.store().store = remoteOrg
 
     spinner.succeed(`[organization:${organization.slug()}] team (${organization.userIds().length})`)

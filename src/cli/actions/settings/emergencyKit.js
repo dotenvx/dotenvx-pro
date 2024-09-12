@@ -4,7 +4,7 @@ const qrcode = require('qrcode')
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib')
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 const userPrivateKey = require('./../../../shared/userPrivateKey')
 const smartMask = require('./../../../lib/helpers/smartMask')
 const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
@@ -56,7 +56,7 @@ async function emergencyKit () {
     const monoFont = await pdf.embedFont(StandardFonts.Courier)
 
     // json
-    const json = await new GetMe(currentUser.hostname(), currentUser.token()).run()
+    const json = await new GetMe(current.hostname(), current.token()).run()
 
     // createdFor
     page.drawText(`created for ${json.username} on ${currentDate()}`, {
@@ -102,9 +102,9 @@ async function emergencyKit () {
 
     // notify the user has downloaded emergency kit at least once
     try {
-      await new PostMeEmergencyKit(currentUser.hostname(), currentUser.token()).run()
+      await new PostMeEmergencyKit(current.hostname(), current.token()).run()
     } catch (error) {
-      console.error(`notifying ${currentUser.hostname()} failed: ${error.message}`)
+      console.error(`notifying ${current.hostname()} failed: ${error.message}`)
     }
 
     const pdfBytes = await pdf.save()

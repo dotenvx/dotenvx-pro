@@ -1,5 +1,5 @@
 const { logger } = require('@dotenvx/dotenvx')
-const currentUser = require('./../../shared/currentUser')
+const current = require('./../../shared/current')
 const { request } = require('undici')
 
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
@@ -11,7 +11,7 @@ async function logout () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
-  const token = currentUser.token()
+  const token = current.token()
   const hostname = options.hostname
   const apiLogoutUrl = `${hostname}/api/logout`
   const settingsDevicesUrl = `${hostname}/settings/devices`
@@ -37,7 +37,7 @@ async function logout () {
     const username = responseData.username
     const accessToken = responseData.access_token
 
-    currentUser.logout(hostname, id, accessToken)
+    current.logout(hostname, id, accessToken)
     spinner.succeed(`logged out [${username}] from this device and revoked token [${truncate(accessToken, 11)}]`)
     logger.help(`⮕ next visit [${settingsDevicesUrl}] to view your devices`)
   }

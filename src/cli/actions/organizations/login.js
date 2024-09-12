@@ -2,7 +2,7 @@ const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
 const { logger } = require('@dotenvx/dotenvx')
 
-const currentUser = require('./../../../shared/currentUser')
+const current = require('./../../../shared/current')
 const GetOrganizations = require('./../../../lib/api/getOrganizations')
 
 async function login () {
@@ -10,7 +10,7 @@ async function login () {
   const hostname = options.hostname
 
   try {
-    const organizations = await new GetOrganizations(hostname, currentUser.token()).run()
+    const organizations = await new GetOrganizations(hostname, current.token()).run()
 
     const lookups = {}
     for (const row of organizations) {
@@ -27,7 +27,7 @@ async function login () {
       })
 
       const organizationId = lookups[input.organization]
-      currentUser.loginOrganization(organizationId)
+      current.loginOrganization(organizationId)
 
       logger.success(`✔ ${input.organization} set`)
     } else {
