@@ -13,13 +13,6 @@ settings
   .description('print your username')
   .action(usernameAction)
 
-// dotenvx pro settings organization
-const organizationAction = require('./../actions/settings/organization')
-settings
-  .command('organization')
-  .description('print your organization')
-  .action(organizationAction)
-
 // dotenvx pro settings token
 const tokenAction = require('./../actions/settings/token')
 settings
@@ -66,5 +59,27 @@ settings
   .command('recover')
   .description('recover your account 🔐')
   .action(recover)
+
+// dotenvx pro settings org
+const orgAction = require('./../actions/settings/org')
+settings
+  .command('org')
+  .description('print current organization')
+  .action(orgAction)
+
+// dotenvx pro settings orgpublickey
+const orgPublicKeyAction = require('./../actions/settings/orgPublicKey')
+settings
+  .command('orgpublickey')
+  .description('print organization publicKey')
+  .action(orgPublicKeyAction)
+
+// dotenvx pro settings orgprivatekey
+const orgPrivateKeyAction = require('./../actions/settings/orgPrivateKey')
+settings
+  .command('orgprivatekey')
+  .description('print organization privateKey (--unmask)')
+  .option('--unmask', 'unmask privateKey')
+  .action(orgPrivateKeyAction)
 
 module.exports = settings

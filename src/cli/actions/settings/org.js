@@ -1,6 +1,6 @@
 const organizationDb = require('./../../../shared/organization')
 
-function organization () {
+function org () {
   const slug = organizationDb.slug()
   if (slug) {
     process.stdout.write(slug)
@@ -10,4 +10,4 @@ function organization () {
   }
 }
 
-module.exports = organization
+module.exports = org

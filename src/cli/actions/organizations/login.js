@@ -31,7 +31,7 @@ async function login () {
 
       logger.success(`✔ ${input.organization} set`)
     } else {
-      logger.error('you must be a member of at least one organization. Create one [dotenvx pro organizations new] or ask your teammates to invite you.')
+      logger.error('Create an organization [dotenvx pro organizations new] or join one [dotenvx pro organizations join].')
     }
   } catch (error) {
     if (error.message) {
