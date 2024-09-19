@@ -4,12 +4,12 @@ const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../../shared/current')
 
-async function list () {
+async function orgTeam () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   const token = current.token()
-  const hostname = options.hostname
+  const hostname = current.hostname()
   const organizationId = current.organizationId()
   const url = `${hostname}/api/organizations/${organizationId}/members`
   const response = await request(url, {
@@ -48,4 +48,4 @@ async function list () {
   process.stdout.write(table(t))
 }
 
-module.exports = list
+module.exports = orgTeam

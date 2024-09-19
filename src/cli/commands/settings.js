@@ -54,17 +54,17 @@ settings
   .action(emergencyKitAction)
 
 // dotenvx pro settings recover
-const recover = require('./../actions/settings/recover')
+const recoverAction = require('./../actions/settings/recover')
 settings
   .command('recover')
   .description('recover your account 🔐')
-  .action(recover)
+  .action(recoverAction)
 
 // dotenvx pro settings org
 const orgAction = require('./../actions/settings/org')
 settings
   .command('org')
-  .description('print current organization')
+  .description('print organization')
   .action(orgAction)
 
 // dotenvx pro settings orgpublickey
@@ -81,5 +81,12 @@ settings
   .description('print organization privateKey (--unmask)')
   .option('--unmask', 'unmask privateKey')
   .action(orgPrivateKeyAction)
+
+// dotenvx pro settings orgteam
+const orgTeamAction = require('./../actions/settings/orgTeam')
+settings
+  .command('orgteam')
+  .description('print organization team')
+  .action(orgTeamAction)
 
 module.exports = settings

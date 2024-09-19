@@ -64,9 +64,6 @@ program.command('ls')
   .option('-ef, --exclude-env-file <excludeFilenames...>', 'path(s) to exclude from your env file(s) (default: none)')
   .action(lsAction)
 
-// dotenvx pro team
-program.addCommand(require('./commands/team'))
-
 // dotenvx pro organizations
 program.addCommand(require('./commands/organizations'))
 
