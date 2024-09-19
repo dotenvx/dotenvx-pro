@@ -1,6 +1,6 @@
 const { table } = require('table')
 const { request } = require('undici')
-const { logger } = require('@dotenvx/dotenvx')
+const { logger, getColor, bold } = require('@dotenvx/dotenvx')
 
 const current = require('./../../../shared/current')
 
@@ -30,19 +30,14 @@ async function orgTeam () {
   }
 
   // build table
-  const t = [['username', 'user public_key', 'organization public_key', 'organization private_key']]
+  const t = [['username', 'synced']]
   for (const row of responseData) {
-    let publicKeyExists = ''
-    if (row.public_key && row.public_key.length > 0) {
-      publicKeyExists = '✔'
+    let synced = getColor('red')('✖')
+    if (row.public_key && row.public_key.length > 0 && row.organization_private_key_encrypted_with_user_public_key && row.organization_private_key_encrypted_with_user_public_key.length > 0) {
+      synced = getColor('green')('✔')
     }
 
-    let organizationPrivateKeyExists = ''
-    if (row.organization_private_key_encrypted_with_user_public_key && row.organization_private_key_encrypted_with_user_public_key.length > 0) {
-      organizationPrivateKeyExists = '✔'
-    }
-
-    t.push([row.username, publicKeyExists, '✔', organizationPrivateKeyExists])
+    t.push([row.username, synced])
   }
 
   process.stdout.write(table(t))

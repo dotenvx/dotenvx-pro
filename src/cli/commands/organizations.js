@@ -23,13 +23,4 @@ organizations
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(loginAction)
 
-// dotenvx pro organizations list
-const listAction = require('./../actions/organizations/list')
-organizations
-  .command('list')
-  .description('list my organizations')
-  .option('-h, --hostname <url>', 'set hostname', current.hostname())
-  .option('--unmask', 'unmask sensitive data')
-  .action(listAction)
-
 module.exports = organizations
