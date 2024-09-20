@@ -3,11 +3,11 @@ const crypto = require('crypto')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
-const current = require('./../../../shared/current')
 const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 const confirm = require('./../../../lib/helpers/confirm')
-
 const spinner = createSpinner('waiting on browser creation')
+
+const current = require('./../../../shared/current')
 
 async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
   logger.debug(`POST ${requestUidUrl} with requestUid ${requestUid} at interval ${interval}`)
@@ -15,6 +15,11 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
   while (true) {
     try {
       const token = current.token()
+      if (!token || token.length < 1) {
+        const error = new Error('missing user. Log in with [dotenvx pro login].')
+        throw error
+      }
+
       const response = await request(requestUidUrl, {
         method: 'POST',
         headers: {
@@ -49,18 +54,18 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
         await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
-      logger.error(error.toString())
+      console.error(error.message)
       process.exit(1)
     }
   }
 }
 
-async function neww () {
+async function orgNew () {
   const options = this.opts()
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   const requestUid = `req_${crypto.randomBytes(4).toString('hex')}`
-  const hostname = options.hostname
+  const hostname = current.hostname()
   const organizationsNewUrl = `${hostname}/organizations/new?request_uid=${requestUid}`
   const requestUidUrl = `${hostname}/api/request_uid`
   const interval = 5 // for 5 seconds
@@ -80,9 +85,9 @@ async function neww () {
       process.exit(1)
     }
   } catch (error) {
-    logger.error(error.toString())
+    console.error(error.message)
     process.exit(1)
   }
 }
 
-module.exports = neww
+module.exports = orgNew

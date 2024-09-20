@@ -1,17 +1,14 @@
 const { table } = require('table')
 const { request } = require('undici')
-const { logger, getColor, bold } = require('@dotenvx/dotenvx')
+const { getColor } = require('@dotenvx/dotenvx')
 
 const current = require('./../../../shared/current')
+const organizationDb = require('./../../../shared/organization')
 
 async function orgTeam () {
-  const options = this.opts()
-  logger.debug(`options: ${JSON.stringify(options)}`)
-
-  const token = current.token()
   const hostname = current.hostname()
-  const organizationId = current.organizationId()
-  const url = `${hostname}/api/organizations/${organizationId}/members`
+  const token = current.token()
+  const url = `${hostname}/api/organizations/${organizationDb.slug()}/members`
   const response = await request(url, {
     method: 'GET',
     headers: {
@@ -21,8 +18,6 @@ async function orgTeam () {
   })
 
   const responseData = await response.body.json()
-
-  logger.debug(responseData)
 
   if (response.statusCode >= 400) {
     console.error(`[${responseData.error.code}] ${responseData.error.message}`)

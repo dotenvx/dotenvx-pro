@@ -50,7 +50,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
           const newInterval = interval + 1 // grow the interval
           await new Promise(resolve => setTimeout(resolve, newInterval * 1000))
         } else {
-          logger.error(responseData.error_description)
+          console.error(responseData.error_description)
           process.exit(1)
         }
       }
@@ -75,7 +75,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
-      logger.error(error.toString())
+      console.error(error.message)
       process.exit(1)
     }
   }
@@ -107,7 +107,7 @@ async function login () {
 
     if (response.statusCode >= 400) {
       logger.debug(responseData)
-      logger.error(responseData.error_description)
+      console.error(responseData.error_description)
       process.exit(1)
     }
 
@@ -134,7 +134,7 @@ async function login () {
       process.exit(1)
     }
   } catch (error) {
-    logger.error(error.toString())
+    console.error(error.message)
     process.exit(1)
   }
 }
