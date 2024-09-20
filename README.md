@@ -4,7 +4,7 @@
 
 ## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
 
-Extend `dotenv` with pro.
+Extend `dotenvx` with pro.
 
 ```sh
 npm install @dotenvx/dotenvx-pro --save
@@ -13,10 +13,10 @@ npm install @dotenvx/dotenvx-pro --save
 
 or install globally
 
-<details><summary>with brew 🍺</summary><br>
+<details><summary>with curl 🌐 </summary><br>
 
 ```sh
-brew install dotenvx/brew/dotenvx-pro
+curl -sfS https://dotenvx.sh/pro | sh
 dotenvx pro help
 ```
 
@@ -24,10 +24,10 @@ dotenvx pro help
 
 </details>
 
-<details><summary>with curl 🌐 </summary><br>
+<details><summary>with brew 🍺</summary><br>
 
 ```sh
-curl -sfS https://dotenvx.sh/pro | sh
+brew install dotenvx/brew/dotenvx-pro
 dotenvx pro help
 ```
 
