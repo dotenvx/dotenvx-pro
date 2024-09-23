@@ -31,7 +31,7 @@ async function login () {
 
       logger.success(`✔ ${input.organization} set`)
     } else {
-      logger.error('Create an organization [dotenvx pro settings orgnew] or join one [dotenvx pro organizations join].')
+      logger.error('Create an organization [dotenvx pro settings orgnew] or join one [dotenvx pro settings orgjoin].')
     }
   } catch (error) {
     if (error.message) {
