@@ -8,6 +8,7 @@ const organizationDb = require('./../../../shared/organization')
 async function orgTeam () {
   const hostname = current.hostname()
   const token = current.token()
+
   const url = `${hostname}/api/organizations/${organizationDb.slug()}/members`
   const response = await request(url, {
     method: 'GET',

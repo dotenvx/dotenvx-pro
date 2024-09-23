@@ -63,8 +63,8 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         const organizationId = responseData.current_organization_id
 
         current.login(hostname, id, accessToken)
-        if (organizationId) {
-          current.loginOrganization(organizationId)
+        if (!current.organizationId() && organizationId) {
+          current.selectOrganization(organizationId)
         }
 
         spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)

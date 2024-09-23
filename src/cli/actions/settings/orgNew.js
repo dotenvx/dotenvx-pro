@@ -44,7 +44,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
         const slug = responseData.slug
         const organizationId = responseData.id
 
-        current.loginOrganization(organizationId)
+        current.selectOrganization(organizationId)
 
         spinner.succeed(`created organization [${slug}]`)
         logger.help('⮕ next run [dotenvx pro sync]')

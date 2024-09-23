@@ -58,7 +58,7 @@ const login = function (hostname, id, accessToken) {
   return accessToken
 }
 
-const loginOrganization = function (_organizationId) {
+const selectOrganization = function (_organizationId) {
   if (!_organizationId) {
     throw new Error('DOTENVX_PRO_ORGANIZATION not set. Run [dotenvx pro settings orgselect]')
   }
@@ -120,7 +120,7 @@ module.exports = {
 
   // Set/Delete
   login,
-  loginOrganization,
+  selectOrganization,
   logout,
 
   // Get

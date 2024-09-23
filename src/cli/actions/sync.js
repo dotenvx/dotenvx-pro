@@ -66,12 +66,17 @@ async function sync () {
       throw error
     }
 
-    const currentOrganizationId = current.organizationId()
+    let currentOrganizationId = current.organizationId()
 
     // instead of current.organizationId here can i just get all of them?
     for (let iOrg = 0; iOrg < _organizationIds.length; iOrg++) {
       const organizationId = _organizationIds[iOrg]
-      current.loginOrganization(organizationId) // temp set current.organizationId()
+
+      if (!currentOrganizationId) {
+        currentOrganizationId = organizationId
+      }
+
+      current.selectOrganization(organizationId) // temp set current.organizationId()
 
       let remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
       organization.store().store = remoteOrg
@@ -138,7 +143,7 @@ async function sync () {
     }
 
     spinner.start('[@] logged in')
-    current.loginOrganization(currentOrganizationId)
+    current.selectOrganization(currentOrganizationId)
     spinner.succeed(`[@${organization.slug()}] logged in`)
 
     process.exit(0)

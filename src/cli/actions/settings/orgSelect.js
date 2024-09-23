@@ -7,7 +7,13 @@ const GetOrganizations = require('./../../../lib/api/getOrganizations')
 
 async function orgSelect () {
   try {
-    const organizations = await new GetOrganizations(current.hostname(), current.token()).run()
+    const token = current.token()
+    if (!token || token.length < 1) {
+      const error = new Error('missing user. Log in with [dotenvx pro login].')
+      throw error
+    }
+
+    const organizations = await new GetOrganizations(current.hostname(), token).run()
 
     const lookups = {}
     for (const row of organizations) {
@@ -24,7 +30,7 @@ async function orgSelect () {
       })
 
       const organizationId = lookups[input.organization]
-      current.loginOrganization(organizationId)
+      current.selectOrganization(organizationId)
 
       logger.success(`✔ ${input.organization} set`)
     } else {
