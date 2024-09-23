@@ -3,6 +3,8 @@ const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../shared/current')
+const user = require('./../../shared/user')
+
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
@@ -60,7 +62,8 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         const id = responseData.id
         const username = responseData.username
         const accessToken = responseData.access_token
-        const organizationId = responseData.current_organization_id
+
+        const organizationId = user.organizationIds()[0]
 
         current.login(hostname, id, accessToken)
         if (!current.organizationId() && organizationId) {

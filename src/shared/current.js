@@ -51,6 +51,7 @@ const login = function (hostname, id, accessToken) {
     throw new Error('DOTENVX_PRO_TOKEN not set. Run [dotenvx pro login]')
   }
 
+  store().delete('DOTENVX_PRO_ORGANIZATION')
   store().set('DOTENVX_PRO_USER', id)
   store().set('DOTENVX_PRO_TOKEN', accessToken)
   store().set('DOTENVX_PRO_HOSTNAME', hostname)
