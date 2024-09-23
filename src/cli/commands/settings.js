@@ -93,14 +93,21 @@ settings
 const orgJoinAction = require('./../actions/settings/orgJoin')
 settings
   .command('orgjoin')
-  .description('join an organization')
+  .description('join organization')
   .action(orgJoinAction)
 
 // dotenvx pro settings orgnew
 const orgNewAction = require('./../actions/settings/orgNew')
 settings
   .command('orgnew')
-  .description('create an organization')
+  .description('create organization')
   .action(orgNewAction)
+
+// dotenvx pro settings orgselect
+const orgSelectAction = require('./../actions/settings/orgSelect')
+settings
+  .command('orgselect')
+  .description('select organization')
+  .action(orgSelectAction)
 
 module.exports = settings

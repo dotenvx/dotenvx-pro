@@ -5,12 +5,9 @@ const { logger } = require('@dotenvx/dotenvx')
 const current = require('./../../../shared/current')
 const GetOrganizations = require('./../../../lib/api/getOrganizations')
 
-async function login () {
-  const options = this.opts()
-  const hostname = options.hostname
-
+async function orgSelect () {
   try {
-    const organizations = await new GetOrganizations(hostname, current.token()).run()
+    const organizations = await new GetOrganizations(current.hostname(), current.token()).run()
 
     const lookups = {}
     for (const row of organizations) {
@@ -22,7 +19,7 @@ async function login () {
       const input = await enquirer.prompt({
         type: 'select',
         name: 'organization',
-        message: 'Choose an organization',
+        message: 'Select an organization',
         choices: slugs
       })
 
@@ -41,4 +38,4 @@ async function login () {
   }
 }
 
-module.exports = login
+module.exports = orgSelect
