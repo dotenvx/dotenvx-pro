@@ -25,14 +25,18 @@ function initializeConfStore () {
     projectSuffix: '',
     fileExtension: 'json'
   })
+
+  return _store
 }
 
 // Ensure store is initialized before accessing it
 function store () {
-  if (!_store) {
-    initializeConfStore()
-  }
-  return _store
+  return initializeConfStore()
+  // remove caching - too fickle when supporting multiple orgs
+  // if (!_store) {
+  //   initializeConfStore()
+  // }
+  // return _store
 }
 
 const configPath = function () {
