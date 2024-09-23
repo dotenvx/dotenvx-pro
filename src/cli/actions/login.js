@@ -63,9 +63,11 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         const username = responseData.username
         const accessToken = responseData.access_token
 
-        const organizationId = user.organizationIds()[0]
-
+        // log in user
         current.login(hostname, id, accessToken)
+
+        // attempt to select org
+        const organizationId = user.organizationIds()[0]
         if (!current.organizationId() && organizationId) {
           current.selectOrganization(organizationId)
         }

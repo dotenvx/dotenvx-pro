@@ -8,7 +8,7 @@ const smartMask = require('../src/lib/helpers/smartMask')
 const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
-let publicKey = '02b106c30579baf896ae1fddf077cbcb4fef5e7d457932974878dcb51f42b45498'
+const publicKey = '02b106c30579baf896ae1fddf077cbcb4fef5e7d457932974878dcb51f42b45498'
 let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
 let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
 
@@ -113,7 +113,7 @@ function emergencyKitBlank (options = { unmask: false, example: false }) {
   // publicKey value
   doc.fontSize(10)
   doc.font('Courier')
-  // doc.text(publicKey, 110, 342, { align: 'left', width: (page.width - (100 * 2) - 10) })
+  doc.text(publicKey, 110, 342, { align: 'left', width: (page.width - (100 * 2) - 10) })
 
   // label1
   const label1 = 'PRIVATE KEY'
@@ -132,7 +132,7 @@ function emergencyKitBlank (options = { unmask: false, example: false }) {
   // privateKey value
   doc.fontSize(10)
   doc.font('Courier')
-  // doc.text(privateKey, 110, 412, { align: 'left', width: (page.width - (100 * 2) - 20) })
+  doc.text(privateKey, 110, 412, { align: 'left', width: (page.width - (100 * 2) - 20) })
 
   // label2
   const label2 = 'RECOVERY PHRASE'
@@ -151,7 +151,7 @@ function emergencyKitBlank (options = { unmask: false, example: false }) {
   // recoveryPhrase value
   doc.fontSize(12)
   doc.font('Courier')
-  // doc.text(recoveryPhrase, 110, 482, { align: 'left', width: (page.width - (100 * 2) - 20) })
+  doc.text(recoveryPhrase, 110, 482, { align: 'left', width: (page.width - (100 * 2) - 20) })
 
   // help left column
   const help = 'Need help?'
@@ -175,7 +175,7 @@ function emergencyKitBlank (options = { unmask: false, example: false }) {
     // qr code center column
     const qrBuffer = Buffer.from(url.replace(/^data:image\/png;base64,/, ''), 'base64')
     const qrX = (page.width / 2) - (120 / 2)
-    // doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
+    doc.image(qrBuffer, qrX, 610, { width: 120, height: 120 })
 
     // explainer right column
     const setup = 'Setup code'

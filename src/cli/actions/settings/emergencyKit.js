@@ -46,7 +46,7 @@ async function emergencyKit () {
     recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
     privateKey = smartMask(privateKey, options.unmask)
 
-    let publicKey = userPrivateKey.publicKey()
+    const publicKey = userPrivateKey.publicKey()
 
     // setup
     const existing = fs.readFileSync(path.join(__dirname, '../../../assets/emergencyKitBlank.pdf'))
