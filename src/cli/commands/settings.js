@@ -89,11 +89,18 @@ settings
   .description('print organization team')
   .action(orgTeamAction)
 
+// dotenvx pro settings orgjoin
+const orgJoinAction = require('./../actions/settings/orgJoin')
+settings
+  .command('orgjoin')
+  .description('join an organization')
+  .action(orgJoinAction)
+
 // dotenvx pro settings orgnew
 const orgNewAction = require('./../actions/settings/orgNew')
 settings
   .command('orgnew')
-  .description('create new organization')
+  .description('create an organization')
   .action(orgNewAction)
 
 module.exports = settings
