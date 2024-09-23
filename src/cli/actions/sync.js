@@ -27,7 +27,7 @@ async function sync () {
 
   try {
     // logged in
-    spinner.start('[user] logged in')
+    spinner.start('logged in')
     if (current.token().length < 1) {
       const error = new Error()
       error.message = 'login required. Log in with [dotenvx pro login].'
@@ -35,10 +35,10 @@ async function sync () {
     }
     let me = await new GetMe(options.hostname, current.token()).run()
     user.store().store = me
-    spinner.succeed(`[user:${user.username()}] logged in`)
+    spinner.succeed(`[${user.username()}] logged in`)
 
     // verify/sync public key
-    spinner.start(`[user:${user.username()}] encrypted`)
+    spinner.start(`[${user.username()}] encrypted`)
     if (userPrivateKey.publicKey().length < 1) {
       const error = new Error()
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
@@ -46,19 +46,19 @@ async function sync () {
     }
     me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
     user.store().store = me
-    spinner.succeed(`[user:${user.username()}] encrypted`)
+    spinner.succeed(`[${user.username()}] encrypted`)
 
     // verify emergency kit
-    spinner.start(`[user:${user.username()}] emergency kit`)
+    spinner.start(`[${user.username()}] emergency kit`)
     if (!user.emergencyKitGeneratedAt()) {
       const error = new Error()
       error.message = 'emergency kit must be generated once. Generate it with [dotenvx pro settings emergencykit --unmask]'
       throw error
     }
-    spinner.succeed(`[user:${user.username()}] emergency kit`)
+    spinner.succeed(`[${user.username()}] emergency kit`)
 
     // organization(s) - check if any
-    spinner.start('[organization] logged in')
+    spinner.start('[org] logged in')
     const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
@@ -76,7 +76,7 @@ async function sync () {
       let remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
       organization.store().store = remoteOrg
 
-      spinner.start(`[organization:${organization.slug()}] encrypted`)
+      spinner.start(`[@${organization.slug()}] encrypted`)
       // generate org keypair for the first time
       const organizationHasPublicKey = organization.publicKey() && organization.publicKey().length > 0
       if (!organizationHasPublicKey) {
@@ -104,10 +104,10 @@ async function sync () {
         error.message = `unable to encrypt/decrypt for organization [${organization.slug()}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
         throw error
       }
-      spinner.succeed(`[organization:${organization.slug()}] encrypted`)
+      spinner.succeed(`[@${organization.slug()}] encrypted`)
 
       // check team is all synced
-      spinner.start(`[organization:${organization.slug()}] team (${organization.userIds().length})`)
+      spinner.start(`[@${organization.slug()}] team (${organization.userIds().length})`)
 
       // check for users missing their private_key_encrypted
       const _userIdsMissingPrivateKeyEncrypted = organization.userIdsMissingPrivateKeyEncrypted()
@@ -120,7 +120,7 @@ async function sync () {
           const publicKey = organization.store().get(`user/${userId}/public_key/1`)
 
           if (!publicKey || publicKey.length < 1) {
-            spinner.warn(`[organization:${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)
+            spinner.warn(`[@${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)
           } else {
             // encrypt organization private key using teammate's public key
             const privateKeyEncrypted = encryptValue(organization.privateKey(), publicKey)
@@ -134,12 +134,12 @@ async function sync () {
       remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
       organization.store().store = remoteOrg
 
-      spinner.succeed(`[organization:${organization.slug()}] team (${organization.userIds().length})`)
+      spinner.succeed(`[@${organization.slug()}] team (${organization.userIds().length})`)
     }
 
-    spinner.start('[organization] logged in')
+    spinner.start('[@] logged in')
     current.loginOrganization(currentOrganizationId)
-    spinner.succeed(`[organization:${organization.slug()}] logged in`)
+    spinner.succeed(`[@${organization.slug()}] logged in`)
 
     process.exit(0)
   } catch (error) {
