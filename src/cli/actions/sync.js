@@ -58,11 +58,11 @@ async function sync () {
     spinner.succeed(`[${user.username()}] emergency kit`)
 
     // organization(s) - check if any
-    spinner.start('[org] logged in')
+    spinner.start('[@] logged in')
     const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
-      error.message = 'Log into an organization with [dotenvx pro organizations login].'
+      error.message = 'Log into an organization with [dotenvx pro settings orgselect].'
       throw error
     }
 

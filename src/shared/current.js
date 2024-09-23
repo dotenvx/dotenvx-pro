@@ -60,7 +60,7 @@ const login = function (hostname, id, accessToken) {
 
 const loginOrganization = function (_organizationId) {
   if (!_organizationId) {
-    throw new Error('DOTENVX_PRO_ORGANIZATION not set. Run [dotenvx pro organizations choose]')
+    throw new Error('DOTENVX_PRO_ORGANIZATION not set. Run [dotenvx pro settings orgselect]')
   }
 
   store().set('DOTENVX_PRO_ORGANIZATION', _organizationId)
