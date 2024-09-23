@@ -46,6 +46,8 @@ async function emergencyKit () {
     recoveryPhrase = formatRecoveryPhrase(recoveryPhrase)
     privateKey = smartMask(privateKey, options.unmask)
 
+    let publicKey = userPrivateKey.publicKey()
+
     // setup
     const existing = fs.readFileSync(path.join(__dirname, '../../../assets/emergencyKitBlank.pdf'))
     const pdf = await PDFDocument.load(existing)
@@ -63,6 +65,15 @@ async function emergencyKit () {
       x: 100,
       y: 590,
       size: 9,
+      font: monoFont,
+      color: rgb(0, 0, 0)
+    })
+
+    // publicKey
+    page.drawText(publicKey, {
+      x: 105,
+      y: 444,
+      size: 10,
       font: monoFont,
       color: rgb(0, 0, 0)
     })

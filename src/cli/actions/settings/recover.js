@@ -1,5 +1,6 @@
 const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
+const { PrivateKey } = require('eciesjs')
 const { logger } = require('@dotenvx/dotenvx')
 
 const userPrivateKey = require('./../../../shared/userPrivateKey')
@@ -29,11 +30,20 @@ async function recover () {
       const cleanRecoveryPhrase = cleanseRecoveryPhrase(input.recoveryPhrase)
       privateKey = convertRecoveryPhraseToPrivateKey(cleanRecoveryPhrase)
     } catch (e) {
-      spinner.fail(`invalid recovery phrase [${e.message}]`)
-      console.error('✖ could not recover account')
-      logger.blank('')
-      logger.blank('Double-check your recovery phrase and try again. It should be made up of 24 words.')
-      process.exit(1)
+      try {
+        privateKey = input.recoveryPhrase // maybe user put their private key in directly
+        const _privateKey = new PrivateKey(Buffer.from(privateKey, 'hex'))
+        // compute publicKey from privateKey
+        _privateKey.publicKey.toHex()
+      } catch (error) {
+        spinner.fail(`invalid recovery phrase [${e.message}]`)
+        console.error('✖ could not recover account')
+        logger.blank('')
+        logger.blank('Double-check your recovery phrase and try again. It should be made up of 24 words.')
+        logger.blank('')
+        logger.blank('Still having trouble? Contact support@dotenvx.com. We might be able to help.')
+        process.exit(1)
+      }
     }
 
     spinner.succeed('validated recovery phrase [*******]')
