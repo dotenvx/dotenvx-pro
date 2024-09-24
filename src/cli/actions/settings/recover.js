@@ -3,7 +3,7 @@ const enquirer = new Enquirer()
 const { PrivateKey } = require('eciesjs')
 const { logger } = require('@dotenvx/dotenvx')
 
-const userPrivateKey = require('./../../../db/userPrivateKey')
+const UserPrivateKey = require('./../../../db/userPrivateKey')
 const cleanseRecoveryPhrase = require('./../../../lib/helpers/cleanseRecoveryPhrase')
 const convertRecoveryPhraseToPrivateKey = require('./../../../lib/helpers/convertRecoveryPhraseToPrivateKey')
 const sleep = require('./../../../lib/helpers/sleep')
@@ -49,6 +49,7 @@ async function recover () {
     spinner.succeed('validated recovery phrase [*******]')
     spinner.start('recovering privateKey')
     await sleep(1000) // better dx
+    const userPrivateKey = new UserPrivateKey()
     userPrivateKey.recover(privateKey)
     spinner.succeed(`account recovered 🏆 [${truncate(userPrivateKey.privateKey())}]`)
     logger.help('⮕  next run [dotenvx pro login] to reconnect your device')

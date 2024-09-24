@@ -1,7 +1,7 @@
 const Conf = require('conf')
 
 const current = require('./current')
-const userPrivateKey = require('./userPrivateKey')
+const UserPrivateKey = require('./userPrivateKey')
 
 const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
@@ -55,6 +55,8 @@ class Organization {
     if (!value || value.length < 1) {
       return ''
     }
+
+    const userPrivateKey = new UserPrivateKey()
 
     return decryptValue(value, userPrivateKey.privateKey())
   }

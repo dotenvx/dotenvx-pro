@@ -5,105 +5,91 @@ const bip39 = require('bip39')
 const current = require('./current')
 const encryptValue = require('./../lib/helpers/encryptValue')
 
-let _store
+class UserPrivateKey {
+  constructor (userId = current.id()) {
+    this.hostfolder = current.hostfolder()
+    this.userId = current.id()
 
-function initializeConfStore () {
-  if (!current.id()) {
-    console.error('missing user. Log in with [dotenvx pro login].')
-    process.exit(1)
+    if (!this.userId) {
+      throw new Error('missing user. Log in with [dotenvx pro login].')
+    }
+
+    this.store = new Conf({
+      cwd: process.env.DOTENVX_CONFIG || undefined,
+      projectName: 'dotenvx',
+      configName: `${this.hostfolder}/user-${this.userId}-private-key`,
+      projectSuffix: '',
+      fileExtension: 'json',
+      encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
+    })
   }
 
-  _store = new Conf({
-    cwd: process.env.DOTENVX_CONFIG || undefined,
-    projectName: 'dotenvx',
-    configName: `${current.hostfolder()}/user-${current.id()}-private-key`,
-    projectSuffix: '',
-    fileExtension: 'json',
-    encryptionKey: 'dotenvxpro dotenvxpro dotenvxpro'
-  })
-}
-
-// Ensure store is initialized before accessing it
-function store () {
-  if (!_store) {
-    initializeConfStore()
-  }
-  return _store
-}
-
-const configPath = function () {
-  return store().path
-}
-
-const publicKey = function () {
-  // must have private key to try and get public key
-  const privateKeyHex = privateKey()
-  if (!privateKeyHex || privateKeyHex.length < 1) {
-    return ''
+  configPath () {
+    return this.store.path
   }
 
-  // create keyPair object from hex string
-  const _privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
+  publicKey () {
+    // must have private key to try and get public key
+    const privateKeyHex = this.privateKey()
+    if (!privateKeyHex || privateKeyHex.length < 1) {
+      return ''
+    }
 
-  // compute publicKey from privateKey
-  return _privateKey.publicKey.toHex()
-}
+    // create keyPair object from hex string
+    const _privateKey = new PrivateKey(Buffer.from(privateKeyHex, 'hex'))
 
-const privateKey = function () {
-  // must have id to try and lazily generate private key
-  const _id = current.id()
-  if (!_id || _id.length < 1) {
-    return ''
+    // compute publicKey from privateKey
+    return _privateKey.publicKey.toHex()
   }
 
-  const currentPrivateKey = store().get('private_key/1')
-  if (currentPrivateKey && currentPrivateKey.length > 0) {
-    store().set('private_key/1', currentPrivateKey)
+  privateKey () {
+    // must have id to try and lazily generate private key
+    const _id = this.userId
+    if (!_id || _id.length < 1) {
+      return ''
+    }
 
-    return currentPrivateKey
+    const currentPrivateKey = this.store.get('private_key/1')
+    if (currentPrivateKey && currentPrivateKey.length > 0) {
+      this.store.set('private_key/1', currentPrivateKey)
+
+      return currentPrivateKey
+    }
+
+    // generate privateKey for the first time
+    const kp = new PrivateKey()
+    const _privateKey = kp.secret.toString('hex')
+
+    this.store.set('private_key/1', _privateKey)
+
+    return _privateKey
   }
 
-  // generate privateKey for the first time
-  const kp = new PrivateKey()
-  const _privateKey = kp.secret.toString('hex')
+  recoveryPhrase () {
+    // must have private key to try and get public key
+    const privateKeyHex = this.privateKey()
+    if (!privateKeyHex || privateKeyHex.length < 1) {
+      return ''
+    }
 
-  store().set('private_key/1', _privateKey)
-
-  return _privateKey
-}
-
-const recoveryPhrase = function () {
-  // must have private key to try and get public key
-  const privateKeyHex = privateKey()
-  if (!privateKeyHex || privateKeyHex.length < 1) {
-    return ''
+    return bip39.entropyToMnemonic(privateKeyHex)
   }
 
-  return bip39.entropyToMnemonic(privateKeyHex)
-}
-
-const encrypt = function (value) {
-  return encryptValue(value, publicKey())
-}
-
-const recover = function (privateKeyHex) {
-  // must have id to try and lazily generate private key
-  const _id = current.id()
-  if (!_id || _id.length < 1) {
-    return ''
+  encrypt (value) {
+    return encryptValue(value, this.publicKey())
   }
 
-  store().set('private_key/1', privateKeyHex)
+  recover (privateKeyHex) {
+    // must have id to try and lazily generate private key
+    const _id = this.userId
+    if (!_id || _id.length < 1) {
+      return ''
+    }
 
-  return privateKeyHex
+    this.store.set('private_key/1', privateKeyHex)
+
+    return privateKeyHex
+  }
 }
 
-module.exports = {
-  store,
-  configPath,
-  publicKey,
-  privateKey,
-  recoveryPhrase,
-  encrypt,
-  recover
-}
+module.exports = UserPrivateKey

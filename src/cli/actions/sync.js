@@ -3,7 +3,7 @@ const { PrivateKey } = require('eciesjs')
 
 // database
 const current = require('./../../db/current')
-const userPrivateKey = require('./../../db/userPrivateKey')
+const UserPrivateKey = require('./../../db/userPrivateKey')
 const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
@@ -40,6 +40,7 @@ async function sync () {
 
     // verify/sync public key
     spinner.start(`[${user.username()}] encrypted`)
+    const userPrivateKey = new UserPrivateKey()
     if (userPrivateKey.publicKey().length < 1) {
       const error = new Error()
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
