@@ -4,7 +4,7 @@ const { request } = require('undici')
 const { logger, keypair } = require('@dotenvx/dotenvx')
 
 const current = require('./../../db/current')
-const organization = require('./../../db/organization')
+const Organization = require('./../../db/organization')
 
 const sleep = require('./../../lib/helpers/sleep')
 const isGitRepo = require('./../../lib/helpers/isGitRepo')
@@ -104,6 +104,7 @@ async function push (directory) {
 
     const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
     const privateKey = keypairs[privateKeyName]
+    const organization = new Organization() // TODO: handle different id somehow (without user having to be 'logged into' this organization currently)
     const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
     const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
     const payload = {

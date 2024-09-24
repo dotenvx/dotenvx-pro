@@ -6,115 +6,94 @@ const userPrivateKey = require('./userPrivateKey')
 const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 
-let _store
+class Organization {
+  constructor (organizationId = current.organizationId()) {
+    this.hostfolder = current.hostfolder()
+    this.userId = current.id()
+    this.organizationId = organizationId
 
-function initializeConfStore () {
-  if (!current.id()) {
-    console.error('missing user. Log in with [dotenvx pro login].')
-    process.exit(1)
-  }
-
-  if (!current.organizationId()) {
-    console.error('missing organization. Try running [dotenvx pro sync].')
-    process.exit(1)
-  }
-
-  _store = new Conf({
-    cwd: process.env.DOTENVX_CONFIG || undefined,
-    projectName: 'dotenvx',
-    configName: `${current.hostfolder()}/user-${current.id()}-organization-${current.organizationId()}`,
-    projectSuffix: '',
-    fileExtension: 'json'
-  })
-
-  return _store
-}
-
-// Ensure store is initialized before accessing it
-function store () {
-  return initializeConfStore()
-  // remove caching - too fickle when supporting multiple orgs
-  // if (!_store) {
-  //   initializeConfStore()
-  // }
-  // return _store
-}
-
-const configPath = function () {
-  return store().path
-}
-
-const id = function () {
-  return store().get('id')
-}
-
-const slug = function () {
-  return store().get('slug')
-}
-
-const publicKey = function () {
-  return store().get('public_key/1')
-}
-
-const privateKeyEncrypted = function () {
-  return store().get(`user/${current.id()}/private_key_encrypted/1`)
-}
-
-const privateKey = function () {
-  const value = privateKeyEncrypted()
-
-  if (!value || value.length < 1) {
-    return ''
-  }
-
-  return decryptValue(value, userPrivateKey.privateKey())
-}
-
-const encrypt = function (value) {
-  return encryptValue(value, publicKey())
-}
-
-const userIds = function () {
-  const ids = []
-
-  const json = store().store
-  for (const key in json) {
-    // user/2/username
-    const match = key.match(/^user\/(\d+)\/username/)
-
-    if (match && json[key] !== undefined) {
-      ids.push(match[1]) // add user id
+    if (!this.userId) {
+      throw new Error('missing user. Log in with [dotenvx pro login].')
     }
-  }
 
-  return ids
-}
-
-const userIdsMissingPrivateKeyEncrypted = function () {
-  const ids = []
-
-  const json = store().store
-  for (const key in json) {
-    // user/2/private_key_encrypted
-    const match = key.match(/^user\/(\d+)\/private_key_encrypted/)
-
-    if (match && json[key] == null) {
-      ids.push(match[1]) // add user id
+    if (!this.organizationId) {
+      throw new Error('missing organization. Try running [dotenvx pro sync].')
     }
+
+    this.store = new Conf({
+      cwd: process.env.DOTENVX_CONFIG || undefined,
+      projectName: 'dotenvx',
+      configName: `${this.hostfolder}/user-${this.userId}-organization-${this.organizationId}`,
+      projectSuffix: '',
+      fileExtension: 'json'
+    })
   }
 
-  return ids
+  configPath () {
+    return this.store.path
+  }
+
+  id () {
+    return this.store.get('id')
+  }
+
+  slug () {
+    return this.store.get('slug')
+  }
+
+  publicKey () {
+    return this.store.get('public_key/1')
+  }
+
+  privateKeyEncrypted () {
+    return this.store.get(`user/${this.userId}/private_key_encrypted/1`)
+  }
+
+  privateKey () {
+    const value = this.privateKeyEncrypted()
+
+    if (!value || value.length < 1) {
+      return ''
+    }
+
+    return decryptValue(value, userPrivateKey.privateKey())
+  }
+
+  encrypt (value) {
+    return encryptValue(value, this.publicKey())
+  }
+
+  userIds () {
+    const ids = []
+
+    const json = this.store.store
+    for (const key in json) {
+      // user/2/username
+      const match = key.match(/^user\/(\d+)\/username/)
+
+      if (match && json[key] !== undefined) {
+        ids.push(match[1]) // add user id
+      }
+    }
+
+    return ids
+  }
+
+  userIdsMissingPrivateKeyEncrypted () {
+    const ids = []
+
+    const json = this.store.store
+    for (const key in json) {
+      // user/2/private_key_encrypted
+      const match = key.match(/^user\/(\d+)\/private_key_encrypted/)
+
+      if (match && json[key] == null) {
+        ids.push(match[1]) // add user id
+      }
+    }
+
+    return ids
+  }
 }
 
-module.exports = {
-  store,
-  configPath,
-  id,
-  slug,
-  publicKey,
-  privateKeyEncrypted,
-  privateKey,
-  encrypt,
-  userIds,
-  userIdsMissingPrivateKeyEncrypted
-}
+module.exports = Organization

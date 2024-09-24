@@ -5,7 +5,7 @@ const { PrivateKey } = require('eciesjs')
 const current = require('./../../db/current')
 const userPrivateKey = require('./../../db/userPrivateKey')
 const user = require('./../../db/user')
-const organization = require('./../../db/organization')
+const Organization = require('./../../db/organization')
 
 // helpers
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
@@ -71,15 +71,15 @@ async function sync () {
     // instead of current.organizationId here can i just get all of them?
     for (let iOrg = 0; iOrg < _organizationIds.length; iOrg++) {
       const organizationId = _organizationIds[iOrg]
+      const organization = new Organization(organizationId)
 
+      // for later - to auto-select an organization
       if (!currentOrganizationId) {
         currentOrganizationId = organizationId
       }
 
-      current.selectOrganization(organizationId) // temp set current.organizationId()
-
-      let remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
-      organization.store().store = remoteOrg
+      let remoteOrg = await new GetOrganization(current.hostname(), current.token(), organization.id()).run()
+      organization.store.store = remoteOrg
 
       spinner.start(`[@${organization.slug()}] encrypted`)
       // generate org keypair for the first time
@@ -90,8 +90,8 @@ async function sync () {
         const genPrivateKey = kp.secret.toString('hex')
         const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
-        remoteOrg = await new PostOrganizationPublicKey(options.hostname, current.token(), current.organizationId(), genPublicKey, genPrivateKeyEncrypted).run()
-        organization.store().store = remoteOrg
+        remoteOrg = await new PostOrganizationPublicKey(options.hostname, current.token(), organization.id(), genPublicKey, genPrivateKeyEncrypted).run()
+        organization.store.store = remoteOrg
         me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
         user.store().store = me
       }
@@ -121,8 +121,8 @@ async function sync () {
           const userId = _userIdsMissingPrivateKeyEncrypted[i]
 
           // username and publicKey
-          const username = organization.store().get(`user/${userId}/username`)
-          const publicKey = organization.store().get(`user/${userId}/public_key/1`)
+          const username = organization.store.get(`user/${userId}/username`)
+          const publicKey = organization.store.get(`user/${userId}/public_key/1`)
 
           if (!publicKey || publicKey.length < 1) {
             spinner.warn(`[@${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)
@@ -131,19 +131,20 @@ async function sync () {
             const privateKeyEncrypted = encryptValue(organization.privateKey(), publicKey)
 
             // upload their encrypted private key to pro
-            await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, current.token(), current.organizationId(), userId, publicKey, privateKeyEncrypted).run()
+            await new PostOrganizationUserPrivateKeyEncrypted(options.hostname, current.token(), organization.id(), userId, publicKey, privateKeyEncrypted).run()
           }
         }
       }
 
-      remoteOrg = await new GetOrganization(current.hostname(), current.token(), current.organizationId()).run()
-      organization.store().store = remoteOrg
+      remoteOrg = await new GetOrganization(current.hostname(), current.token(), organization.id()).run()
+      organization.store.store = remoteOrg
 
       spinner.succeed(`[@${organization.slug()}] team (${organization.userIds().length})`)
     }
 
     spinner.start('[@] logged in')
     current.selectOrganization(currentOrganizationId)
+    const organization = new Organization()
     spinner.succeed(`[@${organization.slug()}] logged in`)
 
     process.exit(0)
