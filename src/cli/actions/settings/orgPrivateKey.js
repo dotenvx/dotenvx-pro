@@ -1,4 +1,4 @@
-const organizationDb = require('./../../../shared/organization')
+const organizationDb = require('./../../../db/organization')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function orgPrivateKey () {

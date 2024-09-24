@@ -1,4 +1,4 @@
-const userPrivateKey = require('./../../../shared/userPrivateKey')
+const userPrivateKey = require('./../../../db/userPrivateKey')
 
 function publicKey () {
   const publicKey = userPrivateKey.publicKey()

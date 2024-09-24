@@ -1,4 +1,4 @@
-const organizationDb = require('./../../../shared/organization')
+const organizationDb = require('./../../../db/organization')
 
 function org () {
   const slug = organizationDb.slug()

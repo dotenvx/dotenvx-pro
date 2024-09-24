@@ -1,5 +1,5 @@
 const { logger } = require('@dotenvx/dotenvx')
-const current = require('./../../shared/current')
+const current = require('./../../db/current')
 const { request } = require('undici')
 
 const { createSpinner } = require('./../../lib/helpers/createSpinner')

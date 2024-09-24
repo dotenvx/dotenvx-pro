@@ -2,7 +2,7 @@ const Enquirer = require('enquirer')
 const enquirer = new Enquirer()
 const { logger } = require('@dotenvx/dotenvx')
 
-const current = require('./../../../shared/current')
+const current = require('./../../../db/current')
 const GetOrganizations = require('./../../../lib/api/getOrganizations')
 
 async function orgSelect () {

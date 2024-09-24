@@ -3,6 +3,7 @@ const Conf = require('conf')
 const current = require('./current')
 const userPrivateKey = require('./userPrivateKey')
 
+const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 
 let _store
@@ -69,6 +70,10 @@ const privateKey = function () {
   return decryptValue(value, userPrivateKey.privateKey())
 }
 
+const encrypt = function (value) {
+  return encryptValue(value, publicKey())
+}
+
 const userIds = function () {
   const ids = []
 
@@ -109,6 +114,7 @@ module.exports = {
   publicKey,
   privateKeyEncrypted,
   privateKey,
+  encrypt,
   userIds,
   userIdsMissingPrivateKeyEncrypted
 }

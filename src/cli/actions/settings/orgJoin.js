@@ -2,7 +2,7 @@ const open = require('open')
 
 const confirm = require('./../../../lib/helpers/confirm')
 
-const current = require('./../../../shared/current')
+const current = require('./../../../db/current')
 
 async function orgJoin () {
   const hostname = current.hostname()

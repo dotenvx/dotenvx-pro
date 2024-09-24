@@ -1,4 +1,4 @@
-const userPrivateKey = require('./../../../shared/userPrivateKey')
+const userPrivateKey = require('./../../../db/userPrivateKey')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 const smartMaskRecoveryPhrase = require('./../../../lib/helpers/smartMaskRecoveryPhrase')
 

@@ -2,10 +2,10 @@ const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
 // database
-const current = require('./../../shared/current')
-const userPrivateKey = require('./../../shared/userPrivateKey')
-const user = require('./../../shared/user')
-const organization = require('./../../shared/organization')
+const current = require('./../../db/current')
+const userPrivateKey = require('./../../db/userPrivateKey')
+const user = require('./../../db/user')
+const organization = require('./../../db/organization')
 
 // helpers
 const { createSpinner } = require('./../../lib/helpers/createSpinner')

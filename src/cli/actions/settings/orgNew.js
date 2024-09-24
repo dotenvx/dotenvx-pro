@@ -7,7 +7,7 @@ const { createSpinner } = require('./../../../lib/helpers/createSpinner')
 const confirm = require('./../../../lib/helpers/confirm')
 const spinner = createSpinner('waiting on browser creation')
 
-const current = require('./../../../shared/current')
+const current = require('./../../../db/current')
 
 async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
   logger.debug(`POST ${requestUidUrl} with requestUid ${requestUid} at interval ${interval}`)

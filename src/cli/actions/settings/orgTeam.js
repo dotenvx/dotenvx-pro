@@ -2,8 +2,8 @@ const { table } = require('table')
 const { request } = require('undici')
 const { getColor } = require('@dotenvx/dotenvx')
 
-const current = require('./../../../shared/current')
-const organizationDb = require('./../../../shared/organization')
+const current = require('./../../../db/current')
+const organizationDb = require('./../../../db/organization')
 
 async function orgTeam () {
   const hostname = current.hostname()

@@ -1,4 +1,4 @@
-const current = require('./../../../shared/current')
+const current = require('./../../../db/current')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function token () {

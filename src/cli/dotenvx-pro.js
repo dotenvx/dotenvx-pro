@@ -5,7 +5,7 @@ const program = new Command()
 const { setLogLevel } = require('@dotenvx/dotenvx')
 
 const packageJson = require('./../lib/helpers/packageJson')
-const current = require('./../shared/current')
+const current = require('./../db/current')
 
 // global log levels
 program
@@ -32,15 +32,15 @@ program
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(syncAction)
 
-// const pushAction = require('./actions/push')
-// program
-//   .command('push')
-//   .description('push .env.keys')
-//   .argument('[directory]', 'directory to push', '.')
-//   .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
-//   .option('-h, --hostname <url>', 'set hostname', current.hostname())
-//   .action(pushAction)
-//
+const pushAction = require('./actions/push')
+program
+  .command('push')
+  .description('push .env.keys')
+  .argument('[directory]', 'directory to push', '.')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
+  .action(pushAction)
+
 const loginAction = require('./actions/login')
 program
   .command('login')

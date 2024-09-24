@@ -2,8 +2,8 @@ const open = require('open')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
-const current = require('./../../shared/current')
-const user = require('./../../shared/user')
+const current = require('./../../db/current')
+const user = require('./../../db/user')
 
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')

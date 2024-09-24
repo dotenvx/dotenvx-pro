@@ -1,4 +1,4 @@
-const user = require('./../../../shared/user')
+const user = require('./../../../db/user')
 
 async function username () {
   const username = user.username()

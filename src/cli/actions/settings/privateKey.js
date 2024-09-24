@@ -1,4 +1,4 @@
-const userPrivateKey = require('./../../../shared/userPrivateKey')
+const userPrivateKey = require('./../../../db/userPrivateKey')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function privateKey () {

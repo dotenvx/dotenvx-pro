@@ -3,7 +3,7 @@ const enquirer = new Enquirer()
 const { PrivateKey } = require('eciesjs')
 const { logger } = require('@dotenvx/dotenvx')
 
-const userPrivateKey = require('./../../../shared/userPrivateKey')
+const userPrivateKey = require('./../../../db/userPrivateKey')
 const cleanseRecoveryPhrase = require('./../../../lib/helpers/cleanseRecoveryPhrase')
 const convertRecoveryPhraseToPrivateKey = require('./../../../lib/helpers/convertRecoveryPhraseToPrivateKey')
 const sleep = require('./../../../lib/helpers/sleep')

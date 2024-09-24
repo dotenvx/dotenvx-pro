@@ -3,8 +3,8 @@ const path = require('path')
 const { request } = require('undici')
 const { logger, keypair } = require('@dotenvx/dotenvx')
 
-const current = require('./../../shared/current')
-const organization = require('./../../shared/organization')
+const current = require('./../../db/current')
+const organization = require('./../../db/organization')
 
 const sleep = require('./../../lib/helpers/sleep')
 const isGitRepo = require('./../../lib/helpers/isGitRepo')
@@ -85,7 +85,8 @@ async function push (directory) {
 
     // file must exist
     if (!fs.existsSync(filepath)) {
-      spinner.fail(`oops, missing ${filepath} file`)
+      spinner.fail(`oops, missing ${envFilepath} file (${filepath})`)
+      logger.help(`? add one with [echo "HELLO=World" > ${envFilepath}]`)
       process.exit(1)
     }
 
@@ -96,16 +97,14 @@ async function push (directory) {
     const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
     const publicKey = keypairs[publicKeyName]
     if (!publicKey) {
-      spinner.fail('oops, could not locate public key')
+      spinner.fail(`oops, could not locate ${publicKeyName}`)
+      logger.help(`? generate ${publicKeyName} (.env.keys) with [dotenvx encrypt]`)
       process.exit(1)
     }
 
     const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
     const privateKey = keypairs[privateKeyName]
-
-    const organizationPublicKey = organization.publicKey()
-    const privateKeyEncryptedWithOrganizationPublicKey = encryptValue(privateKey, organizationPublicKey)
-
+    const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
     const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
     const payload = {
       repo: usernameName,
@@ -113,6 +112,25 @@ async function push (directory) {
       public_key: publicKey,
       private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey
     }
+
+    // but instead i could just grab this from the /organization/id/project/id/ETC
+    // so maybe what i need instead is a collection of lookups? and maybe a sync file that is focused on that? it's just lookups - like lookup/getOrganizationIdBySlug/:slug => 1
+    // lookup/getProjectIdByRepo/motdotla/test1 => 2
+    //
+    // or POST this data:
+    // { repo: filepath: public_key:,  }
+    // return
+    // { organizationId, repo, public_key:, currentPrivateKeyEncryptedWithOrganizationPublicKey }
+    // use organizationId to get organization.encrypt
+    // but first decrypt the currentPrivateKeyEncryptedWithOrganizationPublicKey
+    //
+    // organization = new Organization(organizationId)
+    // organization = new Organization(slug)
+    //
+    // user.organizationIds
+    // but we don't know it yet
+    // we know the usernameName - which has slug in it
+    //
 
     console.log('payload', payload)
     spinner.succeed('TODO: process payload to api')
