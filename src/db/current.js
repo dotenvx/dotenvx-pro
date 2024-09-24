@@ -1,8 +1,8 @@
 const Conf = require('conf')
 const dotenv = require('dotenv')
 
-const jsonToEnv = require('./helpers/jsonToEnv')
-const extractSubdomainAndDomain = require('./helpers/extractSubdomainAndDomain')
+const jsonToEnv = require('./../lib/helpers/jsonToEnv')
+const extractSubdomainAndDomain = require('./../lib/helpers/extractSubdomainAndDomain')
 
 let _store
 
