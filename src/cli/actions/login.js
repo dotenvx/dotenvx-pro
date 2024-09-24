@@ -3,7 +3,7 @@ const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../db/current')
-const user = require('./../../db/user')
+const User = require('./../../db/user')
 
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
@@ -67,6 +67,7 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl)
         current.login(hostname, id, accessToken)
 
         // attempt to select org
+        const user = new User(id)
         const organizationId = user.organizationIds()[0]
         if (!current.organizationId() && organizationId) {
           current.selectOrganization(organizationId)

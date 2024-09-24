@@ -4,7 +4,7 @@ const { PrivateKey } = require('eciesjs')
 // database
 const current = require('./../../db/current')
 const userPrivateKey = require('./../../db/userPrivateKey')
-const user = require('./../../db/user')
+const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 // helpers
@@ -34,7 +34,8 @@ async function sync () {
       throw error
     }
     let me = await new GetMe(options.hostname, current.token()).run()
-    user.store().store = me
+    const user = new User()
+    user.store.store = me
     spinner.succeed(`[${user.username()}] logged in`)
 
     // verify/sync public key
@@ -45,7 +46,7 @@ async function sync () {
       throw error
     }
     me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
-    user.store().store = me
+    user.store.store = me
     spinner.succeed(`[${user.username()}] encrypted`)
 
     // verify emergency kit
@@ -93,7 +94,7 @@ async function sync () {
         remoteOrg = await new PostOrganizationPublicKey(options.hostname, current.token(), organization.id(), genPublicKey, genPrivateKeyEncrypted).run()
         organization.store.store = remoteOrg
         me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
-        user.store().store = me
+        user.store.store = me
       }
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
