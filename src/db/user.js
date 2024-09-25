@@ -1,6 +1,7 @@
 const Conf = require('conf')
 
 const current = require('./current')
+const Organization = require('./organization')
 
 class User {
   constructor (userId = current.id()) {
@@ -45,6 +46,28 @@ class User {
     }
 
     return ids
+  }
+
+  organizations () {
+    const c = []
+
+    for (const organizationId of this.organizationIds()) {
+      const o = new Organization(organizationId)
+
+      c.push(o)
+    }
+
+    return c
+  }
+
+  lookups () {
+    const h = {}
+
+    for (const organization of this.organizations()) {
+      h[`lookup/organization/${organization.slug()}`] = organization.id()
+    }
+
+    return h
   }
 }
 

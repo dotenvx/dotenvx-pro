@@ -4,6 +4,7 @@ const { request } = require('undici')
 const { logger, keypair } = require('@dotenvx/dotenvx')
 
 const current = require('./../../db/current')
+const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 const sleep = require('./../../lib/helpers/sleep')
@@ -12,6 +13,7 @@ const isGithub = require('./../../lib/helpers/isGithub')
 const gitUrl = require('./../../lib/helpers/gitUrl')
 const gitRoot = require('./../../lib/helpers/gitRoot')
 const extractUsernameName = require('./../../lib/helpers/extractUsernameName')
+const extractSlug = require('./../../lib/helpers/extractSlug')
 const forgivingDirectory = require('./../../lib/helpers/forgivingDirectory')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const encryptValue = require('./../../lib/helpers/encryptValue')
@@ -73,12 +75,32 @@ async function push (directory) {
     process.exit(1)
   }
 
+  // find organization locally
+  const usernameName = extractUsernameName(giturl)
+  const slug = extractSlug(usernameName)
+  const user = new User()
+  const lookups = user.lookups()
+  const organizationId = lookups[`lookup/organization/${slug}`]
+  if (!organizationId) {
+    spinner.fail(`oops, can't find organization [@${slug}]`)
+    logger.help('? try running [dotenvx pro sync] or joining organization [dotenvx pro settings orgjoin]')
+    process.exit(1)
+  }
+  const organization = new Organization(organizationId)
+
+  // check for publicKey
+  if (!organization.publicKey()) {
+    spinner.fail(`oops, can't find orgpublickey for [@${slug}]`)
+    logger.help('? try running [dotenvx pro sync]')
+    process.exit(1)
+  }
+
   // http related
   const hostname = options.hostname
   const pushUrl = `${hostname}/api/push`
   const token = current.token()
-  const usernameName = extractUsernameName(giturl)
 
+  // -f .env,etc
   const envFilepaths = _envFilepaths(directory, options.envFile)
   for (const envFilepath of envFilepaths) {
     const filepath = path.resolve(envFilepath)
@@ -102,36 +124,19 @@ async function push (directory) {
       process.exit(1)
     }
 
+    // privateKey
     const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
     const privateKey = keypairs[privateKeyName]
-    const organization = new Organization() // TODO: handle different id somehow (without user having to be 'logged into' this organization currently)
+
     const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
     const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
     const payload = {
       repo: usernameName,
       filepath: relativeFilepath,
       public_key: publicKey,
-      private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey
+      private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey,
+      organization_public_key: organization.publicKey()
     }
-
-    // but instead i could just grab this from the /organization/id/project/id/ETC
-    // so maybe what i need instead is a collection of lookups? and maybe a sync file that is focused on that? it's just lookups - like lookup/getOrganizationIdBySlug/:slug => 1
-    // lookup/getProjectIdByRepo/motdotla/test1 => 2
-    //
-    // or POST this data:
-    // { repo: filepath: public_key:,  }
-    // return
-    // { organizationId, repo, public_key:, currentPrivateKeyEncryptedWithOrganizationPublicKey }
-    // use organizationId to get organization.encrypt
-    // but first decrypt the currentPrivateKeyEncryptedWithOrganizationPublicKey
-    //
-    // organization = new Organization(organizationId)
-    // organization = new Organization(slug)
-    //
-    // user.organizationIds
-    // but we don't know it yet
-    // we know the usernameName - which has slug in it
-    //
 
     console.log('payload', payload)
     spinner.succeed('TODO: process payload to api')

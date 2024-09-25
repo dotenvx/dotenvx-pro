@@ -34,7 +34,7 @@ class Organization {
   }
 
   id () {
-    return this.store.get('id')
+    return this.organizationId
   }
 
   slug () {
