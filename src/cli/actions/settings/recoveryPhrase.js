@@ -1,21 +1,25 @@
-const currentUser = require('./../../../shared/currentUser')
-const { logger } = require('@dotenvx/dotenvx')
+const UserPrivateKey = require('./../../../db/userPrivateKey')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
-const maskRecoveryPhrase = require('./../../../lib/helpers/maskRecoveryPhrase')
+const smartMaskRecoveryPhrase = require('./../../../lib/helpers/smartMaskRecoveryPhrase')
 
 function recoveryPhrase () {
   const options = this.opts()
-  logger.debug(`options: ${JSON.stringify(options)}`)
 
-  let output = currentUser.getRecoveryPhrase()
+  try {
+    const userPrivateKey = new UserPrivateKey()
+    const recoveryPhrase = userPrivateKey.recoveryPhrase()
 
-  if (!options.unmask) {
-    output = maskRecoveryPhrase(output) // mask output
+    if (recoveryPhrase && recoveryPhrase.length > 0) {
+      process.stdout.write(formatRecoveryPhrase(smartMaskRecoveryPhrase(recoveryPhrase, options.unmask)))
+    } else {
+      console.error('missing recovery phrase. Try generating one with [dotenvx pro login].')
+
+      process.exit(1)
+    }
+  } catch (error) {
+    console.error(error.message)
+    process.exit(1)
   }
-
-  output = formatRecoveryPhrase(output)
-
-  process.stdout.write(output)
 }
 
 module.exports = recoveryPhrase

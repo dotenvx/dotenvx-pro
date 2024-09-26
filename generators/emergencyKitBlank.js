@@ -8,12 +8,15 @@ const smartMask = require('../src/lib/helpers/smartMask')
 const maskRecoveryPhrase = require('../src/lib/helpers/maskRecoveryPhrase')
 const formatRecoveryPhrase = require('../src/lib/helpers/formatRecoveryPhrase')
 
+const publicKey = '02b106c30579baf896ae1fddf077cbcb4fef5e7d457932974878dcb51f42b45498'
 let privateKey = '2c93601cba85b3b2474817897826ebef977415c097f0bf57dcbaa3056e5d64d0'
-// privateKey = ' '
 let recoveryPhrase = 'cart guess electric adult carpet ritual wisdom obscure season tiger spatial stable arrow narrow rely almost brisk arrange dune dawn roast venture install dinosaur'
-// recoveryPhrase = ''
 
-function emergencyKitBlank (options = { unmask: false, example: true }) {
+// privateKey = ' '
+// publicKey = ' '
+// recoveryPhrase = ' '
+
+function emergencyKitBlank (options = { unmask: false, example: false }) {
   function smartMaskRecoveryPhrase (str) {
     if (options.unmask) {
       return str
@@ -81,17 +84,36 @@ function emergencyKitBlank (options = { unmask: false, example: true }) {
   doc.fontSize(12)
   const intro = 'The details below can be used to sign in to your dotenvx account in an emergency.'
   doc.font('Text-Regular')
-  doc.text(intro, 100, 260, { align: 'left', width: page.width - (100 * 2) })
+  doc.text(intro, 100, 220, { align: 'left', width: page.width - (100 * 2) })
 
   // step 1
   const one = '1. Print out this document.'
   doc.font('Text-Regular')
-  doc.text(one, 100, 310, { align: 'left', width: page.width - (100 * 2) })
+  doc.text(one, 100, 260, { align: 'left', width: page.width - (100 * 2) })
 
   // step 2
   const two = '2. Store in a secure place where you can find it, e.g. a safe deposit box.'
   doc.font('Text-Regular')
-  doc.text(two, 100, 330, { align: 'left', width: page.width - (100 * 2) })
+  doc.text(two, 100, 280, { align: 'left', width: page.width - (100 * 2) })
+
+  // label0
+  const label0 = 'PUBLIC KEY'
+  doc.fillColor('black')
+  doc.fontSize(10)
+  doc.font('Text-Heavy')
+  doc.text(label0, 100, 310, { align: 'left', width: page.width - (100 * 2) })
+  doc.fillColor('black')
+
+  // publicKey input
+  doc.strokeColor('black')
+  doc.roundedRect(100, 330, page.width - (100 * 2), 30, 4)
+  doc.stroke()
+  doc.strokeColor('black')
+
+  // publicKey value
+  doc.fontSize(10)
+  doc.font('Courier')
+  doc.text(publicKey, 110, 342, { align: 'left', width: (page.width - (100 * 2) - 10) })
 
   // label1
   const label1 = 'PRIVATE KEY'

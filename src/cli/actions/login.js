@@ -2,12 +2,14 @@ const open = require('open')
 const { request } = require('undici')
 const { logger } = require('@dotenvx/dotenvx')
 
-const db = require('./../../shared/db')
-const currentUser = require('./../../shared/currentUser')
+const current = require('./../../db/current')
+const User = require('./../../db/user')
+
 const clipboardy = require('./../../lib/helpers/clipboardy')
 const systemInformation = require('./../../lib/helpers/systemInformation')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const confirm = require('./../../lib/helpers/confirm')
+const truncate = require('./../../lib/helpers/truncate')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
@@ -23,35 +25,7 @@ const formatCode = function (str) {
   return parts.join('-')
 }
 
-async function syncPublicKey (publicKeyUrl) {
-  spinner.start('syncing publicKey')
-
-  const token = currentUser.getToken()
-  const publicKey = currentUser.getPublicKey()
-  const response = await request(publicKeyUrl, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      public_key: publicKey
-    })
-  })
-
-  const responseData = await response.body.json()
-
-  logger.debug(responseData)
-
-  if (response.statusCode >= 400) {
-    spinner.fail(`[${responseData.error.code}] ${responseData.error.message}`)
-    process.exit(1)
-  }
-
-  spinner.succeed(`synced publicKey [${publicKey}]`)
-}
-
-async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, settingsDevicesUrl) {
+async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl) {
   logger.debug(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
@@ -78,41 +52,36 @@ async function pollTokenUrl (tokenUrl, deviceCode, interval, publicKeyUrl, setti
           const newInterval = interval + 1 // grow the interval
           await new Promise(resolve => setTimeout(resolve, newInterval * 1000))
         } else {
-          logger.error(responseData.error_description)
+          console.error(responseData.error_description)
           process.exit(1)
         }
       }
 
       if (responseData.access_token) {
-        const {
-          username,
-          hashid,
-          hostname
-        } = responseData
-        const fullUsername = responseData.full_username
+        const hostname = responseData.hostname
+        const id = responseData.id
+        const username = responseData.username
         const accessToken = responseData.access_token
-        const accessTokenShort = responseData.access_token_short
 
-        spinner.succeed(`logged in [${username}]`)
+        // log in user
+        current.login(hostname, id, accessToken)
 
-        currentUser.setHostname(hostname)
-        currentUser.setUser(hashid, accessToken)
-        db.setUser(hashid, fullUsername)
+        // attempt to select org
+        const user = new User(id)
+        const organizationId = user.organizationIds()[0]
+        if (!current.organizationId() && organizationId) {
+          current.selectOrganization(organizationId)
+        }
 
-        spinner.succeed(`set access token [${accessTokenShort}]`)
-
-        await syncPublicKey(publicKeyUrl)
-
-        logger.blank('')
-        logger.blank(`Next visit [${settingsDevicesUrl}] to optionally view your devices`)
+        spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)
+        logger.help('⮕ next run [dotenvx pro sync]')
 
         process.exit(0)
       } else {
-        // continue polling if no access_token. shouldn't ever get here if server is implemented correctly
         await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
-      logger.error(error.toString())
+      console.error(error.message)
       process.exit(1)
     }
   }
@@ -125,7 +94,6 @@ async function login () {
   const hostname = options.hostname
   const deviceCodeUrl = `${hostname}/oauth/device/code`
   const tokenUrl = `${hostname}/oauth/token`
-  const publicKeyUrl = `${hostname}/api/public_key`
   const settingsDevicesUrl = `${hostname}/settings/devices`
 
   try {
@@ -145,7 +113,7 @@ async function login () {
 
     if (response.statusCode >= 400) {
       logger.debug(responseData)
-      logger.error(responseData.error_description)
+      console.error(responseData.error_description)
       process.exit(1)
     }
 
@@ -159,7 +127,7 @@ async function login () {
     // qrcode.generate(verificationUri, { small: true }) // too verbose
 
     // begin polling
-    pollTokenUrl(tokenUrl, deviceCode, interval, publicKeyUrl, settingsDevicesUrl)
+    pollTokenUrl(tokenUrl, deviceCode, interval, settingsDevicesUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })
@@ -172,7 +140,7 @@ async function login () {
       process.exit(1)
     }
   } catch (error) {
-    logger.error(error.toString())
+    console.error(error.message)
     process.exit(1)
   }
 }

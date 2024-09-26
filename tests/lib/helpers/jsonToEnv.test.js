@@ -1,6 +1,6 @@
 const t = require('tap')
 
-const jsonToEnv = require('../../../src/shared/helpers/jsonToEnv')
+const jsonToEnv = require('../../../src/lib/helpers/jsonToEnv')
 
 t.test('#jsonToEnv', ct => {
   const json = {

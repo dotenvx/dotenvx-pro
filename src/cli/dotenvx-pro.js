@@ -2,10 +2,10 @@
 
 const { Command } = require('commander')
 const program = new Command()
+const { setLogLevel } = require('@dotenvx/dotenvx')
 
 const packageJson = require('./../lib/helpers/packageJson')
-const currentUser = require('./../shared/currentUser')
-const { setLogLevel } = require('@dotenvx/dotenvx')
+const current = require('./../db/current')
 
 // global log levels
 program
@@ -29,21 +29,38 @@ const syncAction = require('./actions/sync')
 program
   .command('sync')
   .description('sync')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(syncAction)
+
+const pushAction = require('./actions/push')
+program
+  .command('push')
+  .description('push')
+  .argument('[directory]', 'directory to push', '.')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
+  .action(pushAction)
+
+const privateKeyAction = require('./actions/privateKey')
+program
+  .command('privatekey')
+  .description('print project privatekey')
+  .argument('[directory]', 'directory to push', '.')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .action(privateKeyAction)
 
 const loginAction = require('./actions/login')
 program
   .command('login')
-  .description('authenticate to dotenvx pro')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .description('log in')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(loginAction)
 
 const logoutAction = require('./actions/logout')
 program
   .command('logout')
-  .description('log out this machine from dotenvx pro')
-  .option('-h, --hostname <url>', 'set hostname', currentUser.getHostname())
+  .description('log out')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(logoutAction)
 
 // dotenvx pro ls
@@ -54,9 +71,6 @@ program.command('ls')
   .option('-f, --env-file <filenames...>', 'path(s) to your env file(s)', '.env*')
   .option('-ef, --exclude-env-file <excludeFilenames...>', 'path(s) to exclude from your env file(s) (default: none)')
   .action(lsAction)
-
-// dotenvx pro organizations
-program.addCommand(require('./commands/organizations'))
 
 // dotenvx pro settings
 program.addCommand(require('./commands/settings'))

@@ -1,9 +1,9 @@
-const UserPrivateKey = require('./../../../db/userPrivateKey')
+const Organization = require('./../../../db/organization')
 
-function publicKey () {
+function orgPublicKey () {
   try {
-    const userPrivateKey = new UserPrivateKey()
-    const publicKey = userPrivateKey.publicKey()
+    const organization = new Organization()
+    const publicKey = organization.publicKey()
 
     if (publicKey) {
       process.stdout.write(publicKey)
@@ -17,4 +17,4 @@ function publicKey () {
   }
 }
 
-module.exports = publicKey
+module.exports = orgPublicKey

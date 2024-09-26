@@ -6,6 +6,21 @@ settings
   .description('⚙️  settings')
   .allowUnknownOption()
 
+// dotenvx pro settings username
+const usernameAction = require('./../actions/settings/username')
+settings
+  .command('username')
+  .description('print your username')
+  .action(usernameAction)
+
+// dotenvx pro settings token
+const tokenAction = require('./../actions/settings/token')
+settings
+  .command('token')
+  .description('print your access token (--unmask)')
+  .option('--unmask', 'unmask access token')
+  .action(tokenAction)
+
 // dotenvx pro settings publickey
 const publicKeyAction = require('./../actions/settings/publicKey')
 settings
@@ -35,28 +50,64 @@ settings
   .command('emergencykit')
   .description('generate your emergency kit (--unmask)')
   .option('--unmask', 'unmask recovery phrase')
+  .option('--stdout', 'send to stdout')
   .action(emergencyKitAction)
 
 // dotenvx pro settings recover
-const recover = require('./../actions/settings/recover')
+const recoverAction = require('./../actions/settings/recover')
 settings
   .command('recover')
   .description('recover your account 🔐')
-  .action(recover)
+  .action(recoverAction)
 
-// dotenvx pro settings status
-const statusAction = require('./../actions/settings/status')
-settings.command('status')
-  .description('check account status (--unmask)')
-  .option('--unmask', 'unmask access token')
-  .action(statusAction)
-
-// dotenvx pro settings token
-const tokenAction = require('./../actions/settings/token')
+// dotenvx pro settings org
+const orgAction = require('./../actions/settings/org')
 settings
-  .command('token')
-  .description('print your dotenvx access token (--unmask)')
-  .option('--unmask', 'unmask access token')
-  .action(tokenAction)
+  .command('org')
+  .description('print organization')
+  .action(orgAction)
+
+// dotenvx pro settings orgpublickey
+const orgPublicKeyAction = require('./../actions/settings/orgPublicKey')
+settings
+  .command('orgpublickey')
+  .description('print organization publicKey')
+  .action(orgPublicKeyAction)
+
+// dotenvx pro settings orgprivatekey
+const orgPrivateKeyAction = require('./../actions/settings/orgPrivateKey')
+settings
+  .command('orgprivatekey')
+  .description('print organization privateKey (--unmask)')
+  .option('--unmask', 'unmask privateKey')
+  .action(orgPrivateKeyAction)
+
+// dotenvx pro settings orgteam
+const orgTeamAction = require('./../actions/settings/orgTeam')
+settings
+  .command('orgteam')
+  .description('print organization team')
+  .action(orgTeamAction)
+
+// dotenvx pro settings orgjoin
+const orgJoinAction = require('./../actions/settings/orgJoin')
+settings
+  .command('orgjoin')
+  .description('join organization')
+  .action(orgJoinAction)
+
+// dotenvx pro settings orgnew
+const orgNewAction = require('./../actions/settings/orgNew')
+settings
+  .command('orgnew')
+  .description('create organization')
+  .action(orgNewAction)
+
+// dotenvx pro settings orgselect
+const orgSelectAction = require('./../actions/settings/orgSelect')
+settings
+  .command('orgselect')
+  .description('select organization')
+  .action(orgSelectAction)
 
 module.exports = settings

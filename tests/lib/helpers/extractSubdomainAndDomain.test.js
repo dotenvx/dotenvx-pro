@@ -1,6 +1,6 @@
 const t = require('tap')
 
-const extractSubdomainAndDomain = require('../../../src/shared/helpers/extractSubdomainAndDomain')
+const extractSubdomainAndDomain = require('../../../src/lib/helpers/extractSubdomainAndDomain')
 
 t.test('#extractSubdomainAndDomain', ct => {
   const urlString = 'https://pro.dotenvx.com'
