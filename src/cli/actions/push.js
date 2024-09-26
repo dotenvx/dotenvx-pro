@@ -17,6 +17,7 @@ const { createSpinner } = require('./../../lib/helpers/createSpinner')
 
 // api calls
 const PostPush = require('./../../lib/api/postPush')
+const GetOrganization = require('./../../lib/api/getOrganization')
 
 const spinner = createSpinner('pushing')
 
@@ -85,6 +86,9 @@ async function push (directory) {
       process.exit(1)
     }
     const organization = new Organization(organizationId)
+    // sync org
+    let remoteOrg = await new GetOrganization(options.hostname, current.token(), organization.id()).run()
+    organization.store.store = remoteOrg
 
     // check for publicKey
     if (!organization.publicKey()) {
@@ -126,6 +130,10 @@ async function push (directory) {
       const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
 
       await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey).run()
+
+      // sync org
+      remoteOrg = await new GetOrganization(options.hostname, current.token(), organization.id()).run()
+      organization.store.store = remoteOrg
 
       spinner.succeed(`pushed (${relativeFilepath})`)
     }

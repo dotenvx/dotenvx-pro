@@ -67,7 +67,7 @@ function privateKey (directory) {
 
     const repositoryId = lookups[`lookup/repositoryIdByUsernameName/${usernameName}`]
     if (!repositoryId) {
-      console.error(`oops, can't find project [@${usernameName}]. did you push from it? [dotenvx pro push]`)
+      console.error(`oops, can't find project [@${usernameName}]. did you push it? [dotenvx pro push]`)
       process.exit(1)
     }
 
