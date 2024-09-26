@@ -123,8 +123,8 @@ async function sync () {
           const userId = _userIdsMissingPrivateKeyEncrypted[i]
 
           // username and publicKey
-          const username = organization.store.get(`user/${userId}/username`)
-          const publicKey = organization.store.get(`user/${userId}/public_key/1`)
+          const username = organization.store.get(`u/${userId}/un`)
+          const publicKey = organization.store.get(`u/${userId}/pk/1`)
 
           if (!publicKey || publicKey.length < 1) {
             spinner.warn(`[@${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)

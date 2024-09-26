@@ -83,7 +83,7 @@ async function push (directory) {
     const slug = extractSlug(usernameName)
     const user = new User()
     const lookups = user.lookups()
-    const organizationId = lookups[`lookup/organization/${slug}`]
+    const organizationId = lookups[`lookup/organizationIdBySlug/${slug}`]
     if (!organizationId) {
       spinner.fail(`oops, can't find organization [@${slug}]`)
       logger.help('? try running [dotenvx pro sync] or joining organization [dotenvx pro settings orgjoin]')
@@ -136,6 +136,9 @@ async function push (directory) {
       const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
 
       const repository = await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey).run()
+
+      // console.log(user.lookups())
+
       spinner.succeed(`pushed (${relativeFilepath})`)
     }
 

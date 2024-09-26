@@ -61,10 +61,12 @@ class User {
   }
 
   lookups () {
-    const h = {}
+    let h = {}
 
     for (const organization of this.organizations()) {
-      h[`lookup/organization/${organization.slug()}`] = organization.id()
+      h[`lookup/organizationIdBySlug/${organization.slug()}`] = organization.id()
+
+      h = { ...h, ...organization.lookups() }
     }
 
     return h

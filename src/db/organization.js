@@ -46,7 +46,7 @@ class Organization {
   }
 
   privateKeyEncrypted () {
-    return this.store.get(`user/${this.userId}/private_key_encrypted/1`)
+    return this.store.get(`u/${this.userId}/ek/1`)
   }
 
   privateKey () {
@@ -70,8 +70,8 @@ class Organization {
 
     const json = this.store.store
     for (const key in json) {
-      // user/2/username
-      const match = key.match(/^user\/(\d+)\/username/)
+      // u/2/uu (user/2/username)
+      const match = key.match(/^u\/(\d+)\/uu/)
 
       if (match && json[key] !== undefined) {
         ids.push(match[1]) // add user id
@@ -86,8 +86,8 @@ class Organization {
 
     const json = this.store.store
     for (const key in json) {
-      // user/2/private_key_encrypted
-      const match = key.match(/^user\/(\d+)\/private_key_encrypted/)
+      // u/2/ek (user/2/private_key_encrypted)
+      const match = key.match(/^u\/(\d+)\/ek/)
 
       if (match && json[key] == null) {
         ids.push(match[1]) // add user id
@@ -95,6 +95,55 @@ class Organization {
     }
 
     return ids
+  }
+
+  repositoryIds () {
+    const ids = []
+
+    const json = this.store.store
+    for (const key in json) {
+      // r/2/uun (repository/2/username_name)
+      const match = key.match(/^r\/(\d+)\/unn/)
+
+      if (match && json[key] !== undefined) {
+        ids.push(match[1]) // add repository id
+      }
+    }
+
+    return ids
+  }
+
+  envFileIds (repositoryId) {
+    const ids = []
+
+    const json = this.store.store
+    for (const key in json) {
+      // r/2/e/3/f (repository/2/env_file/3/filepath)
+      const regex = new RegExp(`^r/${repositoryId}/e/(\\d+)/f`)
+      const match = key.match(regex)
+
+      if (match && json[key] !== undefined) {
+        ids.push(match[1]) // add env file id
+      }
+    }
+
+    return ids
+  }
+
+  lookups () {
+    const h = {}
+
+    for (const repositoryId of this.repositoryIds()) {
+      const usernameName = this.store.get(`r/${repositoryId}/unn`)
+      h[`lookup/repositoryIdByUsernameName/${usernameName}`] = repositoryId
+
+      for (const envFileId of this.envFileIds(repositoryId)) {
+        const filepath = this.store.get(`r/${repositoryId}/e/${envFileId}/f`)
+        h[`lookup/envFileIdByUsernameNameFilepath/${usernameName}/${filepath}`] = envFileId
+      }
+    }
+
+    return h
   }
 }
 
