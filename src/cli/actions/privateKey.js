@@ -60,14 +60,14 @@ function privateKey (directory) {
     const lookups = user.lookups()
     const organizationId = lookups[`lookup/organizationIdBySlug/${slug}`]
     if (!organizationId) {
-      console.error(`oops, can't find organization [@${slug}]`)
+      console.error(`oops, can't find organization [@${slug}]. did you join it? [dotenvx pro settings orgjoin]`)
       process.exit(1)
     }
     const organization = new Organization(organizationId)
 
     const repositoryId = lookups[`lookup/repositoryIdByUsernameName/${usernameName}`]
     if (!repositoryId) {
-      console.error(`oops, can't find project [@${usernameName}]`)
+      console.error(`oops, can't find project [@${usernameName}]. did you push from it? [dotenvx pro push]`)
       process.exit(1)
     }
 
@@ -76,19 +76,19 @@ function privateKey (directory) {
     for (const envFilepath of envFilepaths) {
       const envFileId = lookups[`lookup/envFileIdByUsernameNameFilepath/${usernameName}/${envFilepath}`]
       if (!envFileId) {
-        console.error(`oops, can't find project file [@${usernameName}/${envFilepath}]`)
+        console.error(`oops, can't find project file [@${usernameName}/${envFilepath}]. did you push it? [dotenvx pro push -f ${envFilepath}]`)
         process.exit(1)
       }
 
       const privateKeyName = organization.store.get(`r/${repositoryId}/e/${envFileId}/ekn`)
       if (!privateKeyName) {
-        console.error(`oops, can't find private key name for [@${usernameName}/${envFilepath}]`)
+        console.error(`oops, can't find private key name for [@${usernameName}/${envFilepath}]. did you sync? [dotenvx pro sync]`)
         process.exit(1)
       }
 
       const privateKeyEncrypted = organization.store.get(`r/${repositoryId}/e/${envFileId}/ek/1`)
       if (!privateKeyEncrypted) {
-        console.error(`oops, can't find private key for [@${usernameName}/${envFilepath}]`)
+        console.error(`oops, can't find private key for [@${usernameName}/${envFilepath}]. did you sync? [dotenvx pro sync]`)
         process.exit(1)
       }
 
