@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.9.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.10.0...main)
+
+## 0.10.0
+
+### Added
+
+* add `sync`, `push`, `privatekey` commands ([#17](https://github.com/dotenvx/dotenvx-pro/pull/17))
 
 ## 0.9.0
 
