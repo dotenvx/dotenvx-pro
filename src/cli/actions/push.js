@@ -134,11 +134,9 @@ async function push (directory) {
 
       // filepath
       const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
-      // public_key: publicKey,
-      // private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey
 
-      const repository = await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath).run()
-      spinner.succeed('pushed')
+      const repository = await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey).run()
+      spinner.succeed(`pushed (${relativeFilepath})`)
     }
 
   } catch (error) {
