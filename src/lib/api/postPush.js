@@ -35,10 +35,10 @@ class PostPush {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        provider: provider,
+        provider,
         organization_public_key: organizationPublicKey,
         username_name: usernameName,
-        filepath: filepath,
+        filepath,
         public_key_name: publicKeyName,
         private_key_name: privateKeyName,
         public_key: publicKey,

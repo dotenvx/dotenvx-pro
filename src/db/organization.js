@@ -65,6 +65,10 @@ class Organization {
     return encryptValue(value, this.publicKey())
   }
 
+  decrypt (value) {
+    return decryptValue(value, this.privateKey())
+  }
+
   userIds () {
     const ids = []
 

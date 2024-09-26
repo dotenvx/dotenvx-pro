@@ -35,11 +35,19 @@ program
 const pushAction = require('./actions/push')
 program
   .command('push')
-  .description('push .env.keys')
+  .description('push')
   .argument('[directory]', 'directory to push', '.')
   .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(pushAction)
+
+const privateKeyAction = require('./actions/privateKey')
+program
+  .command('privatekey')
+  .description('print project privatekey')
+  .argument('[directory]', 'directory to push', '.')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .action(privateKeyAction)
 
 const loginAction = require('./actions/login')
 program

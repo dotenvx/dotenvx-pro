@@ -6,7 +6,6 @@ const current = require('./../../db/current')
 const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
-const sleep = require('./../../lib/helpers/sleep')
 const isGitRepo = require('./../../lib/helpers/isGitRepo')
 const isGithub = require('./../../lib/helpers/isGithub')
 const gitUrl = require('./../../lib/helpers/gitUrl')
@@ -15,15 +14,11 @@ const extractUsernameName = require('./../../lib/helpers/extractUsernameName')
 const extractSlug = require('./../../lib/helpers/extractSlug')
 const forgivingDirectory = require('./../../lib/helpers/forgivingDirectory')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
-const encryptValue = require('./../../lib/helpers/encryptValue')
 
 // api calls
 const PostPush = require('./../../lib/api/postPush')
 
 const spinner = createSpinner('pushing')
-
-// constants
-const ENCODING = 'utf8'
 
 function _envFilepaths (directory, envFile) {
   if (!Array.isArray(envFile)) {
@@ -98,11 +93,6 @@ async function push (directory) {
       process.exit(1)
     }
 
-    // http related
-    const hostname = options.hostname
-    const pushUrl = `${hostname}/api/push`
-    const token = current.token()
-
     // -f .env,etc
     const envFilepaths = _envFilepaths(directory, options.envFile)
     for (const envFilepath of envFilepaths) {
@@ -135,13 +125,10 @@ async function push (directory) {
       // filepath
       const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
 
-      const repository = await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey).run()
-
-      // console.log(user.lookups())
+      await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey).run()
 
       spinner.succeed(`pushed (${relativeFilepath})`)
     }
-
   } catch (error) {
     if (error.message) {
       spinner.fail(error.message)
