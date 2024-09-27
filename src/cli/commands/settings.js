@@ -21,6 +21,13 @@ settings
   .option('--unmask', 'unmask access token')
   .action(tokenAction)
 
+// dotenvx pro settings hostname
+const hostnameAction = require('./../actions/settings/hostname')
+settings
+  .command('hostname')
+  .description('print hostname')
+  .action(hostnameAction)
+
 // dotenvx pro settings publickey
 const publicKeyAction = require('./../actions/settings/publicKey')
 settings
