@@ -74,8 +74,8 @@ class Organization {
 
     const json = this.store.store
     for (const key in json) {
-      // u/2/uu (user/2/username)
-      const match = key.match(/^u\/(\d+)\/uu/)
+      // u/2/un (user/2/username)
+      const match = key.match(/^u\/(\d+)\/un/)
 
       if (match && json[key] !== undefined) {
         ids.push(match[1]) // add user id
@@ -106,7 +106,7 @@ class Organization {
 
     const json = this.store.store
     for (const key in json) {
-      // r/2/uun (repository/2/username_name)
+      // r/2/unn (repository/2/username_name)
       const match = key.match(/^r\/(\d+)\/unn/)
 
       if (match && json[key] !== undefined) {
