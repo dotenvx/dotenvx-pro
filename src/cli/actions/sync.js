@@ -53,18 +53,17 @@ async function sync () {
     // verify emergency kit
     spinner.start(`[${user.username()}] emergency kit`)
     if (!user.emergencyKitGeneratedAt()) {
-      const error = new Error()
-      error.message = 'emergency kit must be generated once. Generate it with [dotenvx pro settings emergencykit --unmask]'
-      throw error
+      spinner.warn(`[${user.username()}] emergency kit recommended. Generate it with [dotenvx pro settings emergencykit --unmask].`)
+    } else {
+      spinner.succeed(`[${user.username()}] emergency kit`)
     }
-    spinner.succeed(`[${user.username()}] emergency kit`)
 
     // organization(s) - check if any
     spinner.start('[@] logged in')
     const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
       const error = new Error()
-      error.message = 'Log into an organization with [dotenvx pro settings orgselect].'
+      error.message = `[${user.username()}] connect your account to an organization. Create one [dotenvx pro settings orgnew] or join one [dotenvx pro settings orgjoin].`
       throw error
     }
 
