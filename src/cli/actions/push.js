@@ -129,7 +129,10 @@ async function push (directory) {
       // filepath
       const relativeFilepath = path.relative(gitroot, path.join(process.cwd(), directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
 
-      await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey).run()
+      // text
+      const text = fs.readFileSync(filepath, 'utf8')
+
+      await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
 
       // sync org
       remoteOrg = await new GetOrganization(options.hostname, current.token(), organization.id()).run()
