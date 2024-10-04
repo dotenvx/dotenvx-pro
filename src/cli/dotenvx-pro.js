@@ -41,6 +41,16 @@ program
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(pushAction)
 
+// dotenvx pro keypair
+const keypairAction = require('./actions/keypair')
+program.command('keypair')
+  .description('print public/private keys for .env file(s)')
+  .argument('[key]', 'environment variable key name')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)')
+  .option('-pp, --pretty-print', 'pretty print output')
+  .action(keypairAction)
+
+// dotenvx pro privatekey
 const privateKeyAction = require('./actions/privateKey')
 program
   .command('privatekey')

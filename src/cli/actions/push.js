@@ -29,7 +29,6 @@ function _envFilepaths (directory, envFile) {
   return envFile.map(file => path.join(directory, file))
 }
 
-// Create a simple-git instance for the current directory
 async function push (directory) {
   try {
     spinner.start()
