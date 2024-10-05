@@ -2,10 +2,12 @@ const Organization = require('./../../db/organization')
 const PostOrganizationPublicKey = require('./../../lib/api/postOrganizationPublicKey')
 
 class SyncOrganizationPublicKey {
-  constructor (hostname, token, id) {
+  constructor (hostname, token, id, publicKey, privateKeyEncrypted) {
     this.hostname = hostname
     this.token = token
     this.id = id
+    this.publicKey = publicKey
+    this.privateKeyEncrypted = privateKeyEncrypted
   }
 
   async run () {

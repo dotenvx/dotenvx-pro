@@ -68,7 +68,7 @@ class PrivateKey {
     return results
   }
 
-  _validateGit() {
+  _validateGit () {
     // must be a git repo
     if (!isGitRepo()) {
       throw new Error('oops, must be a git repository')

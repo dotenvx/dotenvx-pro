@@ -45,7 +45,7 @@ class PostPush {
         private_key_name: privateKeyName,
         public_key: publicKey,
         private_key_encrypted_with_organization_public_key: privateKeyEncryptedWithOrganizationPublicKey,
-        text: text
+        text
       })
     })
 

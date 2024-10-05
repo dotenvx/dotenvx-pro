@@ -4,7 +4,6 @@ const { PrivateKey } = require('eciesjs')
 // database
 const current = require('./../../db/current')
 const UserPrivateKey = require('./../../db/userPrivateKey')
-const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 // helpers
