@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { logger, keypair } = require('@dotenvx/dotenvx')
+const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../db/current')
 const User = require('./../../db/user')
@@ -19,6 +19,7 @@ const PostPush = require('./../../lib/api/postPush')
 
 // SyncOrganization
 const SyncOrganization = require('./../../lib/services/syncOrganization')
+const Keypair = require('./../../lib/services/keypair')
 
 const spinner = createSpinner('pushing')
 
@@ -109,8 +110,7 @@ async function push (directory) {
       }
 
       // get keypairs
-      // TODO: replace this with pro keypairs that looks into db too
-      const keypairs = keypair(filepath)
+      const keypairs = new Keypair(envFilepath).run()
 
       // publicKey must exist
       const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
