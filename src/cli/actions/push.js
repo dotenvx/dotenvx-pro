@@ -123,7 +123,7 @@ async function push (directory) {
 
       // privateKey
       const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
-      const privateKey = keypairs[privateKeyName] // TODO: THIS IS NOT SMART ENOUGH TO FIND PRIVATE KEY THAT ALREADY EXISTS IN SYNCED DATA
+      const privateKey = keypairs[privateKeyName]
       const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
 
       // filepath
