@@ -1,10 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const { logger, keypair } = require('@dotenvx/dotenvx')
+const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../db/current')
 const User = require('./../../db/user')
-const Organization = require('./../../db/organization')
 
 const isGitRepo = require('./../../lib/helpers/isGitRepo')
 const isGithub = require('./../../lib/helpers/isGithub')
@@ -17,7 +16,10 @@ const { createSpinner } = require('./../../lib/helpers/createSpinner')
 
 // api calls
 const PostPush = require('./../../lib/api/postPush')
-const GetOrganization = require('./../../lib/api/getOrganization')
+
+// SyncOrganization
+const SyncOrganization = require('./../../lib/services/syncOrganization')
+const Keypair = require('./../../lib/services/keypair')
 
 const spinner = createSpinner('pushing')
 
@@ -29,7 +31,6 @@ function _envFilepaths (directory, envFile) {
   return envFile.map(file => path.join(directory, file))
 }
 
-// Create a simple-git instance for the current directory
 async function push (directory) {
   try {
     spinner.start()
@@ -85,10 +86,9 @@ async function push (directory) {
       logger.help('? try running [dotenvx pro sync] or joining organization [dotenvx pro settings orgjoin]')
       process.exit(1)
     }
-    const organization = new Organization(organizationId)
+
     // sync org
-    let remoteOrg = await new GetOrganization(options.hostname, current.token(), organization.id()).run()
-    organization.store.store = remoteOrg
+    const organization = await new SyncOrganization(options.hostname, current.token(), organizationId).run()
 
     // check for publicKey
     if (!organization.publicKey()) {
@@ -110,7 +110,7 @@ async function push (directory) {
       }
 
       // get keypairs
-      const keypairs = keypair(filepath)
+      const keypairs = new Keypair(envFilepath).run()
 
       // publicKey must exist
       const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
@@ -135,8 +135,7 @@ async function push (directory) {
       await new PostPush(options.hostname, current.token(), 'github', organization.publicKey(), usernameName, relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
 
       // sync org
-      remoteOrg = await new GetOrganization(options.hostname, current.token(), organization.id()).run()
-      organization.store.store = remoteOrg
+      await new SyncOrganization(options.hostname, current.token(), organizationId).run()
 
       spinner.succeed(`pushed (${relativeFilepath})`)
     }

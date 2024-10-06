@@ -25,6 +25,7 @@ program
   .description(packageJson.description)
   .version(packageJson.version)
 
+// dotenvx pro sync
 const syncAction = require('./actions/sync')
 program
   .command('sync')
@@ -32,6 +33,7 @@ program
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(syncAction)
 
+// dotenvx pro push
 const pushAction = require('./actions/push')
 program
   .command('push')
@@ -41,14 +43,7 @@ program
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(pushAction)
 
-const privateKeyAction = require('./actions/privateKey')
-program
-  .command('privatekey')
-  .description('print project privatekey')
-  .argument('[directory]', 'directory to push', '.')
-  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
-  .action(privateKeyAction)
-
+// dotenvx pro login
 const loginAction = require('./actions/login')
 program
   .command('login')
@@ -56,12 +51,22 @@ program
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(loginAction)
 
+// dotenvx pro logout
 const logoutAction = require('./actions/logout')
 program
   .command('logout')
   .description('log out')
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(logoutAction)
+
+// dotenvx pro keypair
+const keypairAction = require('./actions/keypair')
+program.command('keypair')
+  .description('print public/private keys for .env file(s)')
+  .argument('[key]', 'environment variable key name')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)')
+  .option('-pp, --pretty-print', 'pretty print output')
+  .action(keypairAction)
 
 // dotenvx pro ls
 const lsAction = require('./actions/ls')

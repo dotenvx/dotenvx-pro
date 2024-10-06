@@ -4,7 +4,6 @@ const { PrivateKey } = require('eciesjs')
 // database
 const current = require('./../../db/current')
 const UserPrivateKey = require('./../../db/userPrivateKey')
-const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 // helpers
@@ -13,11 +12,13 @@ const encryptValue = require('./../../lib/helpers/encryptValue')
 const decryptValue = require('./../../lib/helpers/decryptValue')
 
 // api calls
-const GetMe = require('./../../lib/api/getMe')
-const GetOrganization = require('./../../lib/api/getOrganization')
-const PostMePublicKey = require('./../../lib/api/postMePublicKey')
-const PostOrganizationPublicKey = require('./../../lib/api/postOrganizationPublicKey')
 const PostOrganizationUserPrivateKeyEncrypted = require('./../../lib/api/postOrganizationUserPrivateKeyEncrypted')
+
+// services
+const SyncMe = require('./../../lib/services/syncMe')
+const SyncPublicKey = require('./../../lib/services/syncPublicKey')
+const SyncOrganization = require('./../../lib/services/syncOrganization')
+const SyncOrganizationPublicKey = require('./../../lib/services/syncOrganizationPublicKey')
 
 const spinner = createSpinner('syncing')
 
@@ -33,9 +34,7 @@ async function sync () {
       error.message = 'login required. Log in with [dotenvx pro login].'
       throw error
     }
-    let me = await new GetMe(options.hostname, current.token()).run()
-    const user = new User()
-    user.store.store = me
+    let user = await new SyncMe(options.hostname, current.token()).run()
     spinner.succeed(`[${user.username()}] logged in`)
 
     // verify/sync public key
@@ -46,8 +45,7 @@ async function sync () {
       error.message = 'missing public key. Try generating one with [dotenvx pro login].'
       throw error
     }
-    me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
-    user.store.store = me
+    user = await new SyncPublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
     spinner.succeed(`[${user.username()}] encrypted`)
 
     // verify emergency kit
@@ -69,20 +67,17 @@ async function sync () {
 
     let currentOrganizationId = current.organizationId()
 
-    // instead of current.organizationId here can i just get all of them?
     for (let iOrg = 0; iOrg < _organizationIds.length; iOrg++) {
       const organizationId = _organizationIds[iOrg]
-      const organization = new Organization(organizationId)
 
       // for later - to auto-select an organization
       if (!currentOrganizationId) {
         currentOrganizationId = organizationId
       }
 
-      let remoteOrg = await new GetOrganization(current.hostname(), current.token(), organization.id()).run()
-      organization.store.store = remoteOrg
-
+      let organization = await new SyncOrganization(options.hostname, current.token(), organizationId).run()
       spinner.start(`[@${organization.slug()}] encrypted`)
+
       // generate org keypair for the first time
       const organizationHasPublicKey = organization.publicKey() && organization.publicKey().length > 0
       if (!organizationHasPublicKey) {
@@ -91,10 +86,8 @@ async function sync () {
         const genPrivateKey = kp.secret.toString('hex')
         const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
-        remoteOrg = await new PostOrganizationPublicKey(options.hostname, current.token(), organization.id(), genPublicKey, genPrivateKeyEncrypted).run()
-        organization.store.store = remoteOrg
-        me = await new PostMePublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
-        user.store.store = me
+        organization = await new SyncOrganizationPublicKey(options.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
+        user = await new SyncPublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
       }
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
@@ -137,9 +130,7 @@ async function sync () {
         }
       }
 
-      remoteOrg = await new GetOrganization(current.hostname(), current.token(), organization.id()).run()
-      organization.store.store = remoteOrg
-
+      organization = await new SyncOrganization(current.hostname(), current.token(), organizationId).run()
       spinner.succeed(`[@${organization.slug()}] team (${organization.userIds().length})`)
     }
 
