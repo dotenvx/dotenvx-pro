@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.11.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.12.0...main)
+
+## 0.12.0
+
+### Added
+
+* add `dotenvx pro keypair --format shell` option ([#20](https://github.com/dotenvx/dotenvx-pro/pull/20))
 
 ## 0.11.0
 
