@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.10.2...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.11.0...main)
+
+## 0.11.0
+
+### Added
+
+* add `dotenvx pro keypair` command ([#19](https://github.com/dotenvx/dotenvx-pro/pull/19))
+
+### Removed
+
+* remove `dotenvx pro privatekey` command. (keypair services this need more flexibly) ([#19](https://github.com/dotenvx/dotenvx-pro/pull/19))
 
 ## 0.10.2
 
