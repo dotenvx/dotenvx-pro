@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.12.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.12.1...main)
+
+## 0.12.1
+
+### Added
+
+* add `lib/main.js` so require loads without error ([#21](https://github.com/dotenvx/dotenvx-pro/pull/21))
 
 ## 0.12.0
 
