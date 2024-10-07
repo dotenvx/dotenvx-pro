@@ -21,3 +21,11 @@ t.test('#mask - 11 characters', ct => {
 
   ct.end()
 })
+
+t.test('#mask - undefined', ct => {
+  const result = mask(undefined, 11)
+
+  t.equal(result, '')
+
+  ct.end()
+})

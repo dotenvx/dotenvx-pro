@@ -1,5 +1,5 @@
 const gitUrl = require('./../helpers/gitUrl')
-const validateGit = require('./../helpers/validateGit')
+const ValidateGit = require('./../helpers/validateGit')
 const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 
@@ -16,7 +16,7 @@ class DbKeypair {
   }
 
   run () {
-    validateGit()
+    new ValidateGit().run()
 
     const out = {}
     for (const envFilepath of this._envFilepaths()) {

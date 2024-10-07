@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 
 const gitUrl = require('./../helpers/gitUrl')
 const gitRoot = require('./../helpers/gitRoot')
-const validateGit = require('./../helpers/validateGit')
+const ValidateGit = require('./../helpers/validateGit')
 const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 const forgivingDirectory = require('./../helpers/forgivingDirectory')
@@ -32,7 +32,7 @@ class Push {
   }
 
   async run () {
-    validateGit()
+    new ValidateGit().run()
 
     const organization = await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
 
