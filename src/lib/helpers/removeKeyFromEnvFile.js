@@ -1,7 +1,6 @@
 const fs = require('fs')
-const path = require('path')
 
-function removeKeyFromEnvFile(filePath, keyName) {
+function removeKeyFromEnvFile (filePath, keyName) {
   const content = fs.readFileSync(filePath, 'utf-8')
   const lines = content.split('\n')
 
