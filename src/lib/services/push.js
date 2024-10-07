@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const { keypair } = require('@dotenvx/dotenvx')
 
 const gitUrl = require('./../helpers/gitUrl')
 const gitRoot = require('./../helpers/gitRoot')
@@ -10,7 +9,6 @@ const extractUsernameName = require('./../helpers/extractUsernameName')
 const forgivingDirectory = require('./../helpers/forgivingDirectory')
 
 // services
-const DbKeypair = require('./dbKeypair')
 const SyncOrganization = require('./syncOrganization')
 const Keypair = require('./keypair')
 
