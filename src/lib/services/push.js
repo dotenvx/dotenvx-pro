@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const dotenv = require('dotenv')
 
 const gitUrl = require('./../helpers/gitUrl')
 const gitRoot = require('./../helpers/gitRoot')
@@ -7,6 +8,7 @@ const validateGit = require('./../helpers/validateGit')
 const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 const forgivingDirectory = require('./../helpers/forgivingDirectory')
+const removeKeyFromEnvFile = require('./../helpers/removeKeyFromEnvFile')
 
 // services
 const SyncOrganization = require('./syncOrganization')
@@ -79,6 +81,20 @@ class Push {
 
       // sync org
       await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+
+      // deal with .env.keys file
+      const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
+      if (fs.existsSync(envKeysFilepath)) {
+        // remove DOTENV_PRIVATE_KEY from .env.keys file
+        removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
+
+        // remove .env.keys file if not more private keys left
+        const env = fs.readFileSync(envKeysFilepath, 'utf8')
+        const parsedKeys = dotenv.parse(env)
+        if (Object.keys(parsedKeys).length <= 0) {
+          fs.unlinkSync(envKeysFilepath)
+        }
+      }
 
       pushedFilepaths.push(relativeFilepath)
     }
