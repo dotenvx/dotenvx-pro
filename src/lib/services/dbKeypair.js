@@ -1,5 +1,7 @@
+const path = require('path')
+const gitRoot = require('./../helpers/gitRoot')
 const gitUrl = require('./../helpers/gitUrl')
-const validateGit = require('./../helpers/validateGit')
+const ValidateGit = require('./../helpers/validateGit')
 const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 
@@ -8,38 +10,50 @@ const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 class DbKeypair {
-  constructor (envFile = '.env') {
+  constructor (envFile = '.env', key = undefined) {
     this.envFile = envFile
+    this.key = key
 
     this.user = new User()
     this._mem = {}
   }
 
   run () {
-    validateGit()
+    new ValidateGit().run()
 
+    const relativePathToGitRoot = path.relative(this._gitRoot(), process.cwd())
     const out = {}
     for (const envFilepath of this._envFilepaths()) {
-      const envFileId = this.lookups()[`lookup/envFileIdByUsernameNameFilepath/${this.usernameName()}/${envFilepath}`]
+      const smartEnvFilepath = path.join(relativePathToGitRoot, envFilepath) // smart enough to know if you've cd-ed into a directory
+      const lookupKey = `lookup/envFileIdByUsernameNameFilepath/${this.usernameName()}/${smartEnvFilepath}`
+      const envFileId = this.lookups()[lookupKey]
       if (!envFileId) {
         continue
       }
 
       const publicKeyName = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/pkn`)
-      const publicKey = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/pk/1`)
+      const publicKey = process.env[publicKeyName] || this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/pk/1`) // respect process.env
       if (publicKeyName && publicKey) {
         out[publicKeyName] = publicKey
       }
 
       const privateKeyName = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ekn`)
-      const privateKeyEncrypted = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ek/1`)
-      if (privateKeyName && privateKeyEncrypted) {
-        const privateKey = this.organization().decrypt(privateKeyEncrypted)
+      const privateKey = process.env[privateKeyName]
+      if (privateKeyName && privateKey) {
         out[privateKeyName] = privateKey
+      } else {
+        const privateKeyEncrypted = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ek/1`)
+        if (privateKeyName && privateKeyEncrypted) {
+          out[privateKeyName] = this.organization().decrypt(privateKeyEncrypted)
+        }
       }
     }
 
-    return out
+    if (this.key) {
+      return out[this.key]
+    } else {
+      return out
+    }
   }
 
   organization () {
@@ -57,7 +71,7 @@ class DbKeypair {
       return this._mem.usernameName
     }
 
-    const result = extractUsernameName(gitUrl())
+    const result = extractUsernameName(this._gitUrl())
     this._mem.usernameName = result
     return result
   }
@@ -100,6 +114,14 @@ class DbKeypair {
     }
 
     return id
+  }
+
+  _gitUrl () {
+    return gitUrl()
+  }
+
+  _gitRoot () {
+    return gitRoot()
   }
 
   _envFilepaths () {

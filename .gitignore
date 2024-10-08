@@ -15,6 +15,6 @@ tests/tmp
 !tests/.env.local
 !tests/.env.multiline
 !tests/.env.vault
-!tests/monorepo/**/.env*
+!tests/repos/**/.env*
 spec/tmp/*
 !spec/tmp/.gitkeep

@@ -5,8 +5,8 @@ const Organization = require('./organization')
 
 class User {
   constructor (userId = current.id()) {
+    this.userId = userId
     this.hostfolder = current.hostfolder()
-    this.userId = current.id()
 
     if (!this.userId) {
       throw new Error('missing user. Log in with [dotenvx pro login].')
