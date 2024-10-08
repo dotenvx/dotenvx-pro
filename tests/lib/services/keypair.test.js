@@ -1,4 +1,5 @@
 const t = require('tap')
+require('../../setup')(t)
 const fs = require('fs')
 const sinon = require('sinon')
 
