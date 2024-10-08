@@ -32,6 +32,7 @@ t.test('#run (no arguments)', ct => {
 t.test('#usernameName', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   ct.same(dbk.usernameName(), 'dotenvx/app1')
 
   ct.end()
@@ -40,6 +41,7 @@ t.test('#usernameName', ct => {
 t.test('#slug', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   ct.same(dbk.slug(), 'dotenvx')
 
   ct.end()
@@ -48,6 +50,7 @@ t.test('#slug', ct => {
 t.test('#slug - memoizes', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   ct.same(dbk.slug(), 'dotenvx')
   ct.same(dbk.slug(), 'dotenvx')
 
@@ -57,6 +60,7 @@ t.test('#slug - memoizes', ct => {
 t.test('#organizationId', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   ct.same(dbk.organizationId(), '99')
 
   ct.end()
@@ -65,6 +69,7 @@ t.test('#organizationId', ct => {
 t.test('#organizationId (throws is not found)', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:other/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   try {
     dbk.organizationId()
     ct.fail('should have raised an error but did not')
@@ -78,6 +83,7 @@ t.test('#organizationId (throws is not found)', ct => {
 t.test('#repositoryId', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   ct.same(dbk.repositoryId(), '1')
 
   ct.end()
@@ -86,6 +92,7 @@ t.test('#repositoryId', ct => {
 t.test('#repositoryId (throws if not found)', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/other.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   try {
     dbk.repositoryId()
     ct.fail('should have raised an error but did not')
@@ -99,6 +106,7 @@ t.test('#repositoryId (throws if not found)', ct => {
 t.test('#organization', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   ct.same(dbk.organization(), new Organization('99'))
 
   ct.end()
@@ -107,6 +115,7 @@ t.test('#organization', ct => {
 t.test('#run (finds .env file)', ct => {
   const dbk = new DbKeypair(envFile)
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   const result = dbk.run()
 
   ct.same(result, {
@@ -120,6 +129,7 @@ t.test('#run (finds .env file)', ct => {
 t.test('#run (finds .env file as array)', ct => {
   const dbk = new DbKeypair([envFile])
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _gitUrl to simulate a real repo
   const result = dbk.run()
 
   ct.same(result, {
@@ -133,6 +143,7 @@ t.test('#run (finds .env file as array)', ct => {
 t.test('#run (finds .env file with specified key)', ct => {
   const dbk = new DbKeypair(envFile, 'DOTENV_PRIVATE_KEY')
   sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _
   const result = dbk.run()
 
   ct.same(result, '74d6ff245dd24c0fcb32f99aa3b4c4ac9de402cc35aa5eece35106d4496d22ae')

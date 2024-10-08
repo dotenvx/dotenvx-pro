@@ -1,3 +1,5 @@
+const path = require('path')
+const gitRoot = require('./../helpers/gitRoot')
 const gitUrl = require('./../helpers/gitUrl')
 const ValidateGit = require('./../helpers/validateGit')
 const extractSlug = require('./../helpers/extractSlug')
@@ -19,9 +21,11 @@ class DbKeypair {
   run () {
     new ValidateGit().run()
 
+    const relativePathToGitRoot = path.relative(this._gitRoot(), process.cwd())
     const out = {}
     for (const envFilepath of this._envFilepaths()) {
-      const lookupKey = `lookup/envFileIdByUsernameNameFilepath/${this.usernameName()}/${envFilepath}`
+      const smartEnvFilepath = path.join(relativePathToGitRoot, envFilepath) // smart enough to know if you've cd-ed into a directory
+      const lookupKey = `lookup/envFileIdByUsernameNameFilepath/${this.usernameName()}/${smartEnvFilepath}`
       const envFileId = this.lookups()[lookupKey]
       if (!envFileId) {
         continue
@@ -110,6 +114,10 @@ class DbKeypair {
 
   _gitUrl () {
     return gitUrl()
+  }
+
+  _gitRoot () {
+    return gitRoot()
   }
 
   _envFilepaths () {
