@@ -8,8 +8,9 @@ const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 class DbKeypair {
-  constructor (envFile = '.env') {
+  constructor (envFile = '.env', key = undefined) {
     this.envFile = envFile
+    this.key = key
 
     this.user = new User()
     this._mem = {}
@@ -20,7 +21,8 @@ class DbKeypair {
 
     const out = {}
     for (const envFilepath of this._envFilepaths()) {
-      const envFileId = this.lookups()[`lookup/envFileIdByUsernameNameFilepath/${this.usernameName()}/${envFilepath}`]
+      const lookupKey = `lookup/envFileIdByUsernameNameFilepath/${this.usernameName()}/${envFilepath}`
+      const envFileId = this.lookups()[lookupKey]
       if (!envFileId) {
         continue
       }
@@ -39,7 +41,11 @@ class DbKeypair {
       }
     }
 
-    return out
+    if (this.key) {
+      return out[this.key]
+    } else {
+      return out
+    }
   }
 
   organization () {
@@ -57,7 +63,7 @@ class DbKeypair {
       return this._mem.usernameName
     }
 
-    const result = extractUsernameName(gitUrl())
+    const result = extractUsernameName(this._gitUrl())
     this._mem.usernameName = result
     return result
   }
@@ -100,6 +106,10 @@ class DbKeypair {
     }
 
     return id
+  }
+
+  _gitUrl () {
+    return gitUrl()
   }
 
   _envFilepaths () {

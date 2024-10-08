@@ -62,6 +62,14 @@ t.test('#privateKey (when no userId)', ct => {
   ct.end()
 })
 
+t.test('#privateKey (when one does not yet exist it creates one)', ct => {
+  inst.store.set('private_key/1', null)
+
+  ct.ok(inst.privateKey())
+
+  ct.end()
+})
+
 t.test('#recoveryPhrase', ct => {
   ct.same(inst.recoveryPhrase(), 'only vicious sock episode fortune prosper mouse isolate foam purity earn target talk design ready dutch drastic deer type unusual notable girl magnet sheriff')
 

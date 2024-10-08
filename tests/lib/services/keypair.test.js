@@ -5,6 +5,7 @@ const sinon = require('sinon')
 const Keypair = require('../../../src/lib/services/keypair')
 
 let writeFileSyncStub
+const envFile = 'tests/repos/dotenvx/app2/.env'
 
 t.beforeEach((ct) => {
   // important, clear process.env before each test
@@ -25,7 +26,6 @@ t.test('#run (no arguments)', ct => {
 })
 
 t.test('#run (finds .env file)', ct => {
-  const envFile = 'tests/monorepo/apps/encrypted/.env'
   const result = new Keypair(envFile).run()
 
   ct.same(result, { DOTENV_PUBLIC_KEY: '03eaf2142ab3d55bdf108962334e06696db798e7412cfc51d75e74b4f87f299bba', DOTENV_PRIVATE_KEY: 'ec9e80073d7ace817d35acb8b7293cbf8e5981b4d2f5708ee5be405122993cd1' })
@@ -34,7 +34,6 @@ t.test('#run (finds .env file)', ct => {
 })
 
 t.test('#run (finds .env file as array)', ct => {
-  const envFile = 'tests/monorepo/apps/encrypted/.env'
   const result = new Keypair([envFile]).run()
 
   ct.same(result, { DOTENV_PUBLIC_KEY: '03eaf2142ab3d55bdf108962334e06696db798e7412cfc51d75e74b4f87f299bba', DOTENV_PRIVATE_KEY: 'ec9e80073d7ace817d35acb8b7293cbf8e5981b4d2f5708ee5be405122993cd1' })
@@ -43,7 +42,6 @@ t.test('#run (finds .env file as array)', ct => {
 })
 
 t.test('#run (finds .env file with specified key)', ct => {
-  const envFile = 'tests/monorepo/apps/encrypted/.env'
   const result = new Keypair(envFile, 'DOTENV_PRIVATE_KEY').run()
 
   ct.same(result, 'ec9e80073d7ace817d35acb8b7293cbf8e5981b4d2f5708ee5be405122993cd1')

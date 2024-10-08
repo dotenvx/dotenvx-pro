@@ -31,7 +31,7 @@ const ORGANIZATION = {
   'u/1/un': 'motdotla',
   'u/1/pk/1': '02f4da02c08394d2ee665d571642a6caaf2ca1df93b4d9e02ba8b3571a06f254cf',
   'u/1/ek/1': 'BHL5Nvc426sKAsptOVpZUK/RKaD3BfT9swV2d09wBHvtLKA1rQ9ab9NQOVQP2QW7hhMoudbSdECRATu4XHRN9W2God9oWiltvJs9reyGP3LPsQnLEY6WAPmmLsr2iBe+cYW8hCiBAdQHN3FTJtteoVECGsq0rQ4HCbeHkyqduMdEMaEVHzqY1bfLiqSahJOCfPQdJ5rsb78g1Nml4CHY8Y4=',
-  'r/1/unn': 'dotenvx/testing123',
+  'r/1/unn': 'dotenvx/app1',
   'r/1/e/1/f': '.env',
   'r/1/e/1/pkn': 'DOTENV_PUBLIC_KEY',
   'r/1/e/1/pk/1': '020666fa64c3e4ea8f7cc6ee48ef56641ecb7ed5cb829016066dd4dfd7ce05f5e3',

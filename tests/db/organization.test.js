@@ -140,9 +140,9 @@ t.test('#envFileIds', ct => {
 
 t.test('#lookups', ct => {
   ct.same(org.lookups(), {
-    'lookup/repositoryIdByUsernameName/dotenvx/testing123': '1',
-    'lookup/envFileIdByUsernameNameFilepath/dotenvx/testing123/.env': '1',
-    'lookup/envFileIdByUsernameNameFilepath/dotenvx/testing123/.env.production': '2'
+    'lookup/repositoryIdByUsernameName/dotenvx/app1': '1',
+    'lookup/envFileIdByUsernameNameFilepath/dotenvx/app1/.env': '1',
+    'lookup/envFileIdByUsernameNameFilepath/dotenvx/app1/.env.production': '2'
   })
 
   ct.end()
