@@ -38,10 +38,18 @@ const pushAction = require('./actions/push')
 program
   .command('push')
   .description('push')
-  .argument('[directory]', 'directory to push', '.')
   .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(pushAction)
+
+// dotenvx pro pull
+const pullAction = require('./actions/pull')
+program
+  .command('pull')
+  .description('pull')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
+  .action(pullAction)
 
 // dotenvx pro login
 const loginAction = require('./actions/login')
