@@ -32,16 +32,20 @@ class DbKeypair {
       }
 
       const publicKeyName = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/pkn`)
-      const publicKey = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/pk/1`)
+      const publicKey = process.env[publicKeyName] || this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/pk/1`) // respect process.env
       if (publicKeyName && publicKey) {
         out[publicKeyName] = publicKey
       }
 
       const privateKeyName = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ekn`)
-      const privateKeyEncrypted = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ek/1`)
-      if (privateKeyName && privateKeyEncrypted) {
-        const privateKey = this.organization().decrypt(privateKeyEncrypted)
+      const privateKey = process.env[privateKeyName]
+      if (privateKeyName && privateKey) {
         out[privateKeyName] = privateKey
+      } else {
+        const privateKeyEncrypted = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ek/1`)
+        if (privateKeyName && privateKeyEncrypted) {
+          out[privateKeyName] = this.organization().decrypt(privateKeyEncrypted)
+        }
       }
     }
 

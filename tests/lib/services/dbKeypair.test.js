@@ -150,3 +150,39 @@ t.test('#run (finds .env file with specified key)', ct => {
 
   ct.end()
 })
+
+t.test('#run (respects privateKey set already in process.env)', ct => {
+  process.env.DOTENV_PRIVATE_KEY = 'respect me!'
+
+  const dbk = new DbKeypair(envFile, 'DOTENV_PRIVATE_KEY')
+  sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _
+  const result = dbk.run()
+  ct.same(result, 'respect me!')
+
+  const dbk2 = new DbKeypair(envFile, 'DOTENV_PUBLIC_KEY')
+  sinon.stub(dbk2, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk2, '_gitRoot').returns('.') // stub _
+  const result2 = dbk2.run()
+  ct.same(result2, '020666fa64c3e4ea8f7cc6ee48ef56641ecb7ed5cb829016066dd4dfd7ce05f5e3')
+
+  ct.end()
+})
+
+t.test('#run (respects publicKey set already in process.env)', ct => {
+  process.env.DOTENV_PUBLIC_KEY = 'respect me!'
+
+  const dbk = new DbKeypair(envFile, 'DOTENV_PUBLIC_KEY')
+  sinon.stub(dbk, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk, '_gitRoot').returns('.') // stub _
+  const result = dbk.run()
+  ct.same(result, 'respect me!')
+
+  const dbk2 = new DbKeypair(envFile, 'DOTENV_PRIVATE_KEY')
+  sinon.stub(dbk2, '_gitUrl').returns('git@github.com:dotenvx/app1.git') // stub _gitUrl to simulate a real repo
+  sinon.stub(dbk2, '_gitRoot').returns('.') // stub _
+  const result2 = dbk2.run()
+  ct.same(result2, '74d6ff245dd24c0fcb32f99aa3b4c4ac9de402cc35aa5eece35106d4496d22ae')
+
+  ct.end()
+})
