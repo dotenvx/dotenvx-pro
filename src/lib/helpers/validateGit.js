@@ -40,19 +40,19 @@ class ValidateGit {
     }
   }
 
-  _isGitRepo() {
+  _isGitRepo () {
     return isGitRepo()
   }
 
-  _gitRoot() {
+  _gitRoot () {
     return gitRoot()
   }
 
-  _gitUrl() {
+  _gitUrl () {
     return gitUrl()
   }
 
-  _isGithub(giturl) {
+  _isGithub (giturl) {
     return isGithub(giturl)
   }
 }

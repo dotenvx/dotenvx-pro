@@ -1,17 +1,11 @@
 const t = require('tap')
 require('../setup')(t)
 
-const sinon = require('sinon')
-const Conf = require('conf')
-
 const current = require('../../src/db/current')
 
 const HOSTNAME = 'http://example.com'
 const ID = 1
 const TOKEN = 'dxo_1234'
-
-let sandbox
-let confStub
 
 t.beforeEach((ct) => {
 })
