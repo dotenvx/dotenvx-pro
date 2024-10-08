@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.12.1...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.12.2...main)
+
+## 0.12.2
+
+### Changed
+
+* respect `process.env` ahead of synced db data ([#23](https://github.com/dotenvx/dotenvx-pro/pull/23))
 
 ## 0.12.1
 
