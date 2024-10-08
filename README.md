@@ -57,16 +57,19 @@ Usage: @dotenvx/dotenvx-pro [options] [command]
 dotenvx pro 🏆
 
 Options:
-  -l, --log-level <level>  set log level (default: "info")
-  -q, --quiet              sets log level to error
-  -v, --verbose            sets log level to verbose
-  -d, --debug              sets log level to debug
-  -V, --version            output the version number
-  -h, --help               display help for command
+  -l, --log-level <level>     set log level (default: "info")
+  -q, --quiet                 sets log level to error
+  -v, --verbose               sets log level to verbose
+  -d, --debug                 sets log level to debug
+  -V, --version               output the version number
+  -h, --help                  display help for command
 
 Commands:
-  login [options]          authenticate to dotenvx pro
-  logout [options]         log out this machine from dotenvx pro
-  settings                 ⚙️  settings
-
+  sync [options]              sync
+  push [options] [directory]  push
+  login [options]             log in
+  logout [options]            log out
+  keypair [options] [key]     print public/private keys for .env file(s)
+  ls [options] [directory]    print all .env files in a tree structure
+  settings                    ⚙️  settings
 ```
