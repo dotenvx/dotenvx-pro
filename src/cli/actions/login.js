@@ -120,6 +120,7 @@ async function login () {
     const deviceCode = responseData.device_code
     const userCode = responseData.user_code
     const verificationUri = responseData.verification_uri
+    const verificationUriComplete = responseData.verification_uri_complete
     const interval = responseData.interval
 
     try { clipboardy.writeSync(userCode) } catch (_e) {}
@@ -135,7 +136,7 @@ async function login () {
     spinner.start()
 
     if (answer) {
-      await open(verificationUri)
+      await open(verificationUriComplete)
     } else {
       process.exit(1)
     }
