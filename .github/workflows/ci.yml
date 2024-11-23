@@ -25,6 +25,32 @@ jobs:
       - run: npm run test
       - run: npm audit --omit=dev
 
+  test-pkg:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+      - run: npm install
+      - name: pkg
+        run: |
+          echo "pkg-ing"
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-x86_64 --output bin/linux-x86_64/dotenvx-pro
+      - name: verify version
+        run: |
+          cd bin/linux-x86_64/
+          RELEASED_VERSION=$(./dotenvx-pro --version)
+          EXPECTED_VERSION=$(node -p "require('./../../package.json').version")
+          echo $RELEASED_VERSION
+          echo $EXPECTED_VERSION
+          if [ "$RELEASED_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "postrelease version mismatch: expected $EXPECTED_VERSION, got $RELEASED_VERSION"
+            exit 1
+          fi
+
   # run only on semantic version tag
   release:
     needs: test
@@ -61,21 +87,18 @@ jobs:
       - name: npm install
         run: npm install
 
-      - name: npm run patch
-        run: npm run patch
-
       - name: pkg
         run: |
           echo "pkg-ing"
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-macos-x64 --output bin/darwin-amd64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-macos-x64 --output bin/darwin-x86_64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-macos-arm64 --output bin/darwin-arm64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-x64 --output bin/linux-amd64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-x64 --output bin/linux-x86_64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-arm64 --output bin/linux-arm64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-linuxstatic-arm64 --output bin/linux-aarch64/dotenvx-pro
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-win-x64 --output bin/windows-amd64/dotenvx-pro.exe
-          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node16-win-x64 --output bin/windows-x86_64/dotenvx-pro.exe
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-macos-x64 --output bin/darwin-amd64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-macos-x64 --output bin/darwin-x86_64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-macos-arm64 --output bin/darwin-arm64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-linuxstatic-x64 --output bin/linux-amd64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-linuxstatic-x64 --output bin/linux-x86_64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-linuxstatic-arm64 --output bin/linux-arm64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-linuxstatic-arm64 --output bin/linux-aarch64/dotenvx-pro
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-win-x64 --output bin/windows-amd64/dotenvx-pro.exe
+          ./node_modules/.bin/pkg . --no-bytecode --public-packages "*" --public --target node20-win-x64 --output bin/windows-x86_64/dotenvx-pro.exe
           echo "change ownership"
           sudo chown -R root:root bin/
           echo "dist-ing"
