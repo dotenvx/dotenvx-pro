@@ -34,8 +34,6 @@ class Pull {
   async run () {
     new ValidateGit().run()
 
-    // sync me
-    const user = await new SyncMe(options.hostname, current.token()).run()
     // sync organization
     const organization = await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
 
