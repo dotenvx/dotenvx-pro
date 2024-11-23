@@ -18,6 +18,7 @@ async function push () {
     for (const filepath of pushedFilepaths) {
       spinner.succeed(`pushed (${filepath})`)
     }
+    logger.help('⮕ next run [dotenvx pro open]')
   } catch (error) {
     if (error.message) {
       spinner.fail(error.message)
