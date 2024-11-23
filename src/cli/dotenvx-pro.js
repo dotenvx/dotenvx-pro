@@ -51,6 +51,13 @@ program
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(pullAction)
 
+const openAction = require('./actions/open')
+program
+  .command('open')
+  .description('view repository on dotenvx pro')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
+  .action(openAction)
+
 // dotenvx pro login
 const loginAction = require('./actions/login')
 program
