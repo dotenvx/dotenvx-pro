@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.12.2...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.13.0...main)
+
+## 0.13.0
+
+### Added
+
+* add `open` command ([#25](https://github.com/dotenvx/dotenvx-pro/pull/25))
 
 ## 0.12.2
 
