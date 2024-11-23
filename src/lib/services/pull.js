@@ -157,4 +157,4 @@ class Pull {
   }
 }
 
-module.exports = Push
+module.exports = Pull
