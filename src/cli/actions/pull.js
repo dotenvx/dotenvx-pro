@@ -2,11 +2,11 @@ const { logger } = require('@dotenvx/dotenvx')
 
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 
-const Push = require('./../../lib/services/push')
+const Pull = require('./../../lib/services/pull')
 
-const spinner = createSpinner('pushing')
+const spinner = createSpinner('pulling')
 
-async function push () {
+async function pull () {
   try {
     spinner.start()
 
@@ -14,9 +14,9 @@ async function push () {
     const options = this.opts()
     logger.debug(`options: ${JSON.stringify(options)}`)
 
-    const pushedFilepaths = await new Push(options.hostname, options.envFile).run()
-    for (const filepath of pushedFilepaths) {
-      spinner.succeed(`pushed (${filepath})`)
+    const pulledFilepaths = await new Pull(options.hostname, options.envFile).run()
+    for (const filepath of pulledFilepaths) {
+      spinner.succeed(`pulled (${filepath})`)
     }
   } catch (error) {
     if (error.message) {
@@ -31,4 +31,4 @@ async function push () {
   }
 }
 
-module.exports = push
+module.exports = pull
