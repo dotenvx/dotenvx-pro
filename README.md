@@ -13,7 +13,7 @@ For teams and organizations that need secure, scalable secrets management.
 
 ## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
 
-**Install globally.**
+*Install globally.*
 
 <details><summary>with curl 🌐 </summary><br>
 
@@ -47,7 +47,7 @@ tar -xzf dotenvx-pro.tar.gz
 
 </details>
 
-**Then log in.**
+*Then log in.*
 
 ```sh
 $ dotenvx pro login
