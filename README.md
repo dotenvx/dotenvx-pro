@@ -50,6 +50,14 @@ tar -xzf dotenvx-pro.tar.gz
 
 &nbsp;
 
+Then log in from your machine.
+
+```
+$ dotenvx pro login
+```
+
+That's it!
+
 ## Usage
 
 ```sh
