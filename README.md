@@ -1,6 +1,8 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-*dotenvx pro 🏆*–For teams and organizations that need secure, scalable secrets management.
+*dotenvx pro 🏆*
+
+For teams and organizations that need secure, scalable secrets management.
 
 * **Extended 75-day free trial**
 * **Fully managed private keys** securely synced with zero-knowledge encryption
