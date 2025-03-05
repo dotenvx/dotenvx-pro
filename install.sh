@@ -141,6 +141,13 @@ is_arch_supported() {
   return 0
 }
 
+# dotenvx checks ------------------------
+install_dotenvx_if_missing() {
+  if ! command -v dotenvx >/dev/null 2>&1; then
+    curl -sfS https://dotenvx.sh | sh
+  fi
+}
+
 # is_* checks ---------------------------
 is_piped() {
   [ "$0" = "sh" ] || [ "$0" = "bash" ]
@@ -391,6 +398,9 @@ run() {
   is_curl_installed
   is_os_supported
   is_arch_supported
+
+  # dotenvx checks
+  install_dotenvx_if_missing
 
   # install logic
   if [ -n "$VERSION" ]; then
