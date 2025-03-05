@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.13.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.14.0...main)
+
+## 0.14.0
+
+### Added
+
+* installing `dotenvx pro` should also install `dotenvx`
 
 ## 0.13.0
 
