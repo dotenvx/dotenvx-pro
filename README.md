@@ -13,14 +13,7 @@
 
 ## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
 
-Extend `dotenvx` with pro.
-
-```sh
-npm install @dotenvx/dotenvx-pro --save
-```
-&nbsp;
-
-or install globally
+Install globally.
 
 <details><summary>with curl 🌐 </summary><br>
 
