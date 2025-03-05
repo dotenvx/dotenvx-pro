@@ -57,8 +57,6 @@ $ dotenvx pro login
 ⮕ next run [dotenvx pro sync]
 ```
 
-&nbsp;
-
 *That's it, enjoy Pro! 🏆*
 
 ## Usage
