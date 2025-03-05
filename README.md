@@ -1,6 +1,15 @@
-# dotenvx-pro
+[![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-> Use dotenvx like a pro
+*dotenvx pro 🏆*–For teams and organizations that need secure, scalable secrets management.
+
+* **Extended 75-day free trial**
+* **Fully managed private keys** securely synced with zero-knowledge encryption
+* **Team permissions** to control access
+* [and more](https://dotenvx.com/pricing)
+
+[Read the security paper (coming soon)]()
+
+&nbsp;
 
 ## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
 
