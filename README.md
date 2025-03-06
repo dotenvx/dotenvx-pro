@@ -13,8 +13,16 @@ For teams and organizations that need secure, scalable secrets management.
 
 ## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
 
-*Install globally.*
+*Install dotenvx pro.*
 
+<details><summary>with npm 📦</summary><br>
+
+```sh
+npm install @dotenvx/dotenvx-pro --save
+npx dotenvx help
+```
+
+</details>
 <details><summary>with curl 🌐 </summary><br>
 
 ```sh
@@ -25,7 +33,6 @@ dotenvx pro help
 &nbsp;
 
 </details>
-
 <details><summary>with brew 🍺</summary><br>
 
 ```sh
@@ -36,8 +43,7 @@ dotenvx pro help
 &nbsp;
 
 </details>
-
-<details><summary>or with github releases 🐙</summary><br>
+<details><summary>with github releases 🐙</summary><br>
 
 ```sh
 curl -L -o dotenvx-pro.tar.gz "https://github.com/dotenvx/dotenvx-pro/releases/latest/download/dotenvx-pro-$(uname -s)-$(uname -m).tar.gz"
@@ -45,9 +51,10 @@ tar -xzf dotenvx-pro.tar.gz
 ./dotenvx-pro help
 ```
 
+&nbsp;
+
 </details>
 
-&nbsp;
 
 *Then log in.*
 
