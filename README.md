@@ -55,7 +55,7 @@ tar -xzf dotenvx-pro.tar.gz
 
 ```sh
 $ dotenvx pro login
-✔ logged in [motdotla] to this device and activated token [dxo_6kjPifI…]
+✔ logged in [username] to this device and activated token [dxo_6kjPifI…]
 ⮕ next run [dotenvx pro sync]
 ```
 
