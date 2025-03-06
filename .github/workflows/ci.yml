@@ -162,6 +162,13 @@ jobs:
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           commit_owner: motdotenv
           commit_email: mot@dotenv.org
+          install: |
+            # Ensure dotenvx tap added
+            system "brew", "tap", "dotenvx/brew" unless `brew tap`.include?("dotenvx/brew")
+            # Ensure dotenvx is installed
+            system "brew", "install", "dotenvx/brew/dotenvx" unless Formula["dotenvx"].installed?
+            # Instal dotenvx pro
+            bin.install "dotenvx-pro"
           install: 'bin.install "dotenvx-pro";'
           test: 'system bin/"dotenvx-pro", "--version";'
           target_darwin_amd64: true
