@@ -30,8 +30,6 @@ curl -sfS https://dotenvx.sh/pro | sh
 dotenvx pro help
 ```
 
-&nbsp;
-
 </details>
 <details><summary>with brew 🍺</summary><br>
 
@@ -39,8 +37,6 @@ dotenvx pro help
 brew install dotenvx/brew/dotenvx-pro
 dotenvx pro help
 ```
-
-&nbsp;
 
 </details>
 <details><summary>with github releases 🐙</summary><br>
@@ -51,10 +47,9 @@ tar -xzf dotenvx-pro.tar.gz
 ./dotenvx-pro help
 ```
 
-&nbsp;
-
 </details>
 
+&nbsp;
 
 *Then log in.*
 
