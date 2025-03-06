@@ -39,7 +39,7 @@ dotenvx pro help
 ```
 
 </details>
-<details><summary>with github releases 🐙</summary><br>
+<details><summary>or with github releases 🐙</summary><br>
 
 ```sh
 curl -L -o dotenvx-pro.tar.gz "https://github.com/dotenvx/dotenvx-pro/releases/latest/download/dotenvx-pro-$(uname -s)-$(uname -m).tar.gz"
