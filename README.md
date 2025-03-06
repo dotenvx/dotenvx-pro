@@ -19,7 +19,7 @@ For teams and organizations that need secure, scalable secrets management.
 
 ```sh
 npm install @dotenvx/dotenvx-pro --save
-npx dotenvx help
+npx dotenvx pro help
 ```
 
 </details>
