@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Added
 
-* add `pro settings storetree` to display store mechanism ([#29](https://github.com/dotenvx/dotenvx-pro/pull/29))
+* add `pro settings storetree` to display encrypted store file structure ([#29](https://github.com/dotenvx/dotenvx-pro/pull/29))
 
 ## 0.16.0
 
