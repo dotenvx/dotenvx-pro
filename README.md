@@ -55,8 +55,6 @@ tar -xzf dotenvx-pro.tar.gz
 
 ```sh
 $ dotenvx pro login
-press Enter to open [https://pro.dotenvx.com/login/device] and enter code [D9C1-03BC]... (Y/n)
-⠹ waiting on browser authorization
 ✔ logged in [username] to this device and activated token [dxo_6kjPifI…]
 ⮕ next run [dotenvx pro sync]
 ```
