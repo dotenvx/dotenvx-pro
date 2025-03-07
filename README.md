@@ -134,7 +134,7 @@ Advanced CLI commands.
   $ echo "HELLO=World" > .env
   $ dotenvx encrypt
 
-  $ dotenvx push
+  $ dotenvx pro push
 
   $ dotenvx pro keypair DOTENV_PRIVATE_KEY
   <privateKey>
