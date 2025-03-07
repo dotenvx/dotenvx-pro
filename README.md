@@ -141,3 +141,17 @@ Advanced CLI commands.
   ```
 
   </details>
+* <details><summary>`pro settings storetree`</summary><br>
+
+  Print encrypted store tree–backing your dotenvx pro installation.
+
+  ```sh
+  $ dotenvx pro settings storetree
+  ├─ .env
+  └─ pro.dotenvx.com
+     ├─ user-1-organization-1.json
+     ├─ user-1-private-key.json
+     └─ user-1.json
+  ```
+
+  </details>
