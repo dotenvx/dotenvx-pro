@@ -5,7 +5,7 @@ const treeify = require('object-treeify')
 const current = require('./../../../db/current')
 const ArrayToTree = require('./../../../lib/helpers/arrayToTree')
 
-function filepaths(directory) {
+function filepaths (directory) {
   return new Fdir()
     .withRelativePaths()
     .crawl(directory)
