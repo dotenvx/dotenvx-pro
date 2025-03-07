@@ -7,8 +7,6 @@ For teams and organizations that need secure, scalable secrets management. 🏆
 * **Team permissions** to control access
 * [and more](https://dotenvx.com/pricing)
 
-[Read the security paper (coming soon)]()
-
 &nbsp;
 
 ## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
@@ -88,3 +86,58 @@ Commands:
   ls [options] [directory]  print all .env files in a tree structure
   settings                  ⚙️  settings
 ```
+
+## Advanced
+
+> Become a `dotenvx pro` power user.
+>
+
+### CLI 📟
+
+Advanced CLI commands.
+
+* <details><summary>`pro keypair`</summary><br>
+
+  Print public/private keys for `.env` file.
+
+  ```sh
+  $ echo "HELLO=World" > .env
+  $ dotenvx encrypt
+
+  $ dotenvx pro push
+
+  $ dotenvx pro keypair
+  {"DOTENV_PUBLIC_KEY":"<publicKey>","DOTENV_PRIVATE_KEY":"<privateKey>"}
+  ```
+
+  </details>
+* <details><summary>`pro keypair -f`</summary><br>
+
+  Print public/private keys for `.env.production` file.
+
+  ```sh
+  $ echo "HELLO=Production" > .env.production
+  $ dotenvx encrypt -f .env.production
+
+  $ dotenvx pro push
+
+  $ dotenvx pro keypair -f .env.production
+  {"DOTENV_PUBLIC_KEY_PRODUCTION":"<publicKey>","DOTENV_PRIVATE_KEY_PRODUCTION":"<privateKey>"}
+  ```
+
+  </details>
+* <details><summary>`pro keypair DOTENV_PRIVATE_KEY`</summary><br>
+
+  Print specific keypair for `.env` file.
+
+  ```sh
+  $ echo "HELLO=World" > .env
+  $ dotenvx encrypt
+
+  $ dotenvx push
+
+  $ dotenvx pro keypair DOTENV_PRIVATE_KEY
+  <privateKey>
+  ```
+
+  </details>
