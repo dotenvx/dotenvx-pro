@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.16.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.17.0...main)
+
+## 0.17.0
+
+### Added
+
+* add `pro settings storetree` to display encrypted store file structure ([#29](https://github.com/dotenvx/dotenvx-pro/pull/29))
 
 ## 0.16.0
 

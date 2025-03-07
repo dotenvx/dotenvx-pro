@@ -98,7 +98,7 @@ Advanced CLI commands.
 
 * <details><summary>`pro keypair`</summary><br>
 
-  Print public/private keys for `.env` file.
+  Print fully managed public/private keys for `.env` file.
 
   ```sh
   $ echo "HELLO=World" > .env
@@ -113,7 +113,7 @@ Advanced CLI commands.
   </details>
 * <details><summary>`pro keypair -f`</summary><br>
 
-  Print public/private keys for `.env.production` file.
+  Print fully managed public/private keys for `.env.production` file.
 
   ```sh
   $ echo "HELLO=Production" > .env.production
@@ -128,7 +128,7 @@ Advanced CLI commands.
   </details>
 * <details><summary>`pro keypair DOTENV_PRIVATE_KEY`</summary><br>
 
-  Print specific keypair for `.env` file.
+  Print specific fully managed keypair for `.env` file.
 
   ```sh
   $ echo "HELLO=World" > .env
