@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.17.0...main)
 
+## 0.17.1
+
+### Changed
+
+* 🐞 fix `--unmask` regression ([#30](https://github.com/dotenvx/dotenvx-pro/pull/30))
+
 ## 0.17.0
 
 ### Added

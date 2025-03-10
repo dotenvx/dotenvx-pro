@@ -21,13 +21,6 @@ settings
   .option('--unmask', 'unmask access token')
   .action(tokenAction)
 
-// dotenvx pro settings hostname
-const hostnameAction = require('./../actions/settings/hostname')
-settings
-  .command('hostname')
-  .description('print hostname')
-  .action(hostnameAction)
-
 // dotenvx pro settings publickey
 const publicKeyAction = require('./../actions/settings/publicKey')
 settings
@@ -116,5 +109,19 @@ settings
   .command('orgselect')
   .description('select organization')
   .action(orgSelectAction)
+
+// dotenvx pro settings hostname
+const hostnameAction = require('./../actions/settings/hostname')
+settings
+  .command('hostname')
+  .description('print hostname')
+  .action(hostnameAction)
+
+// dotenvx pro settings storetree
+const storetreeAction = require('./../actions/settings/storetree')
+settings
+  .command('storetree')
+  .description('print store tree')
+  .action(storetreeAction)
 
 module.exports = settings
