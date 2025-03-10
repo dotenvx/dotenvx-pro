@@ -6,59 +6,122 @@ settings
   .description('⚙️  settings')
   .allowUnknownOption()
 
-// Regular Commands
-const basicCommands = [
-  ['username', 'print your username', require('./../actions/settings/username')],
-  ['token', 'print your access token (--unmask)', require('./../actions/settings/token')],
-  ['publickey', 'print your publicKey', require('./../actions/settings/publicKey')],
-  ['privatekey', 'print your privateKey (--unmask)', require('./../actions/settings/privateKey')],
-  ['recoveryphrase', 'print your recovery phrase (--unmask)', require('./../actions/settings/recoveryPhrase')],
-  ['emergencykit', 'generate your emergency kit (--unmask)', require('./../actions/settings/emergencyKit')],
-  ['recover', 'recover your account 🛟', require('./../actions/settings/recover')],
-  ['org', 'print organization', require('./../actions/settings/org')],
-  ['orgpublickey', 'print organization publicKey', require('./../actions/settings/orgPublicKey')],
-  ['orgprivatekey', 'print organization privateKey (--unmask)', require('./../actions/settings/orgPrivateKey')],
-  ['orgteam', 'print organization team', require('./../actions/settings/orgTeam')],
-  ['orgjoin', 'join organization', require('./../actions/settings/orgJoin')],
-  ['orgnew', 'create organization', require('./../actions/settings/orgNew')],
-  ['orgselect', 'select organization', require('./../actions/settings/orgSelect')]
-]
+// dotenvx pro settings username
+const usernameAction = require('./../actions/settings/username')
+settings
+  .command('username')
+  .description('print your username')
+  .action(usernameAction)
 
-// Advanced Commands (to be displayed separately)
-const advancedCommands = [
-  ['hostname', 'print hostname', require('./../actions/settings/hostname')],
-  ['storetree', 'print store tree', require('./../actions/settings/storetree')]
-]
+// dotenvx pro settings token
+const tokenAction = require('./../actions/settings/token')
+settings
+  .command('token')
+  .description('print your access token (--unmask)')
+  .option('--unmask', 'unmask access token')
+  .action(tokenAction)
 
-// Register Basic Commands
-basicCommands.forEach(([name, desc, action]) => {
-  settings.command(name).description(desc).action(action)
-})
+// dotenvx pro settings publickey
+const publicKeyAction = require('./../actions/settings/publicKey')
+settings
+  .command('publickey')
+  .description('print your publicKey')
+  .action(publicKeyAction)
 
-// Register Advanced Commands (Hidden from default help)
-advancedCommands.forEach(([name, desc, action]) => {
-  settings.command(name).description(desc).action(action)
-})
+// dotenvx pro settings privateKey
+const privateKeyAction = require('./../actions/settings/privateKey')
+settings
+  .command('privatekey')
+  .description('print your privateKey (--unmask)')
+  .option('--unmask', 'unmask privateKey')
+  .action(privateKeyAction)
 
-// Override `helpInformation` to add an "Advanced" section
-settings.helpInformation = function () {
-  const originalHelp = Command.prototype.helpInformation.call(this)
-  const lines = originalHelp.split('\n')
+// dotenvx pro settings recoveryphrase
+const recoveryPhraseAction = require('./../actions/settings/recoveryPhrase')
+settings
+  .command('recoveryphrase')
+  .description('print your recovery phrase (--unmask)')
+  .option('--unmask', 'unmask recovery phrase')
+  .action(recoveryPhraseAction)
 
-  // Extract standard commands
-  const filteredLines = lines.filter(line =>
-    !advancedCommands.some(([name]) => line.includes(`  ${name} `))
-  )
+// dotenvx pro settings emergencykit
+const emergencyKitAction = require('./../actions/settings/emergencyKit')
+settings
+  .command('emergencykit')
+  .description('generate your emergency kit (--unmask)')
+  .option('--unmask', 'unmask recovery phrase')
+  .option('--stdout', 'send to stdout')
+  .action(emergencyKitAction)
 
-  // Add Advanced Commands at the end
-  if (advancedCommands.length > 0) {
-    filteredLines.push('Advanced:')
-    advancedCommands.forEach(([name, desc]) => {
-      filteredLines.push(`  ${name.padEnd(15)} ${desc}`)
-    })
-  }
+// dotenvx pro settings recover
+const recoverAction = require('./../actions/settings/recover')
+settings
+  .command('recover')
+  .description('recover your account 🔐')
+  .action(recoverAction)
 
-  return filteredLines.join('\n')
-}
+// dotenvx pro settings org
+const orgAction = require('./../actions/settings/org')
+settings
+  .command('org')
+  .description('print organization')
+  .action(orgAction)
+
+// dotenvx pro settings orgpublickey
+const orgPublicKeyAction = require('./../actions/settings/orgPublicKey')
+settings
+  .command('orgpublickey')
+  .description('print organization publicKey')
+  .action(orgPublicKeyAction)
+
+// dotenvx pro settings orgprivatekey
+const orgPrivateKeyAction = require('./../actions/settings/orgPrivateKey')
+settings
+  .command('orgprivatekey')
+  .description('print organization privateKey (--unmask)')
+  .option('--unmask', 'unmask privateKey')
+  .action(orgPrivateKeyAction)
+
+// dotenvx pro settings orgteam
+const orgTeamAction = require('./../actions/settings/orgTeam')
+settings
+  .command('orgteam')
+  .description('print organization team')
+  .action(orgTeamAction)
+
+// dotenvx pro settings orgjoin
+const orgJoinAction = require('./../actions/settings/orgJoin')
+settings
+  .command('orgjoin')
+  .description('join organization')
+  .action(orgJoinAction)
+
+// dotenvx pro settings orgnew
+const orgNewAction = require('./../actions/settings/orgNew')
+settings
+  .command('orgnew')
+  .description('create organization')
+  .action(orgNewAction)
+
+// dotenvx pro settings orgselect
+const orgSelectAction = require('./../actions/settings/orgSelect')
+settings
+  .command('orgselect')
+  .description('select organization')
+  .action(orgSelectAction)
+
+// dotenvx pro settings hostname
+const hostnameAction = require('./../actions/settings/hostname')
+settings
+  .command('hostname')
+  .description('print hostname')
+  .action(hostnameAction)
+
+// dotenvx pro settings storetree
+const storetreeAction = require('./../actions/settings/storetree')
+settings
+  .command('storetree')
+  .description('print store tree')
+  .action(storetreeAction)
 
 module.exports = settings
