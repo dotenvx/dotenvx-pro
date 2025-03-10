@@ -141,6 +141,62 @@ Advanced CLI commands.
   ```
 
   </details>
+* <details><summary>`pro settings org`</summary><br>
+
+  Print organization.
+
+  ```sh
+  $ dotenvx pro settings org
+  motdotla
+  ```
+
+  </details>
+* <details><summary>`pro settings orgpublickey`</summary><br>
+
+  Print organization public key–used for encrypting project private keys.
+
+  ```sh
+  $ dotenvx pro settings orgpublickey
+  02761eccd2a442ebbfa14ac2e72762d885a1e96b8949428deea62db305947d6408
+  ```
+
+  </details>
+* <details><summary>`pro settings orgprivatekey`</summary><br>
+
+  Print masked organization private key–used for decrypting project private keys.
+
+  ```sh
+  $ dotenvx pro settings orgprivatekey
+  322c004*********************************************************
+  ```
+
+  </details>
+* <details><summary>`pro settings orgprivatekey --unmask`</summary><br>
+
+  Print unmasked organization private key–used for decrypting project private keys.
+
+  ```sh
+  $ dotenvx pro settings orgprivatekey --unmask
+  322c004*********************************************************
+  ```
+
+  </details>
+* <details><summary>`pro settings orgteam`</summary><br>
+
+  Print team status in tabular format.
+
+  ```sh
+  $ dotenvx pro settings orgteam
+  ╔═══════════╤════════╗
+  ║ username  │ synced ║
+  ╟───────────┼────────╢
+  ║ motdotla  │ ✔      ║
+  ╟───────────┼────────╢
+  ║ motdotenv │ ✔      ║
+  ╚═══════════╧════════╝
+  ```
+
+  </details>
 * <details><summary>`pro settings storetree`</summary><br>
 
   Print encrypted store tree–backing your dotenvx pro installation.
