@@ -177,7 +177,7 @@ Advanced CLI commands.
 
   ```sh
   $ dotenvx pro settings orgprivatekey --unmask
-  322c004*********************************************************
+  322c004271ac6ad1b548df3f316ff4e8f08e17e0b15f459db64f3f3b48b0efb7
   ```
 
   </details>
