@@ -7,7 +7,7 @@ const ArrayToTree = require('./../../../lib/helpers/arrayToTree')
 
 function filepaths (directory) {
   return new Fdir()
-    .withRelativePaths()
+    .withFullPaths()
     .crawl(directory)
     .sync()
 }
