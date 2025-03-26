@@ -1,10 +1,6 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-For small and medium businesses. 🏆
-
-* sync .env files
-* zero-knowledge ghost keys
-* treat secrets like code
+*Sync .env files–across machines, environments, and team members. 🏆*
 
 [Learn more](https://dotenvx.com/docs/pro)
 
