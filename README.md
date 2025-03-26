@@ -6,7 +6,7 @@ For small and medium businesses. 🏆
 * Ghost keys
 * Treat secrets like code
 
-* [Read more](https://dotenvx.com/docs/pro)
+[Read more](https://dotenvx.com/docs/pro)
 
 &nbsp;
 
