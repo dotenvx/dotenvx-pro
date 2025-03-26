@@ -1,11 +1,12 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-For teams and organizations that need secure, scalable secrets management. 🏆
+For small and medium businesses. 🏆
 
-* **Extended 75-day free trial**
-* **Fully managed private keys** securely synced with zero-knowledge encryption
-* **Team permissions** to control access
-* [and more](https://dotenvx.com/pricing)
+* Sync .env files
+* Ghost keys
+* Treat secrets like code
+
+* [Read more](https://dotenvx.com/docs/pro)
 
 &nbsp;
 
