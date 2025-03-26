@@ -2,9 +2,9 @@
 
 For small and medium businesses. 🏆
 
-* Sync .env files
-* Ghost keys
-* Treat secrets like code
+* sync .env files
+* zero-knowledge ghost keys
+* treat secrets like code
 
 [Read more](https://dotenvx.com/docs/pro)
 
