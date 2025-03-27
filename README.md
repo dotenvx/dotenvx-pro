@@ -2,9 +2,9 @@
 
 The World's Best Secrets Manager for .env Files. 🏆
 
-* sync .env files
-* zero-knowledge encryption
-* treat secrets like code
+* Sync .env files
+* Zero-knowledge
+* Treat secrets like code
 
 [Learn more](https://dotenvx.com/docs/pro)
 
