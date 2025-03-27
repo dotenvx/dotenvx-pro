@@ -1,6 +1,10 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-*Sync .env files–across machines, environments, and team members. 🏆*
+The World's Best Secrets Manager for .env Files. 🏆
+
+* sync .env files
+* zero-knowledge encryption
+* treat secrets like code
 
 [Learn more](https://dotenvx.com/docs/pro)
 
