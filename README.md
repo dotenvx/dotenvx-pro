@@ -1,6 +1,6 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-The World's Best Secrets Manager for .env Files. 🏆
+The World's Best Secrets Manager-for .env Files. 🏆
 
 * Sync .env files
 * Zero-knowledge
