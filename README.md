@@ -1,10 +1,10 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-*The World's Best Secrets Manager for .env Files. 🏆*
+*Secrets Management Like Casting a Spell 🧙*
 
-* Sync .env files
+* Cloaked keys
 * Zero-knowledge
-* Treat secrets like code
+* Secrets as Code
 
 [Learn more](https://dotenvx.com/docs/pro)
 
