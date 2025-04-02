@@ -1,6 +1,6 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-*Secrets Management Like Casting a Spell 🧙*
+*Secrets Management, Reimagined. 🏆*
 
 * Cloaked keys
 * Zero-knowledge
