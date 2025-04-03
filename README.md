@@ -3,7 +3,7 @@
 *Secrets Management – Done Right. 🏆*
 
 * Encrypt .env
-* Cloak .env.keys
+* Cloak the keys
 * Treat secrets like code
 
 [Learn more](https://dotenvx.com/docs/pro)
