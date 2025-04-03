@@ -1,10 +1,10 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-*Secrets Management, Reimagined. 🏆*
+*Secrets Management – Done Right. 🏆*
 
-* Cloaked keys
-* Zero-knowledge
-* Secrets as Code
+* Encrypt .env
+* Cloak .env.keys
+* Treat secrets like code
 
 [Learn more](https://dotenvx.com/docs/pro)
 
