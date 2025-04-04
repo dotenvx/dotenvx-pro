@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.17.3...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.17.4...main)
+
+## 0.17.4
+
+### Changed
+
+* Extract `version` for use with homebrew formulua
 
 ## 0.17.3
 

@@ -151,6 +151,13 @@ jobs:
     strategy:
       fail-fast: true
     steps:
+      # GITHUB_ENV operates like a .env file
+      - name: extract version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          CLEAN_VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "CLEAN_VERSION=$CLEAN_VERSION" >> $GITHUB_ENV
       # https://github.com/Justintime50/homebrew-releaser
       - name: homebrew releaser
         uses: Justintime50/homebrew-releaser@v1
