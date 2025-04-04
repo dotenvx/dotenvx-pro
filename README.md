@@ -2,9 +2,9 @@
 
 *Secrets Management – Done Right. 🏆*
 
-* Encrypt .env
-* Cloak your private keys
-* Treat secrets like code
+* Encrypted
+* Cloaked
+* Secrets as Code
 
 [Learn more](https://dotenvx.com/docs/pro)
 
