@@ -25,11 +25,21 @@ program
   .description(packageJson.description)
   .version(packageJson.version)
 
+// dotenvx pro cloak
+const cloakAction = require('./actions/cloak')
+program
+  .command('cloak')
+  .description('cloak private keys')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
+  .option('-h, --hostname <url>', 'set hostname', current.hostname())
+  .action(cloakAction)
+
 // dotenvx pro sync
 const syncAction = require('./actions/sync')
 program
   .command('sync')
   .description('sync')
+  .option('-f, --env-file <paths...>', 'path(s) to your env file(s)', '.env')
   .option('-h, --hostname <url>', 'set hostname', current.hostname())
   .action(syncAction)
 
