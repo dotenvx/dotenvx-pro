@@ -1,6 +1,8 @@
 [![dotenvx pro](https://dotenvx.com/pro-banner.png)](https://dotenvx.com/pricing)
 
-*Secrets Management – Done Right. 🏆*
+*Secrets Management – Done Right. 🏆* 
+
+> Pro is a commercial extension for [dotenvx](https://github.com/dotenvx/dotenvx).
 
 * Encrypted
 * Cloaked
