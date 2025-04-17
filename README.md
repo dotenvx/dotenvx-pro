@@ -2,7 +2,7 @@
 
 *Secrets Management – Done Right. 🏆* 
 
-> Pro is a commercial extension for [dotenvx](https://github.com/dotenvx/dotenvx).
+> Dotenvx Pro is a commercial extension for [dotenvx](https://github.com/dotenvx/dotenvx).
 
 * Encrypted
 * Cloaked
