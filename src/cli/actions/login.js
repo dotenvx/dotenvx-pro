@@ -10,20 +10,11 @@ const systemInformation = require('./../../lib/helpers/systemInformation')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const confirm = require('./../../lib/helpers/confirm')
 const truncate = require('./../../lib/helpers/truncate')
+const formatCode = require('./../../lib/helpers/formatCode')
 
 const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
 const spinner = createSpinner('waiting on browser authorization')
-
-const formatCode = function (str) {
-  const parts = []
-
-  for (let i = 0; i < str.length; i += 4) {
-    parts.push(str.substring(i, i + 4))
-  }
-
-  return parts.join('-')
-}
 
 async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl) {
   logger.debug(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)

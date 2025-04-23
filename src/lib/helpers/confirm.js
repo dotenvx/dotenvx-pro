@@ -6,7 +6,7 @@ module.exports = (opts) => {
     inactive: 'N',
     initialValue: true,
     render () {
-      return `${opts.message} (${this.value ? 'Y/n' : 'y/N'})`
+      return `${opts.message} (Y/n)`
     }
   }).prompt()
 }
