@@ -52,10 +52,11 @@ tar -xzf dotenvx-pro.tar.gz
 
 &nbsp;
 
-*Then log in.*
+*Then `encrypt` and `cloak`.*
 
 ```sh
-$ dotenvx pro login
+$ dotenvx encrypt
+$ dotenvx pro cloak
 ✔ logged in [username] to this device and activated token [dxo_6kjPifI…]
 ⮕ next run [dotenvx pro sync]
 ```
