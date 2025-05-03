@@ -21,13 +21,14 @@ async function cloak () {
     logger.help('⮕ next run [dotenvx pro sync]')
     spinner.succeed(`cloaked ${privateKeyNames}`)
   } catch (error) {
+    spinner.stop()
     if (error.message) {
-      spinner.fail(error.message)
+      console.error(error.message)
     } else {
-      spinner.fail(error)
+      console.error(error)
     }
     if (error.help) {
-      logger.help(error.help)
+      console.error(error.help)
     }
     process.exit(1)
   }

@@ -8,7 +8,7 @@ async function username () {
     if (username) {
       process.stdout.write(username)
     } else {
-      console.error('missing username. Try running [dotenvx pro sync].')
+      console.error('login required. Try running [dotenvx pro sync].')
       process.exit(1)
     }
   } catch (error) {

@@ -1,5 +1,7 @@
 const Conf = require('conf')
 
+const Errors = require('../lib/helpers/errors')
+
 const current = require('./current')
 const Organization = require('./organization')
 
@@ -9,7 +11,8 @@ class User {
     this.hostfolder = current.hostfolder()
 
     if (!this.userId) {
-      throw new Error('missing user. Log in with [dotenvx pro login].')
+      const error = new Errors().loginRequired()
+      throw error
     }
 
     this.store = new Conf({

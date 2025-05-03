@@ -30,8 +30,8 @@
   },
   "funding": "https://dotenvx.com",
   "dependencies": {
-    "@clack/core": "^0.3.4",
-    "@dotenvx/dotenvx": "^1.24.5",
+    "@clack/core": "^0.4.2",
+    "@dotenvx/dotenvx": "^1.42.2",
     "arch": "^2.1.1",
     "bip39": "^3.1.0",
     "commander": "^11.1.0",

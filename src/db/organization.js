@@ -13,7 +13,7 @@ class Organization {
     this.organizationId = organizationId
 
     if (!this.userId) {
-      throw new Error('missing user. Log in with [dotenvx pro login].')
+      throw new Error('login required. Log in with [dotenvx pro login].')
     }
 
     if (!this.organizationId) {

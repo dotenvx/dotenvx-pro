@@ -42,7 +42,7 @@ class Spinner {
       this.text = text
     }
     this.symbol = getColor('green')(SYMBOL_SUCCESS)
-    this.end()
+    this._end()
   }
 
   info (text) {
@@ -50,7 +50,7 @@ class Spinner {
       this.text = text
     }
     this.symbol = getColor('blue')(SYMBOL_INFO)
-    this.end()
+    this._end()
   }
 
   warn (text) {
@@ -58,7 +58,7 @@ class Spinner {
       this.text = text
     }
     this.symbol = getColor('orangered')(SYMBOL_WARN)
-    this.end()
+    this._end()
   }
 
   fail (text) {
@@ -66,15 +66,18 @@ class Spinner {
       this.text = text
     }
     this.symbol = getColor('red')(SYMBOL_ERROR)
-    this.end()
+    this._end()
   }
 
   stop () {
     this.symbol = ''
-    this.end()
+    this.text = ''
+    clearInterval(this.interval)
+    process.stdout.write(CLEAR_LINE + HIDE_CURSOR + (this.symbol ? this.symbol + ' ' : '') + this.text)
+    process.stdout.write(SHOW_CURSOR)
   }
 
-  end () {
+  _end () {
     this.render()
     clearInterval(this.interval)
     process.stdout.write(SHOW_CURSOR + '\n')
@@ -90,7 +93,8 @@ const createSpinner = (initialMessage = '') => {
     warn: (message) => spinner.warn(getColor('orangered')(message)),
     info: (message) => spinner.info(getColor('blue')(message)),
     done: (message) => spinner.succeed(message),
-    fail: (message) => spinner.fail(bold(getColor('red')(message)))
+    fail: (message) => spinner.fail(bold(getColor('red')(message))),
+    stop: () => spinner.stop(),
   }
 }
 

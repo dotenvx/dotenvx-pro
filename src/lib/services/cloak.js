@@ -5,6 +5,7 @@ const dotenv = require('dotenv')
 const gitUrl = require('./../helpers/gitUrl')
 const gitRoot = require('./../helpers/gitRoot')
 const ValidateGit = require('./../helpers/validateGit')
+const ValidateKeysFile = require('./../helpers/validateKeysFile')
 const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 const forgivingDirectory = require('./../helpers/forgivingDirectory')
@@ -27,78 +28,81 @@ class Cloak {
     this.envFile = envFile
     this.directory = forgivingDirectory(directory)
 
-    this.user = new User()
     this._mem = {}
   }
 
   async run () {
     new ValidateGit().run()
-    const organization = await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+    new ValidateKeysFile().run()
 
-    // check for publicKey
-    if (!organization.publicKey()) {
-      const error = new Error(`oops, can't find orgpublickey for [@${this.slug()}]`)
-      error.help = '? try running [dotenvx pro sync]'
-      throw error
-    }
+    this.user = new User()
 
-    const pushedFilepaths = []
-    const privateKeyNames = []
-    for (const envFilepath of this._envFilepaths()) {
-      const filepath = path.resolve(envFilepath)
+    // const organization = await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
 
-      // file must exist
-      if (!fs.existsSync(filepath)) {
-        const error = new Error(`oops, missing ${envFilepath} file (${filepath})`)
-        error.help = `? add one with [echo "HELLO=World" > ${envFilepath}]`
-        throw error
-      }
+    // // check for publicKey
+    // if (!organization.publicKey()) {
+    //   const error = new Error(`oops, can't find orgpublickey for [@${this.slug()}]`)
+    //   error.help = '? try running [dotenvx pro sync]'
+    //   throw error
+    // }
 
-      // get keypairs
-      const keypairs = new Keypair(envFilepath).run()
+    // const pushedFilepaths = []
+    // const privateKeyNames = []
+    // for (const envFilepath of this._envFilepaths()) {
+    //   const filepath = path.resolve(envFilepath)
 
-      // publicKey must exist
-      const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
-      const publicKey = keypairs[publicKeyName]
-      if (!publicKey) {
-        const error = new Error(`oops, could not locate ${publicKeyName}`)
-        error.help = `? generate ${publicKeyName} (.env.keys) with [dotenvx encrypt]`
-        throw error
-      }
+    //   // file must exist
+    //   if (!fs.existsSync(filepath)) {
+    //     const error = new Error(`oops, missing ${envFilepath} file (${filepath})`)
+    //     error.help = `? add one with [echo "HELLO=World" > ${envFilepath}]`
+    //     throw error
+    //   }
 
-      // privateKey
-      const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
-      const privateKey = keypairs[privateKeyName]
-      const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
+    //   // get keypairs
+    //   const keypairs = new Keypair(envFilepath).run()
 
-      // filepath
-      const relativeFilepath = path.relative(gitRoot(), path.join(process.cwd(), this.directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
+    //   // publicKey must exist
+    //   const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
+    //   const publicKey = keypairs[publicKeyName]
+    //   if (!publicKey) {
+    //     const error = new Error(`oops, could not locate ${publicKeyName}`)
+    //     error.help = `? generate ${publicKeyName} (.env.keys) with [dotenvx encrypt]`
+    //     throw error
+    //   }
 
-      // text
-      const text = fs.readFileSync(filepath, 'utf8')
+    //   // privateKey
+    //   const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
+    //   const privateKey = keypairs[privateKeyName]
+    //   const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
 
-      await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
+    //   // filepath
+    //   const relativeFilepath = path.relative(gitRoot(), path.join(process.cwd(), this.directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
 
-      // sync org
-      await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+    //   // text
+    //   const text = fs.readFileSync(filepath, 'utf8')
 
-      // deal with .env.keys file
-      const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
-      if (fs.existsSync(envKeysFilepath)) {
-        // remove DOTENV_PRIVATE_KEY from .env.keys file
-        removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
+    //   await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
 
-        // remove .env.keys file if not more private keys left
-        const env = fs.readFileSync(envKeysFilepath, 'utf8')
-        const parsedKeys = dotenv.parse(env)
-        if (Object.keys(parsedKeys).length <= 0) {
-          fs.unlinkSync(envKeysFilepath)
-        }
-      }
+    //   // sync org
+    //   await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
 
-      pushedFilepaths.push(relativeFilepath)
-      privateKeyNames.push(privateKeyName)
-    }
+    //   // deal with .env.keys file
+    //   const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
+    //   if (fs.existsSync(envKeysFilepath)) {
+    //     // remove DOTENV_PRIVATE_KEY from .env.keys file
+    //     removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
+
+    //     // remove .env.keys file if not more private keys left
+    //     const env = fs.readFileSync(envKeysFilepath, 'utf8')
+    //     const parsedKeys = dotenv.parse(env)
+    //     if (Object.keys(parsedKeys).length <= 0) {
+    //       fs.unlinkSync(envKeysFilepath)
+    //     }
+    //   }
+
+    //   pushedFilepaths.push(relativeFilepath)
+    //   privateKeyNames.push(privateKeyName)
+    // }
 
     return { privateKeyNames }
   }

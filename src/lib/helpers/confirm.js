@@ -1,12 +1,17 @@
-const { ConfirmPrompt } = require('@clack/core')
+const { ConfirmPrompt, isCancel } = require('@clack/core')
 
-module.exports = (opts) => {
-  return new ConfirmPrompt({
+module.exports = async (opts) => {
+  const prompt = new ConfirmPrompt({
     active: 'Y',
     inactive: 'N',
     initialValue: true,
     render () {
       return `${opts.message} (Y/n)`
     }
-  }).prompt()
+  })
+
+  const result = await prompt.prompt()
+  if (isCancel(result)) process.exit(0)
+
+  return result
 }

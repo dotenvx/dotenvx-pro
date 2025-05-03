@@ -17,7 +17,7 @@ t.test('constructor missing userId', ct => {
 
     ct.fail('should have raised an error but did not')
   } catch (error) {
-    ct.equal(error.message, 'missing user. Log in with [dotenvx pro login].')
+    ct.equal(error.message, 'login required. Log in with [dotenvx pro login].')
   }
 
   ct.end()

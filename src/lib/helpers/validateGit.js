@@ -3,39 +3,32 @@ const gitRoot = require('./gitRoot')
 const gitUrl = require('./gitUrl')
 const isGithub = require('./isGithub')
 
+const Errors = require('./errors')
+
 class ValidateGit {
   run () {
     // must be a git repo
     if (!this._isGitRepo()) {
-      const error = new Error('oops, must be a git repository')
-      error.help = '? create one with [git init .]'
-
+      const error = new Errors().missingGitRepo()
       throw error
     }
 
     // must be a git root
     if (!this._gitRoot()) {
-      const error = new Error('oops, could not determine git repository\'s root')
-      error.help = '? create one with [git init .]'
-
+      const error = new Errors().missingGitRoot()
       throw error
     }
 
     // must have a remote origin url
     const giturl = this._gitUrl()
     if (!giturl) {
-      const error = new Error('oops, must have a remote origin (git remote -v)')
-      error.help = '? create it at [github.com/new] and then run [git remote add origin git@github.com:username/repository.git]'
-
+      const error = new Errors().missingGitRemote()
       throw error
     }
 
     // must be a github remote
     if (!this._isGithub(giturl)) {
-      const error = new Error('oops, must be a github.com remote origin (git remote -v)')
-      error.help = '? create it at [github.com/new] and then run [git remote add origin git@github.com:username/repository.git]'
-      error.help2 = 'ℹ need support for other origins? [please tell us](https://github.com/dotenvx/dotenvx/issues)'
-
+      const error = new Errors().invalidGithubRemote()
       throw error
     }
   }

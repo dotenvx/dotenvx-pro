@@ -16,7 +16,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
     try {
       const token = current.token()
       if (!token || token.length < 1) {
-        const error = new Error('missing user. Log in with [dotenvx pro login].')
+        const error = new Error('login required. Log in with [dotenvx pro login].')
         throw error
       }
 

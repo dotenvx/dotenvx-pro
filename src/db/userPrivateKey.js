@@ -11,7 +11,7 @@ class UserPrivateKey {
     this.hostfolder = current.hostfolder()
 
     if (!this.userId) {
-      throw new Error('missing user. Log in with [dotenvx pro login].')
+      throw new Error('login required. Log in with [dotenvx pro login].')
     }
 
     this.store = new Conf({
