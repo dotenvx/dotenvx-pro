@@ -16,62 +16,48 @@ const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 const spinner = createSpinner('waiting on browser authorization')
 
 // api calls
+const PostOauthToken = require('./../../lib/api/postOauthToken')
 const PostOauthDeviceCode = require('./../../lib/api/postOauthDeviceCode')
 
-async function pollTokenUrl (tokenUrl, deviceCode, interval, settingsDevicesUrl) {
-  logger.debug(`POST ${tokenUrl} with deviceCode ${deviceCode} at interval ${interval}`)
+async function pollTokenUrl (hostname, deviceCode, interval, settingsDevicesUrl) {
+  logger.debug(`POST ${hostname} with deviceCode ${deviceCode} at interval ${interval}`)
 
   while (true) {
     try {
-      const response = await request(tokenUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          client_id: OAUTH_CLIENT_ID,
-          device_code: deviceCode,
-          grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-        })
-      })
+      let data
+      try {
+        data = await new PostOauthToken(hostname, deviceCode).run()
+        if (data.access_token) {
+          const hostname = data.hostname
+          const id = data.id
+          const username = data.username
+          const accessToken = data.access_token
 
-      const responseData = await response.body.json()
+          // log in user
+          current.login(hostname, id, accessToken)
 
-      logger.debug(responseData)
+          // attempt to select org
+          const user = new User(id)
+          const organizationId = user.organizationIds()[0]
+          if (!current.organizationId() && organizationId) {
+            current.selectOrganization(organizationId)
+          }
 
-      if (response.statusCode >= 400) {
+          spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)
+          logger.help('⮕ next run [dotenvx pro sync]')
+
+          process.exit(0)
+        } else {
+          await new Promise(resolve => setTimeout(resolve, interval * 1000))
+        }
+      } catch (error) {
         // continue polling if authorization_pending
-        if (responseData.error === 'authorization_pending') {
+        if (error.code === 'authorization_pending') {
           const newInterval = interval + 1 // grow the interval
           await new Promise(resolve => setTimeout(resolve, newInterval * 1000))
         } else {
-          console.error(responseData.error_description)
-          process.exit(1)
+          throw error
         }
-      }
-
-      if (responseData.access_token) {
-        const hostname = responseData.hostname
-        const id = responseData.id
-        const username = responseData.username
-        const accessToken = responseData.access_token
-
-        // log in user
-        current.login(hostname, id, accessToken)
-
-        // attempt to select org
-        const user = new User(id)
-        const organizationId = user.organizationIds()[0]
-        if (!current.organizationId() && organizationId) {
-          current.selectOrganization(organizationId)
-        }
-
-        spinner.succeed(`logged in [${username}] to this device and activated token [${truncate(accessToken, 11)}]`)
-        logger.help('⮕ next run [dotenvx pro sync]')
-
-        process.exit(0)
-      } else {
-        await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
       spinner.stop()
@@ -93,7 +79,6 @@ async function login () {
   logger.debug(`options: ${JSON.stringify(options)}`)
 
   const hostname = options.hostname
-  const tokenUrl = `${hostname}/oauth/token`
   const settingsDevicesUrl = `${hostname}/settings/devices`
 
   try {
@@ -110,7 +95,7 @@ async function login () {
     // qrcode.generate(verificationUri, { small: true }) // too verbose
 
     // begin polling
-    pollTokenUrl(tokenUrl, deviceCode, interval, settingsDevicesUrl)
+    pollTokenUrl(hostname, deviceCode, interval, settingsDevicesUrl)
 
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })
@@ -119,6 +104,7 @@ async function login () {
       spinner.start()
       await open(verificationUriComplete)
     } else {
+      spinner.stop()
       process.exit(1)
     }
   } catch (error) {
