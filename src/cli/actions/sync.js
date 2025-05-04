@@ -1,4 +1,4 @@
-const { logger } = require('@dotenvx/dotenvx')
+const { logger, getColor } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
 // database
@@ -141,10 +141,12 @@ async function sync () {
 
     process.exit(0)
   } catch (error) {
+    spinner.stop()
+
     if (error.message) {
-      spinner.fail(error.message)
+      logger.error(getColor('red')(error.message))
     } else {
-      spinner.fail(error)
+      logger.error(getColor('red')(error))
     }
     if (error.help) {
       logger.help(error.help)

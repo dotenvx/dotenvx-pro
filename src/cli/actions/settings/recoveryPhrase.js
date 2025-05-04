@@ -12,12 +12,12 @@ function recoveryPhrase () {
     if (recoveryPhrase && recoveryPhrase.length > 0) {
       process.stdout.write(formatRecoveryPhrase(smartMaskRecoveryPhrase(recoveryPhrase, options.unmask)))
     } else {
-      console.error('missing recovery phrase. Try generating one with [dotenvx pro login].')
+      logger.error('missing recovery phrase. Try generating one with [dotenvx pro login].')
 
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

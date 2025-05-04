@@ -8,11 +8,11 @@ function orgPublicKey () {
     if (publicKey) {
       process.stdout.write(publicKey)
     } else {
-      console.error('missing public key. Try generating one with [dotenvx pro login].')
+      logger.error('missing public key. Try generating one with [dotenvx pro login].')
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

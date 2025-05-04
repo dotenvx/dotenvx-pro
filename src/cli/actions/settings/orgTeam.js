@@ -1,6 +1,6 @@
 const { table } = require('table')
 const { request } = require('undici')
-const { getColor } = require('@dotenvx/dotenvx')
+const { logger, getColor } = require('@dotenvx/dotenvx')
 
 const current = require('./../../../db/current')
 const Organization = require('./../../../db/organization')
@@ -24,7 +24,7 @@ async function orgTeam () {
     const responseData = await response.body.json()
 
     if (response.statusCode >= 400) {
-      console.error(`[${responseData.error.code}] ${responseData.error.message}`)
+      logger.error(`[${responseData.error.code}] ${responseData.error.message}`)
       process.exit(1)
     }
 
@@ -41,7 +41,7 @@ async function orgTeam () {
 
     process.stdout.write(table(t))
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

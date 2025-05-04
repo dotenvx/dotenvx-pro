@@ -27,12 +27,12 @@ async function logout () {
   } catch (error) {
     spinner.stop()
     if (error.message) {
-      console.error(error.message)
+      logger.error(error.message)
     } else {
-      console.error(error)
+      logger.error(error)
     }
     if (error.help) {
-      console.error(error.help)
+      logger.help(error.help)
     }
     process.exit(1)
   }

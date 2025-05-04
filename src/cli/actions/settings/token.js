@@ -1,3 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
+
 const current = require('./../../../db/current')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
@@ -8,7 +10,7 @@ function token () {
   if (token && token.length > 1) {
     process.stdout.write(smartMask(token, options.unmask, 11))
   } else {
-    console.error('missing token. Try generating one with [dotenvx pro login].')
+    logger.error('missing token. Try generating one with [dotenvx pro login].')
     process.exit(1)
   }
 }

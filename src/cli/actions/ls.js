@@ -42,9 +42,9 @@ function ls (directory) {
     logger.info(treeify(tree))
   } catch (error) {
     if (error.message) {
-      console.error(error.message)
+      logger.error(error.message)
     } else {
-      console.error(error)
+      logger.error(error)
     }
     process.exit(1)
   }

@@ -1,6 +1,7 @@
 const path = require('path')
 const { fdir: Fdir } = require('fdir')
 const treeify = require('object-treeify')
+const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../../db/current')
 const ArrayToTree = require('./../../../lib/helpers/arrayToTree')
@@ -20,11 +21,11 @@ function storetree () {
       const tree = new ArrayToTree(filepaths(directory)).run()
       console.log(treeify(tree))
     } else {
-      console.error('missing storepath. Try running [dotenvx pro login].')
+      logger.error('missing storepath. Try running [dotenvx pro login].')
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

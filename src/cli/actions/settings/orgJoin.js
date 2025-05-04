@@ -1,4 +1,5 @@
 const open = require('open')
+const { logger } = require('@dotenvx/dotenvx')
 
 const confirm = require('./../../../lib/helpers/confirm')
 
@@ -19,7 +20,7 @@ async function orgJoin () {
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

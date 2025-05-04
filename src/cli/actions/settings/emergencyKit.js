@@ -116,7 +116,7 @@ async function emergencyKit () {
     try {
       await new PostMeEmergencyKit(current.hostname(), current.token()).run()
     } catch (error) {
-      console.error(`notifying ${current.hostname()} failed: ${error.message}`)
+      logger.error(`notifying ${current.hostname()} failed: ${error.message}`)
     }
 
     const pdfBytes = await pdf.save()
@@ -128,7 +128,7 @@ async function emergencyKit () {
       logger.success(`✔ created dotenvx-emergency-kit.pdf at [${process.cwd()}/dotenvx-emergency-kit.pdf]`)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
 
     process.exit(1)
   }

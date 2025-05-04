@@ -54,7 +54,7 @@ async function pollRequestUidUrl (requestUidUrl, requestUid, interval) {
         await new Promise(resolve => setTimeout(resolve, interval * 1000))
       }
     } catch (error) {
-      console.error(error.message)
+      logger.error(error.message)
       process.exit(1)
     }
   }
@@ -85,7 +85,7 @@ async function orgNew () {
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

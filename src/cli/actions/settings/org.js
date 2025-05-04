@@ -1,3 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
+
 const Organization = require('./../../../db/organization')
 
 function org () {
@@ -8,11 +10,11 @@ function org () {
     if (slug) {
       process.stdout.write(slug)
     } else {
-      console.error('missing slug. Try running [dotenvx pro sync].')
+      logger.error('missing slug. Try running [dotenvx pro sync].')
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

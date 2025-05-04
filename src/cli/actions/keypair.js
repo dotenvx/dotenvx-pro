@@ -1,3 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
+
 const Keypair = require('./../../lib/services/keypair')
 
 function keypair (key) {
@@ -35,9 +37,9 @@ function keypair (key) {
     }
   } catch (error) {
     if (error.message) {
-      console.error(error.message)
+      logger.error(error.message)
     } else {
-      console.error(error)
+      logger.error(error)
     }
     process.exit(1)
   }

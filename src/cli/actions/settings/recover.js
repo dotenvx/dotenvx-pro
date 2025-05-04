@@ -37,11 +37,11 @@ async function recover () {
         _privateKey.publicKey.toHex()
       } catch (error) {
         spinner.fail(`invalid recovery phrase [${e.message}]`)
-        console.error('✖ could not recover account')
-        logger.blank('')
-        logger.blank('Double-check your recovery phrase and try again. It should be made up of 24 words.')
-        logger.blank('')
-        logger.blank('Still having trouble? Contact support@dotenvx.com. We might be able to help.')
+        logger.error('✖ could not recover account')
+        logger.info('')
+        logger.info('Double-check your recovery phrase and try again. It should be made up of 24 words.')
+        logger.info('')
+        logger.info('Still having trouble? Contact support@dotenvx.com. We might be able to help.')
         process.exit(1)
       }
     }
@@ -55,7 +55,7 @@ async function recover () {
     logger.help('⮕  next run [dotenvx pro login] to reconnect your device')
   } catch (error) {
     if (error.message) {
-      console.error(error.message)
+      logger.error(error.message)
     }
     process.exit(1)
   }

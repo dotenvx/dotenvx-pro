@@ -1,3 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
+
 const User = require('./../../../db/user')
 
 async function username () {
@@ -8,11 +10,11 @@ async function username () {
     if (username) {
       process.stdout.write(username)
     } else {
-      console.error('login required. Try running [dotenvx pro sync].')
+      logger.error('login required. Try running [dotenvx pro sync].')
       process.exit(1)
     }
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 }

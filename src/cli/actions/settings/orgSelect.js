@@ -38,7 +38,7 @@ async function orgSelect () {
     }
   } catch (error) {
     if (error.message) {
-      console.error(error.message)
+      logger.error(error.message)
     }
     process.exit(1)
   }
