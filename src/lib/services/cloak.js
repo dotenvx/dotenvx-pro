@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const dotenv = require('dotenv')
 const { PrivateKey } = require('eciesjs')
 
 // helpers
@@ -25,7 +26,6 @@ const SyncOrganizationPublicKey = require('./../../lib/services/syncOrganization
 const Keypair = require('./keypair')
 
 // db
-const User = require('./../../db/user')
 const current = require('./../../db/current')
 const UserPrivateKey = require('./../../db/userPrivateKey')
 const Organization = require('./../../db/organization')
@@ -58,7 +58,6 @@ class Cloak {
 
     // organization(s)
     const _organizations = this.user.organizations()
-    const _organizationIds = this.user.organizationIds()
     if (!_organizations || _organizations.length < 1) {
       throw new Errors({ username: this.user.username() }).missingOrganization()
     }
@@ -145,18 +144,18 @@ class Cloak {
       await new SyncMe(this.hostname, current.token()).run()
 
       // deal with .env.keys file
-      // const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
-      // if (fs.existsSync(envKeysFilepath)) {
-      //   // remove DOTENV_PRIVATE_KEY from .env.keys file
-      //   removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
+      const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
+      if (fs.existsSync(envKeysFilepath)) {
+        // remove DOTENV_PRIVATE_KEY from .env.keys file
+        removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
 
-      //   // remove .env.keys file if not more private keys left
-      //   const env = fs.readFileSync(envKeysFilepath, 'utf8')
-      //   const parsedKeys = dotenv.parse(env)
-      //   if (Object.keys(parsedKeys).length <= 0) {
-      //     fs.unlinkSync(envKeysFilepath)
-      //   }
-      // }
+        // remove .env.keys file if not more private keys left
+        const env = fs.readFileSync(envKeysFilepath, 'utf8')
+        const parsedKeys = dotenv.parse(env)
+        if (Object.keys(parsedKeys).length <= 0) {
+          fs.unlinkSync(envKeysFilepath)
+        }
+      }
 
       pushedFilepaths.push(relativeFilepath)
       privateKeyNames.push(privateKeyName)
