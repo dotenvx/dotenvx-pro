@@ -23,7 +23,7 @@ t.test('#validateGit (not git repo)', ct => {
 
     ct.fail('should have raised an error but did not')
   } catch (error) {
-    ct.equal(error.message, 'oops, must be a git repository')
+    ct.equal(error.message, '[MISSING_GIT_REPO] must be inside a git repository')
   }
 
   ct.end()
@@ -38,7 +38,7 @@ t.test('#validateGit (not git root)', ct => {
 
     ct.fail('should have raised an error but did not')
   } catch (error) {
-    ct.equal(error.message, 'oops, could not determine git repository\'s root')
+    ct.equal(error.message, '[MISSING_GIT_ROOT] could not determine git repository\'s root')
   }
 
   ct.end()
@@ -53,7 +53,7 @@ t.test('#validateGit (not remote origin)', ct => {
 
     ct.fail('should have raised an error but did not')
   } catch (error) {
-    ct.equal(error.message, 'oops, must have a remote origin (git remote -v)')
+    ct.equal(error.message, '[MISSING_GIT_REMOTE] missing remote origin (git remote -v)')
   }
 
   ct.end()
@@ -68,7 +68,7 @@ t.test('#validateGit (not github origin)', ct => {
 
     ct.fail('should have raised an error but did not')
   } catch (error) {
-    ct.equal(error.message, 'oops, must be a github.com remote origin (git remote -v)')
+    ct.equal(error.message, '[INVALID_GIT_REMOTE] origin must be github.com')
   }
 
   ct.end()

@@ -48,7 +48,7 @@ class Errors {
     return e
   }
 
-  notGithubRemote () {
+  invalidGithubRemote () {
     const code = 'INVALID_GIT_REMOTE'
     const message = `[${code}] origin must be github.com`
     const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/582`
