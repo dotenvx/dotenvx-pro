@@ -1,4 +1,4 @@
-const { request } = require('undici')
+const { request } = require('../../lib/helpers/http')
 
 const buildApiError = require('../../lib/helpers/buildApiError')
 

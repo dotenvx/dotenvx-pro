@@ -4,12 +4,25 @@ class Errors {
     this.filepath = options.filepath
     this.username = options.username
     this.slug = options.slug
+    this.publicKeyName = options.publicKeyName
+    this.privateKeyName = options.privateKeyName
   }
 
   missingEnvKeysFile () {
     const code = 'MISSING_ENV_KEYS_FILE'
     const message = `[${code}] missing ${this.filename} file (${this.filepath})`
     const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/580`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
+  missingEnvFile () {
+    const code = 'MISSING_ENV_FILE'
+    const message = `[${code}] missing ${this.filename} file (${this.filepath})`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/589`
 
     const e = new Error(message)
     e.code = code
@@ -83,8 +96,8 @@ class Errors {
     return e
   }
 
-  missingPublicKey () {
-    const code = 'MISSING_PUBLIC_KEY'
+  missingUserPublicKey () {
+    const code = 'MISSING_USER_PUBLIC_KEY'
     const message = `[${code}] Try generating one with [dotenvx pro login]`
     const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/585`
 
@@ -96,7 +109,7 @@ class Errors {
 
   missingOrganization () {
     const code = 'MISSING_ORGANIZATION'
-    const message = `[${code}] Connect [${this.username}] to an organization with [dotenvx pro settings orgconnect]`
+    const message = `[${code}] Connect [user:${this.username}] to an organization with [dotenvx pro settings orgconnect]`
     const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/586`
 
     const e = new Error(message)
@@ -107,7 +120,7 @@ class Errors {
 
   missingOrganizationPrivateKey () {
     const code = 'MISSING_ORGANIZATION_PRIVATE_KEY'
-    const message = `[${code}] Ask your [${slug}] teammate to run [dotenvx pro sync] and then try again.`
+    const message = `[${code}] Ask your [org:${this.slug}] teammate to run [dotenvx pro sync] and then try again.`
     const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/587`
 
     const e = new Error(message)
@@ -118,8 +131,30 @@ class Errors {
 
   decryptionFailed () {
     const code = 'DECRYPTION_FAILED'
-    const message = `[${code}] Unable to encrypt/decrypt for organization [${slug}]`
+    const message = `[${code}] Unable to encrypt/decrypt for organization [org:${this.slug}]`
     const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/588`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
+  missingDotenvPublicKey () {
+    const code = this.publicKeyName ? `MISSING_${this.publicKeyName}` : 'MISSING_DOTENV_PUBLIC_KEY'
+    const message = `[${code}] missing from ${this.filename} (${this.filepath})`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/590`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
+  missingDotenvPrivateKey () {
+    const code = this.privateKeyName ? `MISSING_${this.privateKeyName}` : 'MISSING_DOTENV_PRIVATE_KEY'
+    const message = `[${code}] missing from ${this.filename} (${this.filepath})`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/590`
 
     const e = new Error(message)
     e.code = code

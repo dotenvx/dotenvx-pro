@@ -8,18 +8,15 @@ const spinner = createSpinner('cloaking')
 
 async function cloak () {
   try {
-    spinner.start()
-
     // debug opts
     const options = this.opts()
     logger.debug(`options: ${JSON.stringify(options)}`)
 
-    const { privateKeyNames } = await new Cloak(options.hostname).run()
-    // for (const privateKeyName of privateKeyNames) {
-    //   spinner.succeed(`cloaked (${privateKeyName})`)
-    // }
+    spinner.start()
+
+    const { privateKeyNames } = await new Cloak(options.hostname, options.envFile).run()
+    spinner.succeed(`cloaked (${privateKeyNames.join(',')})`)
     logger.help('⮕ next run [dotenvx pro sync]')
-    spinner.succeed(`cloaked ${privateKeyNames}`)
   } catch (error) {
     spinner.stop()
     if (error.message) {
@@ -29,6 +26,9 @@ async function cloak () {
     }
     if (error.help) {
       logger.help(error.help)
+    }
+    if (error.stack) {
+      logger.debug(error.stack)
     }
     process.exit(1)
   }

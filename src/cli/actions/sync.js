@@ -130,7 +130,6 @@ async function sync () {
     process.exit(0)
   } catch (error) {
     spinner.stop()
-
     if (error.message) {
       logger.error(error.message)
     } else {
@@ -138,6 +137,9 @@ async function sync () {
     }
     if (error.help) {
       logger.help(error.help)
+    }
+    if (error.stack) {
+      logger.debug(error.stack)
     }
     process.exit(1)
   }

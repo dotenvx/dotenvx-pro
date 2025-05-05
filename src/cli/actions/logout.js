@@ -10,11 +10,11 @@ const spinner = createSpinner('waiting on browser authorization')
 
 async function logout () {
   try {
-    spinner.start()
-
     // debug opts
     const options = this.opts()
     logger.debug(`options: ${JSON.stringify(options)}`)
+
+    spinner.start()
 
     const {
       username,
@@ -33,6 +33,9 @@ async function logout () {
     }
     if (error.help) {
       logger.help(error.help)
+    }
+    if (error.stack) {
+      logger.debug(error.stack)
     }
     process.exit(1)
   }

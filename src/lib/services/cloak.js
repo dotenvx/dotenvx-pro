@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
 // helpers
@@ -35,7 +34,7 @@ const Organization = require('./../../db/organization')
 const PostPush = require('./../../lib/api/postPush')
 
 class Cloak {
-  constructor (hostname = current.hostname(), envFile = '.', directory = '.') {
+  constructor (hostname = current.hostname(), envFile = '.env', directory = '.') {
     this.hostname = hostname
     this.envFile = envFile
     this.directory = forgivingDirectory(directory)
@@ -50,17 +49,17 @@ class Cloak {
 
     // logged in
     new ValidateLoggedIn().run()
-    let user = await new SyncMe(this.hostname, current.token()).run()
+    this.user = await new SyncMe(this.hostname, current.token()).run()
 
     // verify/sync public key
     new ValidatePublicKey().run()
     const userPrivateKey = new UserPrivateKey()
-    user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
+    this.user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
 
     // organization(s)
-    const _organizationIds = user.organizationIds()
+    const _organizationIds = this.user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
-      throw new Errors({username: user.username()}).missingOrganization()
+      throw new Errors({username: this.user.username()}).missingOrganization()
     }
 
     let currentOrganizationId = current.organizationId()
@@ -83,7 +82,7 @@ class Cloak {
         const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
         organization = await new SyncOrganizationPublicKey(this.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
-        user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
+        this.user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
       }
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
@@ -103,10 +102,62 @@ class Cloak {
     current.selectOrganization(currentOrganizationId)
     const organization = new Organization()
 
-    // ready to cloak
-    logger.success('ready to cloak!')
+    const pushedFilepaths = []
+    const privateKeyNames = []
+    for (const envFilepath of this._envFilepaths()) {
+      const filepath = path.resolve(envFilepath)
+      if (!fs.existsSync(filepath)) {
+        throw new Errors({ filename: envFilepath, filepath: filepath }).missingEnvFile()
+      }
 
-    return { }
+      // get keypairs
+      const keypairs = new Keypair(envFilepath).run()
+
+      // publicKey must exist
+      const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
+      const publicKey = keypairs[publicKeyName]
+      if (!publicKey) {
+        throw new Errors({filename: envFilepath, filepath, publicKeyName}).missingDotenvPublicKey()
+      }
+
+      // privateKey must exist
+      const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
+      const privateKey = keypairs[privateKeyName]
+      if (!privateKey) {
+        throw new Errors({filename: envFilepath, filepath, privateKeyName}).missingDotenvPrivateKey()
+      }
+
+      // filepath
+      const relativeFilepath = path.relative(gitRoot(), path.join(process.cwd(), this.directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
+
+      // text
+      const text = fs.readFileSync(filepath, 'utf8')
+
+      const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
+      await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
+
+      // sync org
+      await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+
+      // deal with .env.keys file
+      // const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
+      // if (fs.existsSync(envKeysFilepath)) {
+      //   // remove DOTENV_PRIVATE_KEY from .env.keys file
+      //   removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
+
+      //   // remove .env.keys file if not more private keys left
+      //   const env = fs.readFileSync(envKeysFilepath, 'utf8')
+      //   const parsedKeys = dotenv.parse(env)
+      //   if (Object.keys(parsedKeys).length <= 0) {
+      //     fs.unlinkSync(envKeysFilepath)
+      //   }
+      // }
+
+      pushedFilepaths.push(relativeFilepath)
+      privateKeyNames.push(privateKeyName)
+    }
+
+    return { privateKeyNames }
   }
 
   slug () {

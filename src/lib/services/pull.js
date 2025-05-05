@@ -9,6 +9,7 @@ const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 const forgivingDirectory = require('./../helpers/forgivingDirectory')
 const removeKeyFromEnvFile = require('./../helpers/removeKeyFromEnvFile')
+const Errors = require('./../helpers/errors')
 
 // services
 const SyncOrganization = require('./syncOrganization')
@@ -50,9 +51,7 @@ class Pull {
 
       // file must exist
       if (!fs.existsSync(filepath)) {
-        const error = new Error(`oops, missing ${envFilepath} file (${filepath})`)
-        error.help = `? add one with [echo "HELLO=World" > ${envFilepath}]`
-        throw error
+        throw new Errors({ filename: envFilepath, filepath: filepath }).missingEnvFile()
       }
 
       // get keypairs

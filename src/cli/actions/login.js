@@ -117,6 +117,9 @@ async function login () {
     if (error.help) {
       logger.help(error.help)
     }
+    if (error.stack) {
+      logger.debug(error.stack)
+    }
     process.exit(1)
   }
 }
