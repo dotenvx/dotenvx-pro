@@ -140,8 +140,9 @@ class Cloak {
       const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
       await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
 
-      // sync org
+      // sync up
       await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+      await new SyncMe(this.hostname, current.token()).run()
 
       // deal with .env.keys file
       // const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')

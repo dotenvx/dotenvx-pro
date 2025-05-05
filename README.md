@@ -57,8 +57,7 @@ tar -xzf dotenvx-pro.tar.gz
 ```sh
 $ dotenvx encrypt
 $ dotenvx pro cloak
-✔ logged in [username] to this device and activated token [dxo_6kjPifI…]
-⮕ next run [dotenvx pro sync]
+✔ cloaked (DOTENV_PRIVATE_KEY)
 ```
 
 *That's it, enjoy Pro! 🏆*

@@ -16,7 +16,8 @@ async function cloak () {
 
     const { privateKeyNames } = await new Cloak(options.hostname, options.envFile).run()
     spinner.succeed(`cloaked (${privateKeyNames.join(',')})`)
-    logger.help('⮕ next run [dotenvx pro sync]')
+    // TODO here to tell user what to do next
+    // logger.help('⮕ next run [dotenvx pro sync]')
   } catch (error) {
     spinner.stop()
     if (error.message) {
