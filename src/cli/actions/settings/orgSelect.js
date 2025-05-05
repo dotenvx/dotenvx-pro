@@ -34,7 +34,7 @@ async function orgSelect () {
 
       logger.success(`✔ ${input.organization} set`)
     } else {
-      logger.error('Create an organization [dotenvx pro settings orgnew] or join one [dotenvx pro settings orgjoin].')
+      logger.error('Connect an organization with [dotenvx pro settings orgconnect].')
     }
   } catch (error) {
     if (error.message) {

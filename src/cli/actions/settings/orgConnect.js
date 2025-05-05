@@ -5,7 +5,7 @@ const confirm = require('./../../../lib/helpers/confirm')
 
 const current = require('./../../../db/current')
 
-async function orgJoin () {
+async function orgConnect () {
   const hostname = current.hostname()
   const settingsOrganizationsUrl = `${hostname}/settings/organizations`
 
@@ -25,4 +25,4 @@ async function orgJoin () {
   }
 }
 
-module.exports = orgJoin
+module.exports = orgConnect

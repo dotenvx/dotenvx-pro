@@ -138,7 +138,7 @@ class Pull {
 
     if (!id) {
       const error = new Error(`oops, can't find organization [@${this.slug()}]`)
-      error.help = '? try running [dotenvx pro sync] or joining organization [dotenvx pro settings orgjoin]'
+      error.help = '? try running [dotenvx pro sync] or joining organization [dotenvx pro settings orgconnect]'
 
       throw error
     }

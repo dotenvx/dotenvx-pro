@@ -100,7 +100,7 @@ class DbKeypair {
     const id = this.lookups()[`lookup/organizationIdBySlug/${this.slug()}`]
 
     if (!id) {
-      throw new Error(`oops, can't find organization [@${this.slug()}]. did you join it? [dotenvx pro settings orgjoin]`)
+      throw new Error(`oops, can't find organization [@${this.slug()}]. did you join it? [dotenvx pro settings orgconnect]`)
     }
 
     return id

@@ -4,6 +4,7 @@ const bip39 = require('bip39')
 
 const current = require('./current')
 const encryptValue = require('./../lib/helpers/encryptValue')
+const Errors = require('./../lib/helpers/errors')
 
 class UserPrivateKey {
   constructor (userId = current.id()) {
@@ -11,7 +12,7 @@ class UserPrivateKey {
     this.hostfolder = current.hostfolder()
 
     if (!this.userId) {
-      throw new Error('login required. Log in with [dotenvx pro login].')
+      throw new Errors().loginRequired()
     }
 
     this.store = new Conf({

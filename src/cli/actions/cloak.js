@@ -28,7 +28,7 @@ async function cloak () {
       logger.error(error)
     }
     if (error.help) {
-      logger.error(error.help)
+      logger.help(error.help)
     }
     process.exit(1)
   }

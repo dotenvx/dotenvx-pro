@@ -2,22 +2,32 @@ const fs = require('fs')
 const path = require('path')
 const dotenv = require('dotenv')
 
+// helpers
 const gitUrl = require('./../helpers/gitUrl')
 const gitRoot = require('./../helpers/gitRoot')
 const ValidateGit = require('./../helpers/validateGit')
 const ValidateKeysFile = require('./../helpers/validateKeysFile')
+const ValidateLoggedIn = require('./../helpers/validateLoggedIn')
+const ValidatePublicKey = require('./../helpers/validatePublicKey')
 const extractSlug = require('./../helpers/extractSlug')
 const extractUsernameName = require('./../helpers/extractUsernameName')
 const forgivingDirectory = require('./../helpers/forgivingDirectory')
 const removeKeyFromEnvFile = require('./../helpers/removeKeyFromEnvFile')
+const Errors = require('./../helpers/errors')
+const encryptValue = require('./../helpers/encryptValue')
+const decryptValue = require('./../helpers/decryptValue')
 
 // services
+const SyncMe = require('./../../lib/services/syncMe')
+const SyncPublicKey = require('./../../lib/services/syncPublicKey')
 const SyncOrganization = require('./syncOrganization')
+const SyncOrganizationPublicKey = require('./../../lib/services/syncOrganizationPublicKey')
 const Keypair = require('./keypair')
 
 // db
 const User = require('./../../db/user')
 const current = require('./../../db/current')
+const UserPrivateKey = require('./../../db/userPrivateKey')
 
 // api calls
 const PostPush = require('./../../lib/api/postPush')
@@ -32,79 +42,69 @@ class Cloak {
   }
 
   async run () {
+    // validate repo
     new ValidateGit().run()
     new ValidateKeysFile().run()
 
-    this.user = new User()
+    // logged in
+    new ValidateLoggedIn().run()
+    let user = await new SyncMe(this.hostname, current.token()).run()
 
-    // const organization = await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+    // verify/sync public key
+    new ValidatePublicKey().run()
+    const userPrivateKey = new UserPrivateKey()
+    user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
 
-    // // check for publicKey
-    // if (!organization.publicKey()) {
-    //   const error = new Error(`oops, can't find orgpublickey for [@${this.slug()}]`)
-    //   error.help = '? try running [dotenvx pro sync]'
-    //   throw error
-    // }
+    // organization(s)
+    const _organizationIds = user.organizationIds()
+    if (!_organizationIds || _organizationIds.length < 1) {
+      throw new Errors({username: user.username()}).missingOrganization()
+    }
 
-    // const pushedFilepaths = []
-    // const privateKeyNames = []
-    // for (const envFilepath of this._envFilepaths()) {
-    //   const filepath = path.resolve(envFilepath)
+    let currentOrganizationId = current.organizationId()
 
-    //   // file must exist
-    //   if (!fs.existsSync(filepath)) {
-    //     const error = new Error(`oops, missing ${envFilepath} file (${filepath})`)
-    //     error.help = `? add one with [echo "HELLO=World" > ${envFilepath}]`
-    //     throw error
-    //   }
+    for (let iOrg = 0; iOrg < _organizationIds.length; iOrg++) {
+      const organizationId = _organizationIds[iOrg]
 
-    //   // get keypairs
-    //   const keypairs = new Keypair(envFilepath).run()
+      // for later - to auto-select an organization
+      if (!currentOrganizationId) {
+        currentOrganizationId = organizationId
+      }
+      let organization = await new SyncOrganization(this.hostname, current.token(), organizationId).run()
 
-    //   // publicKey must exist
-    //   const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
-    //   const publicKey = keypairs[publicKeyName]
-    //   if (!publicKey) {
-    //     const error = new Error(`oops, could not locate ${publicKeyName}`)
-    //     error.help = `? generate ${publicKeyName} (.env.keys) with [dotenvx encrypt]`
-    //     throw error
-    //   }
+      // generate org keypair for the first time
+      const organizationHasPublicKey = organization.publicKey() && organization.publicKey().length > 0
+      if (!organizationHasPublicKey) {
+        const kp = new PrivateKey()
+        const genPublicKey = kp.publicKey.toHex()
+        const genPrivateKey = kp.secret.toString('hex')
+        const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
-    //   // privateKey
-    //   const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
-    //   const privateKey = keypairs[privateKeyName]
-    //   const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
+        organization = await new SyncOrganizationPublicKey(this.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
+        user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
+      }
 
-    //   // filepath
-    //   const relativeFilepath = path.relative(gitRoot(), path.join(process.cwd(), this.directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
+      const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
+      if (!meHasPrivateKeyEncrypted) {
+        throw new Errors({slug: organization.slug()}).missingOrganizationPrivateKey()
+      }
 
-    //   // text
-    //   const text = fs.readFileSync(filepath, 'utf8')
+      const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
+      if (canDecryptOrganization !== 'true') {
+        throw new Errors({slug: organization.slug()}).decryptionFailed()
+      }
 
-    //   await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
+      await new SyncOrganization(current.hostname(), current.token(), organizationId).run()
+    }
 
-    //   // sync org
-    //   await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+    // select current organization
+    current.selectOrganization(currentOrganizationId)
+    const organization = new Organization()
 
-    //   // deal with .env.keys file
-    //   const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
-    //   if (fs.existsSync(envKeysFilepath)) {
-    //     // remove DOTENV_PRIVATE_KEY from .env.keys file
-    //     removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
+    // ready to cloak
+    logger.success('ready to cloak!')
 
-    //     // remove .env.keys file if not more private keys left
-    //     const env = fs.readFileSync(envKeysFilepath, 'utf8')
-    //     const parsedKeys = dotenv.parse(env)
-    //     if (Object.keys(parsedKeys).length <= 0) {
-    //       fs.unlinkSync(envKeysFilepath)
-    //     }
-    //   }
-
-    //   pushedFilepaths.push(relativeFilepath)
-    //   privateKeyNames.push(privateKeyName)
-    // }
-
-    return { privateKeyNames }
+    return { }
   }
 
   slug () {
@@ -142,7 +142,7 @@ class Cloak {
 
     if (!id) {
       const error = new Error(`connect your account to organization [@${this.slug()}]`)
-      error.help = '? connect it with one of the following\n\n  1. run [dotenvx pro sync]\n  2. create it [dotenvx pro settings orgnew]\n  3. or join it [dotenvx pro settings orgjoin]'
+      error.help = '? connect it with one of the following\n\n  1. run [dotenvx pro sync]\n  2. or connect it [dotenvx pro settings orgconnect]'
 
       throw error
     }

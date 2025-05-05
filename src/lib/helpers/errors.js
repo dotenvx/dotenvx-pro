@@ -2,6 +2,8 @@ class Errors {
   constructor (options = {}) {
     this.filename = options.filename
     this.filepath = options.filepath
+    this.username = options.username
+    this.slug = options.slug
   }
 
   missingEnvKeysFile () {
@@ -59,6 +61,17 @@ class Errors {
     return e
   }
 
+  econnrefused () {
+    const code = 'ECONNREFUSED'
+    const message = `[${code}] connection refused`
+    const help = `[${code}] check your internet connection`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
   loginRequired () {
     const code = 'LOGIN_REQUIRED'
     const message = `[${code}] Log in with [dotenvx pro login]`
@@ -70,10 +83,43 @@ class Errors {
     return e
   }
 
-  econnrefused () {
-    const code = 'ECONNREFUSED'
-    const message = `[${code}] connection refused`
-    const help = `[${code}] check your internet connection`
+  missingPublicKey () {
+    const code = 'MISSING_PUBLIC_KEY'
+    const message = `[${code}] Try generating one with [dotenvx pro login]`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/585`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
+  missingOrganization () {
+    const code = 'MISSING_ORGANIZATION'
+    const message = `[${code}] Connect [${this.username}] to an organization with [dotenvx pro settings orgconnect]`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/586`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
+  missingOrganizationPrivateKey () {
+    const code = 'MISSING_ORGANIZATION_PRIVATE_KEY'
+    const message = `[${code}] Ask your [${slug}] teammate to run [dotenvx pro sync] and then try again.`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/587`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
+  decryptionFailed () {
+    const code = 'DECRYPTION_FAILED'
+    const message = `[${code}] Unable to encrypt/decrypt for organization [${slug}]`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/588`
 
     const e = new Error(message)
     e.code = code

@@ -1,4 +1,4 @@
-const { logger, getColor } = require('@dotenvx/dotenvx')
+const { logger } = require('@dotenvx/dotenvx')
 const { PrivateKey } = require('eciesjs')
 
 // database
@@ -10,6 +10,8 @@ const Organization = require('./../../db/organization')
 const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const encryptValue = require('./../../lib/helpers/encryptValue')
 const decryptValue = require('./../../lib/helpers/decryptValue')
+const ValidateLoggedIn = require('./../../lib/helpers/validateLoggedIn')
+const ValidatePublicKey = require('./../../lib/helpers/validatePublicKey')
 
 // api calls
 const PostOrganizationUserPrivateKeyEncrypted = require('./../../lib/api/postOrganizationUserPrivateKeyEncrypted')
@@ -29,22 +31,14 @@ async function sync () {
   try {
     // logged in
     spinner.start('logged in')
-    if (current.token().length < 1) {
-      const error = new Error()
-      error.message = 'login required. Log in with [dotenvx pro login].'
-      throw error
-    }
+    new ValidateLoggedIn().run()
     let user = await new SyncMe(options.hostname, current.token()).run()
     spinner.succeed(`[${user.username()}] logged in`)
 
     // verify/sync public key
     spinner.start(`[${user.username()}] encrypted`)
+    new ValidatePublicKey().run()
     const userPrivateKey = new UserPrivateKey()
-    if (userPrivateKey.publicKey().length < 1) {
-      const error = new Error()
-      error.message = 'missing public key. Try generating one with [dotenvx pro login].'
-      throw error
-    }
     user = await new SyncPublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
     spinner.succeed(`[${user.username()}] encrypted`)
 
@@ -56,13 +50,11 @@ async function sync () {
       spinner.succeed(`[${user.username()}] emergency kit`)
     }
 
-    // organization(s) - check if any
+    // organization(s)
     spinner.start('[@] logged in')
     const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
-      const error = new Error()
-      error.message = `[${user.username()}] connect your account to an organization. Create one [dotenvx pro settings orgnew] or join one [dotenvx pro settings orgjoin].`
-      throw error
+      throw new Errors({username: user.username()}).missingOrganization()
     }
 
     let currentOrganizationId = current.organizationId()
@@ -92,16 +84,12 @@ async function sync () {
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
       if (!meHasPrivateKeyEncrypted) {
-        const error = new Error()
-        error.message = `missing private key for organization [${organization.slug()}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
-        throw error
+        throw new Errors({slug: organization.slug()}).missingOrganizationPrivateKey()
       }
 
       const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
       if (canDecryptOrganization !== 'true') {
-        const error = new Error()
-        error.message = `unable to encrypt/decrypt for organization [${organization.slug()}]. Ask your teammate to run [dotenvx pro sync] and then try again.`
-        throw error
+        throw new Errors({slug: organization.slug()}).decryptionFailed()
       }
       spinner.succeed(`[@${organization.slug()}] encrypted`)
 
@@ -144,9 +132,9 @@ async function sync () {
     spinner.stop()
 
     if (error.message) {
-      logger.error(getColor('red')(error.message))
+      logger.error(error.message)
     } else {
-      logger.error(getColor('red')(error))
+      logger.error(error)
     }
     if (error.help) {
       logger.help(error.help)

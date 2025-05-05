@@ -74,7 +74,7 @@ t.test('#organizationId (throws is not found)', ct => {
     dbk.organizationId()
     ct.fail('should have raised an error but did not')
   } catch (error) {
-    ct.equal(error.message, 'oops, can\'t find organization [@other]. did you join it? [dotenvx pro settings orgjoin]')
+    ct.equal(error.message, 'oops, can\'t find organization [@other]. did you join it? [dotenvx pro settings orgconnect]')
   }
 
   ct.end()
