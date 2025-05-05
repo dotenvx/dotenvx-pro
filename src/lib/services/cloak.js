@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const dotenv = require('dotenv')
+const { logger } = require('@dotenvx/dotenvx')
+const { PrivateKey } = require('eciesjs')
 
 // helpers
 const gitUrl = require('./../helpers/gitUrl')
@@ -28,6 +29,7 @@ const Keypair = require('./keypair')
 const User = require('./../../db/user')
 const current = require('./../../db/current')
 const UserPrivateKey = require('./../../db/userPrivateKey')
+const Organization = require('./../../db/organization')
 
 // api calls
 const PostPush = require('./../../lib/api/postPush')
