@@ -8,6 +8,17 @@ on:
     branches: [main]
 
 jobs:
+  standard:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+      - run: npm install
+      - run: npm run standard
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -21,10 +32,8 @@ jobs:
         run: curl -sfSL https://git.io/shellspec | sh -s 0.28.1 --yes
       - run: which shellspec
       - run: npm install
-      - run: npm run standard
       - run: npm run test
       - run: npm audit --omit=dev
-
   test-pkg:
     runs-on: ubuntu-latest
     strategy:
