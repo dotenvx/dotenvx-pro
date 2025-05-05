@@ -10,7 +10,7 @@ class ValidateKeysFile {
 
     // .env.keys file must exist
     if (!fs.existsSync(filepath)) {
-      const error = new Errors({ filename, filepath  }).missingEnvKeysFile()
+      const error = new Errors({ filename, filepath }).missingEnvKeysFile()
       throw error
     }
   }

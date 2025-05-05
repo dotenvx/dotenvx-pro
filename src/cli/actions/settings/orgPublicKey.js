@@ -1,3 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
+
 const Organization = require('./../../../db/organization')
 
 function orgPublicKey () {

@@ -1,3 +1,5 @@
+const { logger } = require('@dotenvx/dotenvx')
+
 const UserPrivateKey = require('./../../../db/userPrivateKey')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 const smartMaskRecoveryPhrase = require('./../../../lib/helpers/smartMaskRecoveryPhrase')

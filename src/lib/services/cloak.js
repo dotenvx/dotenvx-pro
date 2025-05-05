@@ -60,7 +60,7 @@ class Cloak {
     const _organizations = this.user.organizations()
     const _organizationIds = this.user.organizationIds()
     if (!_organizations || _organizations.length < 1) {
-      throw new Errors({username: this.user.username()}).missingOrganization()
+      throw new Errors({ username: this.user.username() }).missingOrganization()
     }
 
     let currentOrganizationId
@@ -87,19 +87,19 @@ class Cloak {
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
       if (!meHasPrivateKeyEncrypted) {
-        throw new Errors({slug: organization.slug()}).missingOrganizationPrivateKey()
+        throw new Errors({ slug: organization.slug() }).missingOrganizationPrivateKey()
       }
 
       const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
       if (canDecryptOrganization !== 'true') {
-        throw new Errors({slug: organization.slug()}).decryptionFailed()
+        throw new Errors({ slug: organization.slug() }).decryptionFailed()
       }
 
       await new SyncOrganization(current.hostname(), current.token(), organizationId).run()
     }
 
     if (!currentOrganizationId) {
-      throw new Errors({username: this.user.username(), slug: this.slug()}).organizationNotConnected()
+      throw new Errors({ username: this.user.username(), slug: this.slug() }).organizationNotConnected()
     }
 
     // select current organization
@@ -111,7 +111,7 @@ class Cloak {
     for (const envFilepath of this._envFilepaths()) {
       const filepath = path.resolve(envFilepath)
       if (!fs.existsSync(filepath)) {
-        throw new Errors({ filename: envFilepath, filepath: filepath }).missingEnvFile()
+        throw new Errors({ filename: envFilepath, filepath }).missingEnvFile()
       }
 
       // get keypairs
@@ -121,14 +121,14 @@ class Cloak {
       const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
       const publicKey = keypairs[publicKeyName]
       if (!publicKey) {
-        throw new Errors({filename: envFilepath, filepath, publicKeyName}).missingDotenvPublicKey()
+        throw new Errors({ filename: envFilepath, filepath, publicKeyName }).missingDotenvPublicKey()
       }
 
       // privateKey must exist
       const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
       const privateKey = keypairs[privateKeyName]
       if (!privateKey) {
-        throw new Errors({filename: envFilepath, filepath, privateKeyName}).missingDotenvPrivateKey()
+        throw new Errors({ filename: envFilepath, filepath, privateKeyName }).missingDotenvPrivateKey()
       }
 
       // filepath

@@ -94,7 +94,7 @@ const createSpinner = (initialMessage = '') => {
     info: (message) => spinner.info(getColor('blue')(message)),
     done: (message) => spinner.succeed(message),
     fail: (message) => spinner.fail(bold(getColor('red')(message))),
-    stop: () => spinner.stop(),
+    stop: () => spinner.stop()
   }
 }
 

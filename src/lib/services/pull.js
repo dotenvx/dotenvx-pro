@@ -51,7 +51,7 @@ class Pull {
 
       // file must exist
       if (!fs.existsSync(filepath)) {
-        throw new Errors({ filename: envFilepath, filepath: filepath }).missingEnvFile()
+        throw new Errors({ filename: envFilepath, filepath }).missingEnvFile()
       }
 
       // get keypairs

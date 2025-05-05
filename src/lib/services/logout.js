@@ -1,5 +1,3 @@
-const { request } = require('./../../lib/helpers/http')
-
 // db
 const current = require('./../../db/current')
 

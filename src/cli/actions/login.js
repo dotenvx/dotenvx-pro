@@ -1,5 +1,4 @@
 const open = require('open')
-const { request } = require('../../lib/helpers/http')
 const { logger } = require('@dotenvx/dotenvx')
 
 const current = require('./../../db/current')
@@ -10,8 +9,6 @@ const { createSpinner } = require('./../../lib/helpers/createSpinner')
 const confirm = require('./../../lib/helpers/confirm')
 const truncate = require('./../../lib/helpers/truncate')
 const formatCode = require('./../../lib/helpers/formatCode')
-
-const OAUTH_CLIENT_ID = 'oac_dotenvxcli'
 
 const spinner = createSpinner('waiting on browser authorization')
 

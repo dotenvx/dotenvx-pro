@@ -12,6 +12,7 @@ const encryptValue = require('./../../lib/helpers/encryptValue')
 const decryptValue = require('./../../lib/helpers/decryptValue')
 const ValidateLoggedIn = require('./../../lib/helpers/validateLoggedIn')
 const ValidatePublicKey = require('./../../lib/helpers/validatePublicKey')
+const Errors = require('./../../lib/helpers/errors')
 
 // api calls
 const PostOrganizationUserPrivateKeyEncrypted = require('./../../lib/api/postOrganizationUserPrivateKeyEncrypted')
@@ -54,7 +55,7 @@ async function sync () {
     spinner.start('[@] logged in')
     const _organizationIds = user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
-      throw new Errors({username: user.username()}).missingOrganization()
+      throw new Errors({ username: user.username() }).missingOrganization()
     }
 
     let currentOrganizationId = current.organizationId()
@@ -84,12 +85,12 @@ async function sync () {
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
       if (!meHasPrivateKeyEncrypted) {
-        throw new Errors({slug: organization.slug()}).missingOrganizationPrivateKey()
+        throw new Errors({ slug: organization.slug() }).missingOrganizationPrivateKey()
       }
 
       const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
       if (canDecryptOrganization !== 'true') {
-        throw new Errors({slug: organization.slug()}).decryptionFailed()
+        throw new Errors({ slug: organization.slug() }).decryptionFailed()
       }
       spinner.succeed(`[@${organization.slug()}] encrypted`)
 
