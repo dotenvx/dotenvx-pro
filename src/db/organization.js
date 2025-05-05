@@ -5,6 +5,7 @@ const UserPrivateKey = require('./userPrivateKey')
 
 const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
+const Errors = require('./../lib/helpers/errors')
 
 class Organization {
   constructor (organizationId = current.organizationId()) {
@@ -13,7 +14,7 @@ class Organization {
     this.organizationId = organizationId
 
     if (!this.userId) {
-      throw new Error('login required. Log in with [dotenvx pro login].')
+      throw new Errors().loginRequired()
     }
 
     if (!this.organizationId) {

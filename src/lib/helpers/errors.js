@@ -118,6 +118,17 @@ class Errors {
     return e
   }
 
+  organizationNotConnected () {
+    const code = 'ORGANIZATION_NOT_CONNECTED'
+    const message = `[${code}] Connect [user:${this.username}] to organization [org:${this.slug}] with [dotenvx pro settings orgconnect]`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/591`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
   missingOrganizationPrivateKey () {
     const code = 'MISSING_ORGANIZATION_PRIVATE_KEY'
     const message = `[${code}] Ask your [org:${this.slug}] teammate to run [dotenvx pro sync] and then try again.`

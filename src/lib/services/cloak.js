@@ -57,20 +57,20 @@ class Cloak {
     this.user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
 
     // organization(s)
+    const _organizations = this.user.organizations()
     const _organizationIds = this.user.organizationIds()
-    if (!_organizationIds || _organizationIds.length < 1) {
+    if (!_organizations || _organizations.length < 1) {
       throw new Errors({username: this.user.username()}).missingOrganization()
     }
 
-    let currentOrganizationId = current.organizationId()
+    let currentOrganizationId
+    for (let iOrg = 0; iOrg < _organizations.length; iOrg++) {
+      const organizationId = _organizations[iOrg].id()
+      const organizationSlug = _organizations[iOrg].slug()
 
-    for (let iOrg = 0; iOrg < _organizationIds.length; iOrg++) {
-      const organizationId = _organizationIds[iOrg]
+      if (organizationSlug.toLowerCase() !== this.slug().toLowerCase()) continue // filters to repo's organization
+      currentOrganizationId = organizationId // set new current organization
 
-      // for later - to auto-select an organization
-      if (!currentOrganizationId) {
-        currentOrganizationId = organizationId
-      }
       let organization = await new SyncOrganization(this.hostname, current.token(), organizationId).run()
 
       // generate org keypair for the first time
@@ -98,8 +98,12 @@ class Cloak {
       await new SyncOrganization(current.hostname(), current.token(), organizationId).run()
     }
 
+    if (!currentOrganizationId) {
+      throw new Errors({username: this.user.username(), slug: this.slug()}).organizationNotConnected()
+    }
+
     // select current organization
-    current.selectOrganization(currentOrganizationId)
+    current.selectOrganization(currentOrganizationId) // TODO: should we switch back to the original current org after the cloak/push?
     const organization = new Organization()
 
     const pushedFilepaths = []
