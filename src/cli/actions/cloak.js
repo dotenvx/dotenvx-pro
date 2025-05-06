@@ -15,7 +15,6 @@ async function cloak () {
     spinner.start()
 
     const {
-      procssedEnvs,
       changedFilepaths,
       unchangedFilepaths
     } = await new Cloak(options.hostname, options.envFile).run()
