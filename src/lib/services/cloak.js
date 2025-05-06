@@ -7,7 +7,6 @@ const { PrivateKey } = require('eciesjs')
 const gitUrl = require('./../helpers/gitUrl')
 const gitRoot = require('./../helpers/gitRoot')
 const ValidateGit = require('./../helpers/validateGit')
-const ValidateKeysFile = require('./../helpers/validateKeysFile')
 const ValidateLoggedIn = require('./../helpers/validateLoggedIn')
 const ValidatePublicKey = require('./../helpers/validatePublicKey')
 const extractSlug = require('./../helpers/extractSlug')
@@ -23,7 +22,8 @@ const SyncMe = require('./../../lib/services/syncMe')
 const SyncPublicKey = require('./../../lib/services/syncPublicKey')
 const SyncOrganization = require('./syncOrganization')
 const SyncOrganizationPublicKey = require('./../../lib/services/syncOrganizationPublicKey')
-const Keypair = require('./keypair')
+const Keypair = require('./Keypair')
+const DbKeypair = require('./dbKeypair')
 
 // db
 const current = require('./../../db/current')
@@ -40,12 +40,14 @@ class Cloak {
     this.directory = forgivingDirectory(directory)
 
     this._mem = {}
+    this.processedEnvs = []
+    this.changedFilepaths = new Set()
+    this.unchangedFilepaths = new Set()
   }
 
   async run () {
     // validate repo
     new ValidateGit().run()
-    new ValidateKeysFile().run()
 
     // logged in
     new ValidateLoggedIn().run()
@@ -65,12 +67,10 @@ class Cloak {
     let currentOrganizationId
     for (let iOrg = 0; iOrg < _organizations.length; iOrg++) {
       const organizationId = _organizations[iOrg].id()
-      const organizationSlug = _organizations[iOrg].slug()
-
-      if (organizationSlug.toLowerCase() !== this.slug().toLowerCase()) continue // filters to repo's organization
-      currentOrganizationId = organizationId // set new current organization
-
       let organization = await new SyncOrganization(this.hostname, current.token(), organizationId).run()
+
+      if (organization.slug().toLowerCase() !== this.slug().toLowerCase()) continue // filters to repo's organization
+      currentOrganizationId = organizationId // set new current organization
 
       // generate org keypair for the first time
       const organizationHasPublicKey = organization.publicKey() && organization.publicKey().length > 0
@@ -105,20 +105,25 @@ class Cloak {
     current.selectOrganization(currentOrganizationId) // TODO: should we switch back to the original current org after the cloak/push?
     const organization = new Organization()
 
-    const pushedFilepaths = []
-    const privateKeyNames = []
     for (const envFilepath of this._envFilepaths()) {
+      const row = {
+        changed: false
+      } // used later for reporting to cli
+
       const filepath = path.resolve(envFilepath)
+      row.filepath = filepath
+      row.filename = envFilepath
       if (!fs.existsSync(filepath)) {
         throw new Errors({ filename: envFilepath, filepath }).missingEnvFile()
       }
 
-      // get keypairs
-      const keypairs = new Keypair(envFilepath).run()
+      const keypairs = new Keypair(envFilepath).run() // file AND db keypairs. db wins.
 
       // publicKey must exist
       const publicKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PUBLIC_KEY'))
       const publicKey = keypairs[publicKeyName]
+      row.publicKeyName = publicKeyName
+      row.publicKey = publicKey
       if (!publicKey) {
         throw new Errors({ filename: envFilepath, filepath, publicKeyName }).missingDotenvPublicKey()
       }
@@ -126,42 +131,54 @@ class Cloak {
       // privateKey must exist
       const privateKeyName = Object.keys(keypairs).find(key => key.startsWith('DOTENV_PRIVATE_KEY'))
       const privateKey = keypairs[privateKeyName]
+      row.privateKeyName = privateKeyName
+      row.privateKey = privateKey
       if (!privateKey) {
         throw new Errors({ filename: envFilepath, filepath, privateKeyName }).missingDotenvPrivateKey()
       }
 
-      // filepath
-      const relativeFilepath = path.relative(gitRoot(), path.join(process.cwd(), this.directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
+      const dbkeypairs = new DbKeypair(envFilepath).run()
+      if (dbkeypairs[privateKeyName] !== privateKey) {
+        row.changed = true // row is changing
 
-      // text
-      const text = fs.readFileSync(filepath, 'utf8')
+        const relativeFilepath = path.relative(gitRoot(), path.join(process.cwd(), this.directory, envFilepath)).replace(/\\/g, '/') // smartly determine path/to/.env file from repository root - where user is cd-ed inside a folder or at repo root
+        const text = fs.readFileSync(filepath, 'utf8')
+        const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
 
-      const privateKeyEncryptedWithOrganizationPublicKey = organization.encrypt(privateKey)
-      await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
+        await new PostPush(this.hostname, current.token(), 'github', organization.publicKey(), this.usernameName(), relativeFilepath, publicKeyName, privateKeyName, publicKey, privateKeyEncryptedWithOrganizationPublicKey, text).run()
+        // sync up for good measure
+        await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
+        await new SyncMe(this.hostname, current.token()).run()
 
-      // sync up
-      await new SyncOrganization(this.hostname, current.token(), this.organizationId()).run()
-      await new SyncMe(this.hostname, current.token()).run()
+        // deal with .env.keys file
+        const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
+        if (fs.existsSync(envKeysFilepath)) {
+          // remove DOTENV_PRIVATE_KEY from .env.keys file
+          removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
 
-      // deal with .env.keys file
-      const envKeysFilepath = path.join(path.dirname(filepath), '.env.keys')
-      if (fs.existsSync(envKeysFilepath)) {
-        // remove DOTENV_PRIVATE_KEY from .env.keys file
-        removeKeyFromEnvFile(envKeysFilepath, privateKeyName)
-
-        // remove .env.keys file if not more private keys left
-        const env = fs.readFileSync(envKeysFilepath, 'utf8')
-        const parsedKeys = dotenv.parse(env)
-        if (Object.keys(parsedKeys).length <= 0) {
-          fs.unlinkSync(envKeysFilepath)
+          // remove .env.keys file if not more private keys left
+          const env = fs.readFileSync(envKeysFilepath, 'utf8')
+          const parsedKeys = dotenv.parse(env)
+          if (Object.keys(parsedKeys).length <= 0) {
+            fs.unlinkSync(envKeysFilepath)
+          }
         }
       }
 
-      pushedFilepaths.push(relativeFilepath)
-      privateKeyNames.push(privateKeyName)
+      if (row.changed) {
+        this.changedFilepaths.add(envFilepath)
+      } else {
+        this.unchangedFilepaths.add(envFilepath)
+      }
+
+      this.processedEnvs.push(row)
     }
 
-    return { privateKeyNames }
+    return {
+      processedEnvs: this.processedEnvs,
+      changedFilepaths: [...this.changedFilepaths],
+      unchangedFilepaths: [...this.unchangedFilepaths]
+    }
   }
 
   slug () {

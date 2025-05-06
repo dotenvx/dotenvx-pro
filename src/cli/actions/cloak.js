@@ -14,10 +14,23 @@ async function cloak () {
 
     spinner.start()
 
-    const { privateKeyNames } = await new Cloak(options.hostname, options.envFile).run()
-    spinner.succeed(`cloaked (${privateKeyNames.join(',')})`)
-    // TODO here to tell user what to do next
-    // logger.help('⮕ next run [dotenvx pro sync]')
+    const {
+      procssedEnvs,
+      changedFilepaths,
+      unchangedFilepaths
+    } = await new Cloak(options.hostname, options.envFile).run()
+
+    spinner.stop()
+
+    if (changedFilepaths.length > 0) {
+      logger.success(`✔ cloaked (${changedFilepaths.join(',')})`)
+    } else if (unchangedFilepaths.length > 0) {
+      logger.info(`✔ cloaked (${unchangedFilepaths.join(',')})`)
+    } else {
+      // do nothing - scenario when no .env files found
+    }
+
+    logger.help('⮕ have your teammate(s) to run [dotenvx pro sync]')
   } catch (error) {
     spinner.stop()
     if (error.message) {

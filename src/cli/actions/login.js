@@ -94,11 +94,13 @@ async function login () {
     // begin polling
     pollTokenUrl(hostname, deviceCode, interval, settingsDevicesUrl)
 
+    logger.info(`press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...`)
+    spinner.start()
+
     // optionally allow user to open browser
     const answer = await confirm({ message: `press Enter to open [${verificationUri}] and enter code [${formatCode(userCode)}]...` })
 
     if (answer) {
-      spinner.start()
       await open(verificationUriComplete)
     } else {
       spinner.stop()
