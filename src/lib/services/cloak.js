@@ -22,7 +22,7 @@ const SyncMe = require('./../../lib/services/syncMe')
 const SyncPublicKey = require('./../../lib/services/syncPublicKey')
 const SyncOrganization = require('./syncOrganization')
 const SyncOrganizationPublicKey = require('./../../lib/services/syncOrganizationPublicKey')
-const Keypair = require('./Keypair')
+const Keypair = require('./keypair')
 const DbKeypair = require('./dbKeypair')
 
 // db
