@@ -27,7 +27,6 @@ const DbKeypair = require('./dbKeypair')
 
 // db
 const current = require('./../../db/current')
-const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 // api calls
