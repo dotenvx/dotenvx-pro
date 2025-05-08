@@ -1,7 +1,6 @@
 const Conf = require('conf')
 const { PrivateKey } = require('eciesjs')
 
-const current = require('./current')
 const encryptValue = require('./../lib/helpers/encryptValue')
 
 class Device {
