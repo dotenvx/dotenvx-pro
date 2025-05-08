@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.19.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.20.0...main)
+
+## 0.20.0
+
+### Added
+
+* Identify device as part of sync handshake ([#35](https://github.com/dotenvx/dotenvx-pro/pull/35))
 
 ## 0.19.0
 
