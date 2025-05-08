@@ -3,6 +3,7 @@ const { PrivateKey } = require('eciesjs')
 const bip39 = require('bip39')
 
 const current = require('./current')
+const Device = require('./device')
 const encryptValue = require('./../lib/helpers/encryptValue')
 const Errors = require('./../lib/helpers/errors')
 
@@ -10,6 +11,7 @@ class UserPrivateKey {
   constructor (userId = current.id()) {
     this.userId = userId
     this.hostfolder = current.hostfolder()
+    this.device = new Device().touch()
 
     if (!this.userId) {
       throw new Errors().loginRequired()
