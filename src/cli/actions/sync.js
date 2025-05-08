@@ -4,6 +4,7 @@ const { PrivateKey } = require('eciesjs')
 // database
 const current = require('./../../db/current')
 const UserPrivateKey = require('./../../db/userPrivateKey')
+const Device = require('./../../db/device')
 const Organization = require('./../../db/organization')
 
 // helpers
@@ -19,6 +20,7 @@ const PostOrganizationUserPrivateKeyEncrypted = require('./../../lib/api/postOrg
 
 // services
 const SyncMe = require('./../../lib/services/syncMe')
+const SyncDevice = require('./../../lib/services/syncDevice')
 const SyncPublicKey = require('./../../lib/services/syncPublicKey')
 const SyncOrganization = require('./../../lib/services/syncOrganization')
 const SyncOrganizationPublicKey = require('./../../lib/services/syncOrganizationPublicKey')
@@ -41,7 +43,12 @@ async function sync () {
     new ValidatePublicKey().run()
     const userPrivateKey = new UserPrivateKey()
     user = await new SyncPublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
+    const device = new Device()
+    device.touch()
+    user = await new SyncDevice(options.hostname, current.token(), device.publicKey(), device.encrypt(userPrivateKey.privateKey())).run()
     spinner.succeed(`[${user.username()}] encrypted`)
+
+    // sync device
 
     // verify emergency kit
     spinner.start(`[${user.username()}] emergency kit`)
