@@ -95,7 +95,7 @@ async function sync () {
         throw new Errors({ slug: organization.slug() }).missingOrganizationPrivateKey()
       }
 
-      const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
+      const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey(user.privateKey()))
       if (canDecryptOrganization !== 'true') {
         throw new Errors({ slug: organization.slug() }).decryptionFailed()
       }

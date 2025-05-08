@@ -123,7 +123,7 @@ class User {
 
     const json = this.store.store
     for (const key in json) {
-      const match = key.match(/^organization\/(\d+)\/private_key_encrypted/)
+      const match = key.match(/^organization\/(\d+)\/slug/)
 
       if (match && json[key] !== undefined) {
         ids.push(match[1]) // add organization id

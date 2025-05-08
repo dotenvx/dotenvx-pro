@@ -55,18 +55,16 @@ class Cloak {
 
     // verify/sync public key
     new ValidatePublicKey().run()
-    const user = new User()
-    this.user = await new SyncPublicKey(this.hostname, current.token(), user.publicKey()).run()
+    this.user = await new SyncPublicKey(this.hostname, current.token(), this.user.publicKey()).run()
 
     // organization(s)
-    const _organizations = this.user.organizations()
-    if (!_organizations || _organizations.length < 1) {
+    const _organizationIds = this.user.organizationIds()
+    if (!_organizationIds || _organizationIds.length < 1) {
       throw new Errors({ username: this.user.username() }).missingOrganization()
     }
 
     let currentOrganizationId
-    for (let iOrg = 0; iOrg < _organizations.length; iOrg++) {
-      const organizationId = _organizations[iOrg].id()
+    for (const organizationId of this.user.organizationIds()) {
       let organization = await new SyncOrganization(this.hostname, current.token(), organizationId).run()
 
       if (organization.slug().toLowerCase() !== this.slug().toLowerCase()) continue // filters to repo's organization
@@ -78,10 +76,10 @@ class Cloak {
         const kp = new PrivateKey()
         const genPublicKey = kp.publicKey.toHex()
         const genPrivateKey = kp.secret.toString('hex')
-        const genPrivateKeyEncrypted = user.encrypt(genPrivateKey) // encrypt org private key with user's public key
+        const genPrivateKeyEncrypted = this.user.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
         organization = await new SyncOrganizationPublicKey(this.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
-        this.user = await new SyncPublicKey(this.hostname, current.token(), user.publicKey()).run()
+        this.user = await new SyncPublicKey(this.hostname, current.token(), this.user.publicKey()).run()
       }
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
@@ -89,7 +87,7 @@ class Cloak {
         throw new Errors({ slug: organization.slug() }).missingOrganizationPrivateKey()
       }
 
-      const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey())
+      const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey(this.user.privateKey()))
       if (canDecryptOrganization !== 'true') {
         throw new Errors({ slug: organization.slug() }).decryptionFailed()
       }
