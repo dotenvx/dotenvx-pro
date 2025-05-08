@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.18.3...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.19.0...main)
+
+## 0.19.0
+
+### Added
+
+* Generate a device identifier to be used with holding user private key encrypted at rest ([#34](https://github.com/dotenvx/dotenvx-pro/pull/34))
 
 ## 0.18.3
 
