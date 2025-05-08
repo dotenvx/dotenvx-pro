@@ -1,6 +1,6 @@
 const { logger } = require('@dotenvx/dotenvx')
 
-const UserPrivateKey = require('./../../../db/userPrivateKey')
+const User = require('./../../../db/user')
 const formatRecoveryPhrase = require('./../../../lib/helpers/formatRecoveryPhrase')
 const smartMaskRecoveryPhrase = require('./../../../lib/helpers/smartMaskRecoveryPhrase')
 
@@ -8,8 +8,8 @@ function recoveryPhrase () {
   const options = this.opts()
 
   try {
-    const userPrivateKey = new UserPrivateKey()
-    const recoveryPhrase = userPrivateKey.recoveryPhrase()
+    const user = new User()
+    const recoveryPhrase = user.recoveryPhrase()
 
     if (recoveryPhrase && recoveryPhrase.length > 0) {
       process.stdout.write(formatRecoveryPhrase(smartMaskRecoveryPhrase(recoveryPhrase, options.unmask)))

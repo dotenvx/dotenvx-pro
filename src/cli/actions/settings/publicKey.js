@@ -1,13 +1,13 @@
 const { logger } = require('@dotenvx/dotenvx')
 
-const UserPrivateKey = require('./../../../db/userPrivateKey')
+const User = require('./../../../db/user')
 
 function publicKey () {
   try {
-    const userPrivateKey = new UserPrivateKey()
-    const publicKey = userPrivateKey.publicKey()
+    const user = new User()
+    const publicKey = user.publicKey()
 
-    if (publicKey) {
+    if (publicKey && publicKey.length > 0) {
       process.stdout.write(publicKey)
     } else {
       logger.error('missing public key. Try generating one with [dotenvx pro login].')

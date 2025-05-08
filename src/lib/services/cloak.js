@@ -27,7 +27,7 @@ const DbKeypair = require('./dbKeypair')
 
 // db
 const current = require('./../../db/current')
-const UserPrivateKey = require('./../../db/userPrivateKey')
+const User = require('./../../db/user')
 const Organization = require('./../../db/organization')
 
 // api calls
@@ -55,8 +55,8 @@ class Cloak {
 
     // verify/sync public key
     new ValidatePublicKey().run()
-    const userPrivateKey = new UserPrivateKey()
-    this.user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
+    const user = new User()
+    this.user = await new SyncPublicKey(this.hostname, current.token(), user.publicKey()).run()
 
     // organization(s)
     const _organizations = this.user.organizations()
@@ -78,10 +78,10 @@ class Cloak {
         const kp = new PrivateKey()
         const genPublicKey = kp.publicKey.toHex()
         const genPrivateKey = kp.secret.toString('hex')
-        const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
+        const genPrivateKeyEncrypted = user.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
         organization = await new SyncOrganizationPublicKey(this.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
-        this.user = await new SyncPublicKey(this.hostname, current.token(), userPrivateKey.publicKey()).run()
+        this.user = await new SyncPublicKey(this.hostname, current.token(), user.publicKey()).run()
       }
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0

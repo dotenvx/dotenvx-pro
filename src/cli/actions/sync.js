@@ -3,7 +3,7 @@ const { PrivateKey } = require('eciesjs')
 
 // database
 const current = require('./../../db/current')
-const UserPrivateKey = require('./../../db/userPrivateKey')
+const User = require('./../../db/user')
 const Device = require('./../../db/device')
 const Organization = require('./../../db/organization')
 
@@ -41,11 +41,11 @@ async function sync () {
     // verify/sync public key
     spinner.start(`[${user.username()}] encrypted`)
     new ValidatePublicKey().run()
-    const userPrivateKey = new UserPrivateKey()
-    user = await new SyncPublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
+    const user = new User()
+    user = await new SyncPublicKey(options.hostname, current.token(), user.publicKey()).run()
     const device = new Device()
     device.touch()
-    user = await new SyncDevice(options.hostname, current.token(), device.publicKey(), device.encrypt(userPrivateKey.privateKey())).run()
+    user = await new SyncDevice(options.hostname, current.token(), device.publicKey(), device.encrypt(user.privateKey())).run()
     spinner.succeed(`[${user.username()}] encrypted`)
 
     // sync device
@@ -84,10 +84,10 @@ async function sync () {
         const kp = new PrivateKey()
         const genPublicKey = kp.publicKey.toHex()
         const genPrivateKey = kp.secret.toString('hex')
-        const genPrivateKeyEncrypted = userPrivateKey.encrypt(genPrivateKey) // encrypt org private key with user's public key
+        const genPrivateKeyEncrypted = user.encrypt(genPrivateKey) // encrypt org private key with user's public key
 
         organization = await new SyncOrganizationPublicKey(options.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
-        user = await new SyncPublicKey(options.hostname, current.token(), userPrivateKey.publicKey()).run()
+        user = await new SyncPublicKey(options.hostname, current.token(), user.publicKey()).run()
       }
 
       const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0

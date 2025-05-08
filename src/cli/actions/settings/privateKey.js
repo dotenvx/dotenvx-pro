@@ -1,14 +1,14 @@
 const { logger } = require('@dotenvx/dotenvx')
 
-const UserPrivateKey = require('./../../../db/userPrivateKey')
+const User = require('./../../../db/user')
 const smartMask = require('./../../../lib/helpers/smartMask')
 
 function privateKey () {
   const options = this.opts()
 
   try {
-    const userPrivateKey = new UserPrivateKey()
-    const privateKey = userPrivateKey.privateKey()
+    const user = new User()
+    const privateKey = user.privateKey()
 
     if (privateKey && privateKey.length > 0) {
       process.stdout.write(smartMask(privateKey, options.unmask))
