@@ -41,7 +41,7 @@ async function sync () {
     // verify/sync public key
     spinner.start(`[${user.username()}] encrypted`)
     new ValidatePublicKey().run()
-    const user = new User()
+    user = new User()
     user = await new SyncPublicKey(options.hostname, current.token(), user.publicKey()).run()
     const device = new Device()
     device.touch()

@@ -109,7 +109,7 @@ class User {
       const o = {
         id: deviceId,
         publicKey: json[`device/${deviceId}/public_key/1`],
-        userPrivateKeyEncrypted: json[`device/${deviceId}/user_private_key_encrypted/1`],
+        userPrivateKeyEncrypted: json[`device/${deviceId}/user_private_key_encrypted/1`]
       }
 
       c.push(o)
