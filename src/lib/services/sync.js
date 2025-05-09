@@ -18,7 +18,6 @@ const SyncOrganizationPublicKey = require('./syncOrganizationPublicKey')
 const User = require('./../../db/user')
 const Device = require('./../../db/device')
 const current = require('./../../db/current')
-const Organization = require('./../../db/organization')
 
 // api calls
 const PostOrganizationUserPrivateKeyEncrypted = require('./../api/postOrganizationUserPrivateKeyEncrypted')
@@ -30,14 +29,11 @@ class Sync {
   }
 
   async run () {
-    let username
-    let emergencyKitGeneratedAt
-    let slugs = []
+    const slugs = []
 
     // logged in
     new ValidateLoggedIn().run()
     this.user = await new SyncMe(this.hostname, current.token()).run()
-    username = this.user.username()
 
     // verify/sync public key
     new ValidatePublicKey().run()
@@ -48,9 +44,6 @@ class Sync {
     const device = new Device()
     device.touch()
     this.user = await new SyncDevice(this.hostname, current.token(), device.publicKey(), device.encrypt(this.user.privateKey())).run()
-
-    // emergency kit
-    emergencyKitGeneratedAt = this.user.emergencyKitGeneratedAt()
 
     // organization(s)
     const _organizationIds = this.user.organizationIds()
@@ -97,11 +90,11 @@ class Sync {
         for (let i = 0; i < _userIdsMissingPrivateKeyEncrypted.length; i++) {
           const userId = _userIdsMissingPrivateKeyEncrypted[i]
 
-          // username and publicKey
-          const username = organization.store.get(`u/${userId}/un`)
+          // publicKey
           const publicKey = organization.store.get(`u/${userId}/pk/1`)
 
           if (!publicKey || publicKey.length < 1) {
+            // const username = organization.store.get(`u/${userId}/un`)
             // TODO: how should I handle this? maybe collect all users that haven't run their first sync yet?
             // spinner.warn(`[@${organization.slug()}] teammate '${username}' missing public key. Tell them to run [dotenvx pro sync].`)
             // probably not needed going forward as we are going to sync in the browser, the chrome extension and the cli. they are bound to have generated their publicKey in one of those places
@@ -121,8 +114,8 @@ class Sync {
     current.selectOrganization(currentOrganizationId)
 
     return {
-      username,
-      emergencyKitGeneratedAt,
+      username: this.user.username(),
+      emergencyKitGeneratedAt: this.user.emergencyKitGeneratedAt(),
       slugs
     }
   }

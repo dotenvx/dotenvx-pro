@@ -16,11 +16,8 @@ async function sync () {
 
     const {
       username,
-      userPublicKey,
-      devicePublicKey,
       emergencyKitGeneratedAt,
-      slugs,
-      currentSlug
+      slugs
     } = await new Sync(options.hostname, options.envFile).run()
 
     spinner.stop()
@@ -30,7 +27,6 @@ async function sync () {
     if (!emergencyKitGeneratedAt) {
       logger.warn(`⚠ [${username}] emergency kit recommended. Generate it with [dotenvx pro settings emergencykit --unmask].`)
     }
-
   } catch (error) {
     spinner.stop()
     if (error.message) {
