@@ -29,7 +29,7 @@ async function cloak () {
       // do nothing - scenario when no .env files found
     }
 
-    logger.help('⮕ have your teammate(s) to run [dotenvx pro sync]')
+    logger.help('⮕ Ask your teammate(s) to run [dotenvx pro sync]')
   } catch (error) {
     spinner.stop()
     if (error.message) {
