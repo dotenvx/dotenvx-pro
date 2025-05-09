@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.20.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.21.0...main)
+
+## 0.21.0
+
+### Changed
+
+* Improved device encrypted private keys ([#36](https://github.com/dotenvx/dotenvx-pro/pull/36))
 
 ## 0.20.0
 
