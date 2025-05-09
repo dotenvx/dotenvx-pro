@@ -44,7 +44,7 @@ class DbKeypair {
       } else {
         const privateKeyEncrypted = this.organization().store.get(`r/${this.repositoryId()}/e/${envFileId}/ek/1`)
         if (privateKeyName && privateKeyEncrypted) {
-          out[privateKeyName] = this.organization().decrypt(privateKeyEncrypted)
+          out[privateKeyName] = this.organization().decrypt(privateKeyEncrypted, this.user.privateKey())
         }
       }
     }

@@ -5,6 +5,7 @@ const sinon = require('sinon')
 
 const current = require('../../src/db/current')
 const Organization = require('../../src/db/organization')
+const User = require('../../src/db/user')
 
 const decryptValue = require('../../src/lib/helpers/decryptValue')
 
@@ -77,7 +78,8 @@ t.test('#privateKeyEncrypted', ct => {
 })
 
 t.test('#privateKey', ct => {
-  ct.same(org.privateKey(), '0b754aae965afa21b631f24ee113167736bc8ea6a17b39a720ec7ffd23499841')
+  const user = new User()
+  ct.same(org.privateKey(user.privateKey()), '0b754aae965afa21b631f24ee113167736bc8ea6a17b39a720ec7ffd23499841')
 
   ct.end()
 })
@@ -93,11 +95,12 @@ t.test('#privateKey (missing privateKeyEncrypted)', ct => {
 })
 
 t.test('#encrypt', ct => {
+  const user = new User()
   const encrypted = org.encrypt('hello')
 
   const decrypted1 = decryptValue(encrypted, '0b754aae965afa21b631f24ee113167736bc8ea6a17b39a720ec7ffd23499841')
-  const decrypted2 = decryptValue(encrypted, org.privateKey())
-  const decrypted3 = org.decrypt(encrypted)
+  const decrypted2 = decryptValue(encrypted, org.privateKey(user.privateKey()))
+  const decrypted3 = org.decrypt(encrypted, user.privateKey())
 
   ct.same(decrypted1, 'hello')
   ct.same(decrypted2, 'hello')

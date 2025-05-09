@@ -18,7 +18,8 @@ const ME = {
   username: 'motdotla',
   'public_key/1': '02f4da02c08394d2ee665d571642a6caaf2ca1df93b4d9e02ba8b3571a06f254cf',
   emergency_kit_generated_at: null,
-  'organization/99/private_key_encrypted/1': 'BHL5Nvc426sKAsptOVpZUK/RKaD3BfT9swV2d09wBHvtLKA1rQ9ab9NQOVQP2QW7hhMoudbSdECRATu4XHRN9W2God9oWiltvJs9reyGP3LPsQnLEY6WAPmmLsr2iBe+cYW8hCiBAdQHN3FTJtteoVECGsq0rQ4HCbeHkyqduMdEMaEVHzqY1bfLiqSahJOCfPQdJ5rsb78g1Nml4CHY8Y4='
+  'organization/99/private_key_encrypted/1': 'BHL5Nvc426sKAsptOVpZUK/RKaD3BfT9swV2d09wBHvtLKA1rQ9ab9NQOVQP2QW7hhMoudbSdECRATu4XHRN9W2God9oWiltvJs9reyGP3LPsQnLEY6WAPmmLsr2iBe+cYW8hCiBAdQHN3FTJtteoVECGsq0rQ4HCbeHkyqduMdEMaEVHzqY1bfLiqSahJOCfPQdJ5rsb78g1Nml4CHY8Y4=',
+  'organization/99/slug': 'dotenvx'
 }
 const USER_PRIVATE_KEY = {
   'private_key/1': '9b1e733825f5b959242bb45a15c9156efdd877acb22342472baf772968c4a17e'

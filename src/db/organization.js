@@ -1,8 +1,6 @@
 const Conf = require('conf')
 
 const current = require('./current')
-const UserPrivateKey = require('./userPrivateKey')
-
 const encryptValue = require('./../lib/helpers/encryptValue')
 const decryptValue = require('./../lib/helpers/decryptValue')
 const Errors = require('./../lib/helpers/errors')
@@ -50,24 +48,22 @@ class Organization {
     return this.store.get(`u/${this.userId}/ek/1`)
   }
 
-  privateKey () {
+  privateKey (userPrivateKey) {
     const value = this.privateKeyEncrypted()
 
     if (!value || value.length < 1) {
       return ''
     }
 
-    const userPrivateKey = new UserPrivateKey()
-
-    return decryptValue(value, userPrivateKey.privateKey())
+    return decryptValue(value, userPrivateKey)
   }
 
   encrypt (value) {
     return encryptValue(value, this.publicKey())
   }
 
-  decrypt (value) {
-    return decryptValue(value, this.privateKey())
+  decrypt (value, userPrivateKey) {
+    return decryptValue(value, this.privateKey(userPrivateKey))
   }
 
   userIds () {
