@@ -118,6 +118,17 @@ class Errors {
     return e
   }
 
+  missingDevice () {
+    const code = 'MISSING_DEVICE'
+    const message = `[${code}] Missing device for [user:${this.username}]`
+    const help = `[${code}] https://github.com/dotenvx/dotenvx/issues/594`
+
+    const e = new Error(message)
+    e.code = code
+    e.help = help
+    return e
+  }
+
   organizationNotConnected () {
     const code = 'ORGANIZATION_NOT_CONNECTED'
     const message = `[${code}] Connect [user:${this.username}] to organization [org:${this.slug}] with [dotenvx pro settings orgconnect]`

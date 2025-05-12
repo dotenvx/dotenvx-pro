@@ -45,6 +45,12 @@ class Sync {
     device.touch()
     this.user = await new SyncDevice(this.hostname, current.token(), device.publicKey(), device.encrypt(this.user.privateKey())).run()
 
+    // device(s)
+    const _deviceIds = this.user.deviceIds()
+    if (!_deviceIds || _deviceIds.length < 1) {
+      throw new Errors({ username: this.user.username() }).missingDevice()
+    }
+
     // organization(s)
     const _organizationIds = this.user.organizationIds()
     if (!_organizationIds || _organizationIds.length < 1) {
