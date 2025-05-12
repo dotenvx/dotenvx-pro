@@ -101,6 +101,22 @@ class User {
     return ids
   }
 
+  deviceIdsMissingUserPrivateKeyEncrypted () {
+    const ids = []
+
+    const json = this.store.store
+    for (const key in json) {
+      // device/3/user_private_key_encrypted/1
+      const match = key.match(/^device\/(\d+)\/user_private_key_encrypted\/1/)
+
+      if (match && json[key] === null) {
+        ids.push(match[1]) // add user id
+      }
+    }
+
+    return ids
+  }
+
   devices () {
     const c = []
 

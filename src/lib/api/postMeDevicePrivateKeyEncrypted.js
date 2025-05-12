@@ -2,11 +2,10 @@ const { request } = require('../../lib/helpers/http')
 
 const buildApiError = require('../../lib/helpers/buildApiError')
 
-class PostOrganizationUserPrivateKeyEncrypted {
-  constructor (hostname, token, organizationId, id, publicKey, privateKeyEncrypted) {
+class PostMeDevicePrivateKeyEncrypted {
+  constructor (hostname, token, id, publicKey, privateKeyEncrypted) {
     this.hostname = hostname
     this.token = token
-    this.organizationId = organizationId
     this.id = id
     this.publicKey = publicKey
     this.privateKeyEncrypted = privateKeyEncrypted
@@ -14,7 +13,7 @@ class PostOrganizationUserPrivateKeyEncrypted {
 
   async run () {
     const token = this.token
-    const url = `${this.hostname}/api/organization/${this.organizationId}/user/${this.id}/private_key_encrypted`
+    const url = `${this.hostname}/api/me/device/${this.id}/private_key_encrypted`
     const publicKey = this.publicKey
     const privateKeyEncrypted = this.privateKeyEncrypted
 
@@ -40,4 +39,4 @@ class PostOrganizationUserPrivateKeyEncrypted {
   }
 }
 
-module.exports = PostOrganizationUserPrivateKeyEncrypted
+module.exports = PostMeDevicePrivateKeyEncrypted

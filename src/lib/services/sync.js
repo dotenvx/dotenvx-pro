@@ -20,6 +20,7 @@ const Device = require('./../../db/device')
 const current = require('./../../db/current')
 
 // api calls
+const PostMeDevicePrivateKeyEncrypted = require('./../api/postMeDevicePrivateKeyEncrypted')
 const PostOrganizationUserPrivateKeyEncrypted = require('./../api/postOrganizationUserPrivateKeyEncrypted')
 
 class Sync {
@@ -44,6 +45,28 @@ class Sync {
     const device = new Device()
     device.touch()
     this.user = await new SyncDevice(this.hostname, current.token(), device.publicKey(), device.encrypt(this.user.privateKey())).run()
+
+    // device(s)
+    const _deviceIds = this.user.deviceIds()
+    if (!_deviceIds || _deviceIds.length < 1) {
+      throw new Errors({ username: this.user.username() }).missingDevice()
+    }
+
+    // check for devices - and sync up the userPrivateKey between them
+    const _deviceIdsMissingUserPrivateKeyEncrypted = this.user.deviceIdsMissingUserPrivateKeyEncrypted()
+    if (_deviceIdsMissingUserPrivateKeyEncrypted || _deviceIdsMissingUserPrivateKeyEncrypted.length > 0) {
+      for (let i = 0; i < _deviceIdsMissingUserPrivateKeyEncrypted.length; i++) {
+        const deviceId = _deviceIdsMissingUserPrivateKeyEncrypted[i]
+
+        // publicKey
+        const devicePublicKey = this.user.store.get(`device/${deviceId}/public_key/1`)
+        // encrypt user private key using device public key
+        const userPrivateKeyEncryptedWithDevicePublicKey = encryptValue(this.user.privateKey(), devicePublicKey)
+
+        // upload their private key encrypted for the device
+        await new PostMeDevicePrivateKeyEncrypted(this.hostname, current.token(), deviceId, devicePublicKey, userPrivateKeyEncryptedWithDevicePublicKey).run()
+      }
+    }
 
     // organization(s)
     const _organizationIds = this.user.organizationIds()

@@ -11,7 +11,7 @@ class UserPrivateKey {
   constructor (userId = current.id()) {
     this.userId = userId
     this.hostfolder = current.hostfolder()
-    this.device = new Device().touch()
+    new Device().touch()
 
     if (!this.userId) {
       throw new Errors().loginRequired()
