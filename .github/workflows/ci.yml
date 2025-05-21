@@ -75,6 +75,7 @@ jobs:
     needs:
       - audit
       - test
+      - test-pkg
     if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '.')
     runs-on: ubuntu-latest
     strategy:
