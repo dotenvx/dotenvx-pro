@@ -32,6 +32,7 @@ async function pollTokenUrl (hostname, deviceCode, interval, settingsDevicesUrl)
 
           // log in user
           current.login(hostname, id, accessToken)
+          // TODO: run sync right after for the user
 
           // attempt to select org
           const user = new User(id)

@@ -27,6 +27,7 @@ class Sync {
   constructor (hostname = current.hostname(), envFile = '.env') {
     this.hostname = hostname
     this.envFile = envFile
+    this.device = new Device()
   }
 
   async run () {
@@ -39,12 +40,10 @@ class Sync {
     // verify/sync public key
     new ValidatePublicKey().run()
     this.user = new User()
-    this.user = await new SyncPublicKey(this.hostname, current.token(), this.user.publicKey()).run()
+    // this.user = await new SyncPublicKey(this.hostname, current.token(), this.user.publicKey()).run() // should NOT be necessary
 
     // sync device
-    const device = new Device()
-    device.touch()
-    this.user = await new SyncDevice(this.hostname, current.token(), device.publicKey(), device.encrypt(this.user.privateKey())).run()
+    this.user = await new SyncDevice(this.hostname, current.token(), this.device.publicKey(), this.device.encrypt(this.user.privateKey())).run()
 
     // device(s)
     const _deviceIds = this.user.deviceIds()
@@ -52,6 +51,11 @@ class Sync {
       throw new Errors({ username: this.user.username() }).missingDevice()
     }
 
+    // TODO: probably deprecate and leave for the app's UI maybe?? like the app could do this on a new login,
+    // but the cli will get run more than the app login process. hmm, maybe still needs to be here. BUT
+    // all new devices added will be synced from that initial oauth login handshake, so maybe this now
+    // unnecessary and we provide an emergency sync in the front-end a user can go to if things seem off
+    //
     // check for devices - and sync up the userPrivateKey between them
     const _deviceIdsMissingUserPrivateKeyEncrypted = this.user.deviceIdsMissingUserPrivateKeyEncrypted()
     if (_deviceIdsMissingUserPrivateKeyEncrypted || _deviceIdsMissingUserPrivateKeyEncrypted.length > 0) {

@@ -1,6 +1,7 @@
 const { request } = require('../../lib/helpers/http')
 
 const buildApiError = require('../../lib/helpers/buildApiError')
+const systemInformation = require('../../lib/helpers/systemInformation')
 
 class PostMeDevice {
   constructor (hostname, token, publicKey, userPrivateKeyEncryptedWithDevicePublicKey = null) {
@@ -15,6 +16,7 @@ class PostMeDevice {
     const url = `${this.hostname}/api/me/device`
     const publicKey = this.publicKey
     const userPrivateKeyEncryptedWithDevicePublicKey = this.userPrivateKeyEncryptedWithDevicePublicKey
+    const _systemInformation = await systemInformation()
 
     const resp = await request(url, {
       method: 'POST',
@@ -24,7 +26,8 @@ class PostMeDevice {
       },
       body: JSON.stringify({
         public_key: publicKey,
-        user_private_key_encrypted_with_device_public_key: userPrivateKeyEncryptedWithDevicePublicKey
+        user_private_key_encrypted_with_device_public_key: userPrivateKeyEncryptedWithDevicePublicKey,
+        system_information: _systemInformation
       })
     })
 

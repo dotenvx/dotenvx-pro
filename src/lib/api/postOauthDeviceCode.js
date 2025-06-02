@@ -1,5 +1,6 @@
 const { request } = require('../../lib/helpers/http')
 
+const Device = require('../../db/device')
 const buildOauthError = require('../../lib/helpers/buildOauthError')
 const systemInformation = require('../../lib/helpers/systemInformation')
 
@@ -11,6 +12,7 @@ class PostOauthDeviceCode {
   }
 
   async run () {
+    const devicePublicKey = new Device().publicKey() // send device.public_key along with request
     const systemInfo = await systemInformation()
     const url = `${this.hostname}/oauth/device/code`
 
@@ -21,7 +23,8 @@ class PostOauthDeviceCode {
       },
       body: JSON.stringify({
         client_id: OAUTH_CLIENT_ID,
-        system_information: systemInfo
+        system_information: systemInfo,
+        device_public_key: devicePublicKey
       })
     })
 

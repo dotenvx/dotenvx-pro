@@ -17,8 +17,13 @@ class Device {
   }
 
   touch () {
-    this.privateKey()
-    return this.configPath()
+    const _privateKey = this.privateKey()
+    const _publicKey = this.publicKey()
+
+    return {
+      privateKey: _privateKey,
+      publicKey: _publicKey
+    }
   }
 
   configPath () {
