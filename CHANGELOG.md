@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.22.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.23.0...main)
+
+## 0.23.0
+
+* Improve device mechanisms
 
 ## 0.22.0
 
