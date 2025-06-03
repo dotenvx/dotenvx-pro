@@ -68,12 +68,6 @@ class Device {
   decrypt (value) {
     return decryptValue(value, this.privateKey())
   }
-
-  recover (privateKeyHex) {
-    this.store.set('private_key/1', privateKeyHex)
-
-    return privateKeyHex
-  }
 }
 
 module.exports = Device

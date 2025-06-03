@@ -2,9 +2,14 @@ const Conf = require('conf')
 const { PrivateKey } = require('eciesjs')
 const bip39 = require('bip39')
 
+// helpers
 const Errors = require('../lib/helpers/errors')
 const encryptValue = require('./../lib/helpers/encryptValue')
 
+// api
+const PostMeDeviceRecover = require('./../lib/api/postMeDeviceRecover')
+
+// db
 const current = require('./current')
 const Organization = require('./organization')
 const Device = require('./device')
@@ -175,6 +180,19 @@ class User {
     }
 
     return h
+  }
+
+  async recover (userPrivateKeyHex) {
+    const device = new Device()
+    const hostname = current.hostname()
+    const token = current.token()
+    const devicePublicKey = device.publicKey()
+    const userPrivateKeyEncryptedWithDevicePublicKey = device.encrypt(userPrivateKeyHex)
+
+    const me = await new PostMeDeviceRecover(hostname, token, devicePublicKey, userPrivateKeyEncryptedWithDevicePublicKey).run()
+    this.store.store = me
+
+    return this.privateKey()
   }
 }
 
