@@ -7,7 +7,7 @@ const Device = require('./device')
 const encryptValue = require('./../lib/helpers/encryptValue')
 const Errors = require('./../lib/helpers/errors')
 
-class UserPrivateKey {
+class UserPrivateKeyDeprecated {
   constructor (userId = current.id()) {
     this.userId = userId
     this.hostfolder = current.hostfolder()
@@ -95,4 +95,4 @@ class UserPrivateKey {
   }
 }
 
-module.exports = UserPrivateKey
+module.exports = UserPrivateKeyDeprecated

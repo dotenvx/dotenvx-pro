@@ -3,20 +3,20 @@ require('../setup')(t)
 
 const sinon = require('sinon')
 
-const UserPrivateKey = require('../../src/db/userPrivateKey')
+const UserPrivateKeyDeprecated = require('../../src/db/userPrivateKeyDeprecated')
 
 const decryptValue = require('../../src/lib/helpers/decryptValue')
 
 let inst
 
 t.beforeEach((ct) => {
-  inst = new UserPrivateKey()
+  inst = new UserPrivateKeyDeprecated()
 })
 
 t.test('constructor missing userId', ct => {
   try {
     // eslint-disable-next-line no-new
-    new UserPrivateKey('')
+    new UserPrivateKeyDeprecated('')
 
     ct.fail('should have raised an error but did not')
   } catch (error) {

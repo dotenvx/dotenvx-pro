@@ -4,7 +4,7 @@ const path = require('path')
 
 const current = require('../src/db/current')
 const User = require('../src/db/user')
-const UserPrivateKey = require('../src/db/userPrivateKey')
+const UserPrivateKeyDeprecated = require('../src/db/userPrivateKeyDeprecated')
 const Organization = require('../src/db/organization')
 
 const HOSTNAME = 'http://example.com'
@@ -63,7 +63,7 @@ module.exports = (t) => {
     user.store.store = ME
 
     // set up userPrivateKey
-    const userPrivateKey = new UserPrivateKey(ID)
+    const userPrivateKey = new UserPrivateKeyDeprecated(ID)
     userPrivateKey.store.store = USER_PRIVATE_KEY
 
     // set up organization

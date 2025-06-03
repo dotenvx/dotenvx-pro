@@ -8,7 +8,7 @@ const encryptValue = require('./../lib/helpers/encryptValue')
 const current = require('./current')
 const Organization = require('./organization')
 const Device = require('./device')
-const UserPrivateKey = require('./userPrivateKey')
+const UserPrivateKeyDeprecated = require('./userPrivateKeyDeprecated')
 
 class User {
   constructor (userId = current.id()) {
@@ -55,7 +55,7 @@ class User {
     }
 
     // fallback to old userPrivateKey method TODO: remove this someday
-    const userPrivateKey = new UserPrivateKey()
+    const userPrivateKey = new UserPrivateKeyDeprecated()
     return userPrivateKey.privateKey()
   }
 
