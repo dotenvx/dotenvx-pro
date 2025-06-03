@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.23.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.24.0...main)
+
+## 0.24.0
+
+* Update `recover` command to store user private key in asymmetric at rest device-level encryption ([#38](https://github.com/dotenvx/dotenvx-pro/pull/38))
 
 ## 0.23.0
 
