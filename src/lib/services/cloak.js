@@ -31,6 +31,7 @@ const Organization = require('./../../db/organization')
 
 // api calls
 const PostPush = require('./../../lib/api/postPush')
+const PostOrganization = require('./../../lib/api/postOrganization')
 
 class Cloak {
   constructor (hostname = current.hostname(), envFile = '.env', directory = '.') {
@@ -95,7 +96,56 @@ class Cloak {
     }
 
     if (!currentOrganizationId) {
-      throw new Errors({ username: this.user.username(), slug: this.slug() }).organizationNotConnected()
+      // Attempt to create the organization if it doesn't exist
+      try {
+        await new PostOrganization(this.hostname, current.token(), this.slug()).run()
+
+        // Re-sync user data to get the newly created organization
+        this.user = await new SyncMe(this.hostname, current.token()).run()
+
+        // Try to find the organization again after creation
+        for (const organizationId of this.user.organizationIds()) {
+          let organization = await new SyncOrganization(this.hostname, current.token(), organizationId).run()
+
+          if (organization.slug().toLowerCase() !== this.slug().toLowerCase()) continue
+          currentOrganizationId = organizationId
+
+          // generate org keypair for the first time
+          const organizationHasPublicKey = organization.publicKey() && organization.publicKey().length > 0
+          if (!organizationHasPublicKey) {
+            const kp = new PrivateKey()
+            const genPublicKey = kp.publicKey.toHex()
+            const genPrivateKey = kp.secret.toString('hex')
+            const genPrivateKeyEncrypted = this.user.encrypt(genPrivateKey) // encrypt org private key with user's public key
+
+            organization = await new SyncOrganizationPublicKey(this.hostname, current.token(), organizationId, genPublicKey, genPrivateKeyEncrypted).run()
+            this.user = await new SyncPublicKey(this.hostname, current.token(), this.user.publicKey()).run()
+          }
+
+          const meHasPrivateKeyEncrypted = organization.privateKeyEncrypted() && organization.privateKeyEncrypted().length > 0
+          if (!meHasPrivateKeyEncrypted) {
+            throw new Errors({ slug: organization.slug() }).missingOrganizationPrivateKey()
+          }
+
+          const canDecryptOrganization = decryptValue(encryptValue('true', organization.publicKey()), organization.privateKey(this.user.privateKey()))
+          if (canDecryptOrganization !== 'true') {
+            throw new Errors({ slug: organization.slug() }).decryptionFailed()
+          }
+
+          await new SyncOrganization(current.hostname(), current.token(), organizationId).run()
+          break
+        }
+      } catch (error) {
+        // If organization creation fails, fall back to the original error
+        if (!currentOrganizationId) {
+          throw new Errors({ username: this.user.username(), slug: this.slug() }).organizationNotConnected()
+        }
+      }
+
+      // Final check - if still no organization found, throw error
+      if (!currentOrganizationId) {
+        throw new Errors({ username: this.user.username(), slug: this.slug() }).organizationNotConnected()
+      }
     }
 
     // select current organization
