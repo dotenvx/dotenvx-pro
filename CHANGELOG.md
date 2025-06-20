@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## 0.25.0
 
-* Proxy `config` to `dotenvx.config` ([#39](https://github.com/dotenvx/dotenvx-pro/pull/39))
+* Proxy `config` to `dotenvx.config` ([#43](https://github.com/dotenvx/dotenvx-pro/pull/43))
 
 ## 0.24.0
 
