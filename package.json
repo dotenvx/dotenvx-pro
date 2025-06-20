@@ -1,7 +1,7 @@
 {
   "version": "0.26.0",
   "name": "@dotenvx/dotenvx-pro",
-  "description": "Secrets Manager for Env Files",
+  "description": "Secrets manager for .env files",
   "author": "@motdotla",
   "keywords": [
     "dotenvx",
