@@ -1,5 +1,11 @@
+const dotenvx = require('@dotenvx/dotenvx')
+
 // services
 const Keypair = require('./services/keypair')
+
+const config = function (options = {}) {
+  return dotenvx.config(options)
+}
 
 /** @type {import('./main').keypair} */
 const keypair = function (envFile, key) {
@@ -7,5 +13,6 @@ const keypair = function (envFile, key) {
 }
 
 module.exports = {
+  config,
   keypair
 }

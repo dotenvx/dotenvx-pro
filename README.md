@@ -2,7 +2,7 @@
 
 > Dotenvx Pro is a commercial extension for [dotenvx](https://github.com/dotenvx/dotenvx).
 
-*Secrets Management – Done Right. 🏆* 
+*Secrets Manager for Env Files 🏆* 
 
 * Encrypted
 * Cloaked
@@ -12,7 +12,7 @@
 
 &nbsp;
 
-## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
+## Quickstart [![npm version](https://img.shields.io/npm/v/@dotenvx/dotenvx-pro.svg)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro) [![downloads](https://img.shields.io/npm/dw/@dotenvx/dotenvx-pro)](https://www.npmjs.com/package/@dotenvx/dotenvx-pro)
 
 *Install dotenvx pro.*
 
