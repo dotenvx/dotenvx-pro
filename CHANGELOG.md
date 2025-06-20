@@ -8,7 +8,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Logger says `dotenvx-pro` and uses pro version ([#44](https://github.com/dotenvx/dotenvx-pro/pull/44))
 
-
 ## 0.25.0
 
 * Proxy `config` to `dotenvx.config` ([#43](https://github.com/dotenvx/dotenvx-pro/pull/43))

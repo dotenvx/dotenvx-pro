@@ -1,9 +1,13 @@
 const dotenvx = require('@dotenvx/dotenvx')
+const packageJson = require('./helpers/packageJson')
 
 // services
 const Keypair = require('./services/keypair')
 
 const config = function (options = {}) {
+  options.logName = options.logName || 'dotenvx-pro'
+  options.logVersion = options.logVersion || packageJson.version
+
   return dotenvx.config(options)
 }
 
