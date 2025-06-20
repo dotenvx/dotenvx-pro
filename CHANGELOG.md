@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.25.0...main)
+## [Unreleased](https://github.com/dotenvx/dotenvx-pro/compare/v0.25.1...main)
+
+## 0.25.1
+
+* Display dotenvx-pro in logger name ([#44](https://github.com/dotenvx/dotenvx-pro/pull/44))
 
 ## 0.25.0
 
