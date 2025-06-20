@@ -1,7 +1,6 @@
 const t = require('tap')
 require('../setup')(t)
 
-const { getColor } = require('@dotenvx/dotenvx')
 const capcon = require('capture-console')
 
 const main = require('../../src/lib/main')
@@ -46,7 +45,7 @@ t.test('#config (logName and logVersion) capture success message', ct => {
 
   ct.match(
     stdout,
-    `[foo@0.0.1] injecting env (1) from tests/repos/dotenvx/app0/.env`,
+    '[foo@0.0.1] injecting env (1) from tests/repos/dotenvx/app0/.env',
     'includes expected success message'
   )
 
