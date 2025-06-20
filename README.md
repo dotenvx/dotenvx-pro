@@ -2,7 +2,7 @@
 
 > Dotenvx Pro is a commercial extension for [dotenvx](https://github.com/dotenvx/dotenvx).
 
-*Secrets Management for Env Files 🏆* 
+*Secrets Manager for Env Files 🏆* 
 
 * Encrypted
 * Cloaked
