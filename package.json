@@ -1,12 +1,15 @@
 {
   "version": "0.25.0",
   "name": "@dotenvx/dotenvx-pro",
-  "description": "Secrets Manager for Env Files 🏆",
+  "description": "Secrets Manager for Env Files",
   "author": "@motdotla",
   "keywords": [
     "dotenvx",
     "dotenv",
-    "env"
+    "env",
+    "secrets manager",
+    "secrets",
+    "manager"
   ],
   "homepage": "https://github.com/dotenvx/dotenvx-pro",
   "repository": "dotenvx/dotenvx-pro",
