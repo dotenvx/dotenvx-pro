@@ -8,7 +8,7 @@ const spinner = createSpinner('pulling')
 
 async function pull () {
   try {
-    logger.warn("[DOTENVX_PRO_DEPRECATED] Pro no longer maintained – and will shutdown February 2026. Please switch to [Dotenvx Ops](https://dotenvx.com/ops).")
+    logger.warn('[DOTENVX_PRO_DEPRECATED] Pro no longer maintained – and will shutdown February 2026. Please switch to [Dotenvx Ops](https://dotenvx.com/ops).')
 
     spinner.start()
 
